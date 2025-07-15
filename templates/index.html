@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Católica - Seu Guia de Fé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --background-light: #f0f2f5;
+            --background-dark: #e9ebee;
+            --text-color: #333;
+            --border-color: #ddd;
+            --container-bg: #fff;
+            --user-bubble: #DCF8C6;
+            --bot-bubble: #f1f1f1;
+            --profile-bg: #f9f9f9;
+            --profile-btn-bg: #e0e0e0;
+            --profile-btn-color: #555;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .chat-container {
+            background-color: var(--container-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 800px;
+            height: 95vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .profile-selection {
+            padding: 15px 20px;
+            background-color: var(--profile-bg);
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.95em;
+            color: var(--text-color);
+            flex-shrink: 0;
+        }
+
+        .profile-selection p {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .profile-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .profile-buttons button {
+            background-color: var(--profile-btn-bg);
+            color: var(--profile-btn-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .profile-buttons button:hover {
+            background-color: #d0d0d0;
+            border-color: #bbb;
+        }
+
+        .profile-buttons button.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: var(--background-dark);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background-color: var(--user-bubble);
+            color: var(--text-color);
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot .message-content {
+            background-color: var(--bot-bubble);
+            color: var(--text-color);
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing-indicator {
+            background-color: var(--bot-bubble);
+            padding: 12px 18px;
+            border-radius: 18px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            width: fit-content;
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            background-color: #888;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+        }
+
+
+        .chat-input-area {
+            flex-shrink: 0;
+            padding: 15px 20px;
+            background-color: var(--container-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .chat-input-area .textarea-wrapper {
+            flex-grow: 1;
+            position: relative;
+            margin-right: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input-area textarea {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1em;
+            resize: none;
+            min-height: 24px;
+            max-height: 150px;
+            padding: 0;
+            background-color: transparent;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+
+        .chat-input-area button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            min-width: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-input-area button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .chat-input-area {
+                padding: 10px 15px;
+            }
+            .chat-input-area textarea {
+                font-size: 0.95em;
+            }
+            .profile-selection {
+                padding: 10px 15px;
+            }
+            .profile-buttons {
+                gap: 5px;
+            }
+            .profile-buttons button {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            IA Católica - Seu Guia de Fé
+        </div>
+
+        <div class="profile-selection">
+            <p>Eu sou um(a):</p>
+            <div class="profile-buttons" id="profileButtons">
+                <button data-profile="leigo" class="selected">Leigo</button>
+                <button data-profile="catequista">Catequista</button>
+                <button data-profile="seminarista">Seminarista</button>
+                <button data-profile="crianca">Criança</button>
+                <button data-profile="sacerdote">Sacerdote</button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">Olá! Eu sou sua IA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.</div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="textarea-wrapper">
+                <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
+            </div>
+            <button id="sendMessageButton">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedProfile = 'leigo';
+        let typingIndicatorElement = null;
+
+        function selectProfile(profile) {
+            const buttons = document.querySelectorAll('.profile-buttons button');
+            buttons.forEach(button => {
+                button.classList.remove('selected');
+            });
+            document.querySelector(`button[data-profile="${profile}"]`).classList.add('selected');
+            selectedProfile = profile;
+            console.log('Perfil selecionado:', selectedProfile);
+        }
+
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('userMessageInput');
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            typingIndicatorElement = document.createElement('div');
+            typingIndicatorElement.classList.add('message', 'bot');
+            typingIndicatorElement.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingIndicatorElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            if (typingIndicatorElement) {
+                typingIndicatorElement.remove();
+                typingIndicatorElement = null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const userMessageInput = document.getElementById('userMessageInput');
+            const sendMessageButton = document.getElementById('sendMessageButton');
+            const profileButtonsContainer = document.getElementById('profileButtons');
+
+            userMessageInput.addEventListener('keypress', function (event) {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            userMessageInput.addEventListener('input', autoResizeTextarea);
+
+            sendMessageButton.addEventListener('click', sendMessage);
+
+            profileButtonsContainer.addEventListener('click', (event) => {
+                if (event.target.tagName === 'BUTTON') {
+                    selectProfile(event.target.dataset.profile);
+                }
+            });
+
+            autoResizeTextarea();
+        });
+
+
+        async function sendMessage() {
+            const userMessageInput = document.getElementById('userMessageInput');
+            const chatMessages = document.getElementById('chatMessages');
+
+            const userMessage = userMessageInput.value.trim();
+
+            if (!userMessage) return;
+
+            appendMessage(userMessage, 'user');
+            userMessageInput.value = '';
+            autoResizeTextarea();
+
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        profile: selectedProfile
+                    })
+                });
+
+                const data = await response.json();
+
+                hideTypingIndicator();
+
+                if (data.error) {
+                    appendMessage(`Erro: ${data.error}`, 'bot');
+                } else {
+                    appendMessage(data.reply, 'bot');
+                }
+            } catch (error) {
+                console.error('Erro ao comunicar com o servidor:', error);
+                hideTypingIndicator();
+                appendMessage('Desculpe, não foi possível conectar ao servidor. Tente novamente.', 'bot');
+            }
+        }
+
+        function appendMessage(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('message-content');
+            contentDiv.innerHTML = marked.parse(message);
+
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
