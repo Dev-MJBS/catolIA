@@ -21,6 +21,7 @@
             --profile-bg: #f9f9f9;
             --profile-btn-bg: #e0e0e0;
             --profile-btn-color: #555;
+            --input-area-height: 85px; /* Altura aproximada da área de input + padding */
         }
 
         body {
@@ -111,6 +112,8 @@
             overflow-y: auto;
             background-color: var(--background-dark);
             -webkit-overflow-scrolling: touch;
+            /* NOVO: Padding extra na parte inferior para a barra de URL/input */
+            padding-bottom: var(--input-area-height); 
         }
 
         .message {
@@ -183,7 +186,6 @@
             40% { transform: translateY(-5px); }
         }
 
-
         .chat-input-area {
             flex-shrink: 0;
             padding: 15px 20px;
@@ -191,6 +193,15 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             align-items: flex-end;
+            /* NOVO: Posição fixa na parte inferior */
+            position: fixed; 
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box; /* Garante que padding e borda não aumentem a largura total */
+            z-index: 1000; /* Garante que fique por cima de outros elementos */
+            /* Ajuste para mobile em geral, para garantir que não fique "colado" */
+            padding-bottom: calc(15px + env(safe-area-inset-bottom)); 
         }
 
         .chat-input-area .textarea-wrapper {
