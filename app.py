@@ -3,12 +3,15 @@ import google.generativeai as genai
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from datetime import datetime
-import locale
+# A biblioteca 'locale' não será mais importada para evitar o erro
+# import locale 
 
-try:
-    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-except locale.Error:
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+# O bloco try-except para locale será removido
+# try:
+#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+# except locale.Error:
+#     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
 
 load_dotenv()
 
@@ -22,7 +25,20 @@ genai.configure(api_key=gemini_api_key)
 model = genai.GenerativeModel('models/gemini-1.5-flash-latest')
 
 def get_liturgia_cnbb_redirecionamento():
-    today_formatted_extenso = datetime.now().strftime("%d de %B de %Y")
+    today = datetime.now()
+    
+    # --- NOVO: Formatação manual da data sem depender do locale ---
+    # Para o mês em português, vamos usar um dicionário
+    meses_pt = {
+        1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril", 
+        5: "Maio", 6: "Junho", 7: "Julho", 8: "Agosto", 
+        9: "Setembro", 10: "Outubro", 11: "Novembro", 12: "Dezembro"
+    }
+    dia = today.day
+    mes = meses_pt[today.month]
+    ano = today.year
+    today_formatted_extenso = f"{dia} de {mes} de {ano}"
+    # --- FIM NOVO ---
     
     reply_message = (
         f"Olá! Entendo que você deseja a Liturgia Diária para hoje, {today_formatted_extenso}.\n\n"
