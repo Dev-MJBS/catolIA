@@ -9,20 +9,22 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
-            --color-primary: #4CAF50;
+            /* Cores Gerais */
+            --color-primary: #4CAF50; /* Verde principal */
             --color-primary-dark: #388E3C;
-            --color-accent: #FF5722;
+            --color-accent: #FF5722; /* Laranja (para botões/destaques) */
 
-            --light-bg-body: #eceff1;
-            --light-bg-container: #ffffff;
-            --light-text-color: #212121;
+            /* Cores do Tema CLARO (Light Mode) */
+            --light-bg-body: #eceff1; /* Fundo do corpo */
+            --light-bg-container: #ffffff; /* Fundo do container principal */
+            --light-text-color: #212121; /* Cor do texto */
             --light-border-color: #e0e0e0;
             --light-header-bg: var(--color-primary);
             --light-header-text: #ffffff;
             --light-header-link: #ffffff;
-            --light-bubble-user: #DCF8C6;
-            --light-bubble-bot: #f1f1f1;
-            --light-profile-bg: #e0f2f7;
+            --light-bubble-user: #DCF8C6; /* Balão do usuário (verde claro) */
+            --light-bubble-bot: #f1f1f1; /* Balão do bot (cinza claro) */
+            --light-profile-bg: #e0f2f7; /* Fundo da seleção de perfil (azul muito claro) */
             --light-profile-btn-bg: #bbdefb;
             --light-profile-btn-color: #424242;
             --light-input-bg: #f5f5f5;
@@ -30,15 +32,16 @@
             --light-footer-bg: #e0e0e0;
             --light-footer-text: #616161;
 
-            --dark-bg-body: #263238;
-            --dark-bg-container: #37474F;
-            --dark-text-color: #eceff1;
+            /* Cores do Tema ESCURO (Dark Mode) */
+            --dark-bg-body: #263238; /* Fundo do corpo */
+            --dark-bg-container: #37474F; /* Fundo do container principal */
+            --dark-text-color: #eceff1; /* Cor do texto */
             --dark-border-color: #455a64;
             --dark-header-bg: var(--color-primary-dark);
             --dark-header-text: #ffffff;
             --dark-header-link: #cfd8dc;
-            --dark-bubble-user: #4CAF50;
-            --dark-bubble-bot: #546E7A;
+            --dark-bubble-user: #4CAF50; /* Balão do usuário (verde mais escuro) */
+            --dark-bubble-bot: #546E7A; /* Balão do bot (cinza azulado) */
             --dark-profile-bg: #37474F;
             --dark-profile-btn-bg: #4CAF50;
             --dark-profile-btn-color: #ffffff;
@@ -47,6 +50,44 @@
             --dark-footer-bg: #263238;
             --dark-footer-text: #9e9e9e;
 
+            /* Cores do Tema 'Criança' */
+            --child-bg-body: #E3F2FD; /* Azul muito claro */
+            --child-bg-container: #FFFFFF;
+            --child-text-color: #424242;
+            --child-border-color: #90CAF9;
+            --child-header-bg: #64B5F6;
+            --child-header-text: #FFFFFF;
+            --child-header-link: #FFFFFF;
+            --child-bubble-user: #FFCDD2; /* Rosa claro */
+            --child-bubble-bot: #E1F5FE; /* Azul bebê */
+            --child-profile-bg: #BBDEFB;
+            --child-profile-btn-bg: #90CAF9;
+            --child-profile-btn-color: #FFFFFF;
+            --child-input-bg: #E1F5FE;
+            --child-input-border: #90CAF9;
+            --child-footer-bg: #BBDEFB;
+            --child-footer-text: #424242;
+
+            /* NOVO: Cores do Tema 'Sacerdote' (Preto) */
+            --priest-bg-body: #1a1a1a; /* Preto quase absoluto */
+            --priest-bg-container: #2c2c2c; /* Cinza bem escuro */
+            --priest-text-color: #e0e0e0; /* Texto claro */
+            --priest-border-color: #444444;
+            --priest-header-bg: #000000; /* Preto absoluto */
+            --priest-header-text: #ffffff;
+            --priest-header-link: #cccccc;
+            --priest-bubble-user: #424242; /* Cinza para balão do usuário */
+            --priest-bubble-bot: #333333; /* Cinza mais escuro para balão do bot */
+            --priest-profile-bg: #222222;
+            --priest-profile-btn-bg: #424242;
+            --priest-profile-btn-color: #ffffff;
+            --priest-input-bg: #222222;
+            --priest-input-border: #555555;
+            --priest-footer-bg: #000000;
+            --priest-footer-text: #aaaaaa;
+
+
+            /* Variáveis para o Tema ATUAL (usadas no CSS) */
             --bg-body: var(--light-bg-body);
             --bg-container: var(--light-bg-container);
             --text-color: var(--light-text-color);
@@ -64,10 +105,12 @@
             --footer-bg: var(--light-footer-bg);
             --footer-text: var(--light-footer-text);
 
+            /* Alturas de elementos fixos */
             --header-height: 60px;
             --input-area-height: 85px;
             --footer-height: 40px;
             --toggle-button-size: 40px;
+            --menu-width: 280px; /* Largura do menu lateral */
         }
 
         body.dark-mode {
@@ -90,22 +133,41 @@
         }
 
         body.child-mode {
-            --bg-body: #E3F2FD;
-            --bg-container: #FFFFFF;
-            --text-color: #424242;
-            --border-color: #90CAF9;
-            --header-bg: #64B5F6;
-            --header-text: #FFFFFF;
-            --header-link: #FFFFFF;
-            --bubble-user: #FFCDD2;
-            --bubble-bot: #E1F5FE;
-            --profile-bg: #BBDEFB;
-            --profile-btn-bg: #90CAF9;
-            --profile-btn-color: #FFFFFF;
-            --input-bg: #E1F5FE;
-            --input-border: #90CAF9;
-            --footer-bg: #BBDEFB;
-            --footer-text: #424242;
+            --bg-body: var(--child-bg-body);
+            --bg-container: var(--child-bg-container);
+            --text-color: var(--child-text-color);
+            --border-color: var(--child-border-color);
+            --header-bg: var(--child-header-bg);
+            --header-text: var(--child-header-text);
+            --header-link: var(--child-header-link);
+            --bubble-user: var(--child-bubble-user);
+            --bubble-bot: var(--child-bubble-bot);
+            --profile-bg: var(--child-profile-bg);
+            --child-profile-btn-bg: var(--child-profile-btn-bg);
+            --profile-btn-color: var(--child-profile-btn-color);
+            --input-bg: var(--child-input-bg);
+            --input-border: var(--child-input-border);
+            --footer-bg: var(--child-footer-bg);
+            --footer-text: var(--child-footer-text);
+        }
+        
+        body.priest-mode {
+            --bg-body: var(--priest-bg-body);
+            --bg-container: var(--priest-bg-container);
+            --text-color: var(--priest-text-color);
+            --border-color: var(--priest-border-color);
+            --header-bg: var(--priest-header-bg);
+            --header-text: var(--priest-header-text);
+            --header-link: var(--priest-header-link);
+            --bubble-user: var(--priest-bubble-user);
+            --bubble-bot: var(--priest-bubble-bot);
+            --profile-bg: var(--priest-profile-bg);
+            --profile-btn-bg: var(--priest-profile-btn-bg);
+            --profile-btn-color: var(--priest-profile-btn-color);
+            --input-bg: var(--priest-input-bg);
+            --input-border: var(--priest-input-border);
+            --footer-bg: var(--priest-footer-bg);
+            --footer-text: var(--priest-footer-text);
         }
 
         body {
@@ -117,7 +179,7 @@
             min-height: 100vh;
             margin: 0;
             color: var(--text-color);
-            overflow: hidden;
+            overflow-x: hidden;
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
@@ -138,7 +200,7 @@
 
         body > .chat-container {
             margin-top: calc(var(--header-height) + 20px);
-            height: calc(95vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height));
+            height: calc(95vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height)); 
             align-self: center;
         }
 
@@ -177,6 +239,15 @@
             border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+        .menu-icon {
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-right: 15px;
+            transition: transform 0.2s ease;
+        }
+        .menu-icon:hover {
+            transform: scale(1.1);
+        }
 
         .header-right a {
             background-color: rgba(255, 255, 255, 0.2);
@@ -197,6 +268,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
 
+        /* Área de Conteúdo Principal Rolável */
         .chat-scrollable-content {
             flex-grow: 1;
             overflow-y: auto;
@@ -206,6 +278,7 @@
             padding: 20px;
         }
 
+        /* Mensagem Central */
         .main-central-message {
             text-align: center;
             font-family: 'Montserrat', sans-serif;
@@ -218,6 +291,7 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         
+        /* Seção de Prompts */
         .profile-selection {
             padding: 15px 20px;
             background-color: var(--profile-bg);
@@ -268,6 +342,7 @@
             transform: translateY(-1px);
         }
 
+        /* Área de Mensagens (Zona de Diálogo) */
         .chat-messages {
             background-color: var(--bg-container);
             transition: background-color 0.5s ease;
@@ -279,8 +354,19 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            min-height: 100px; /* Garante que a área de mensagem comece com um tamanho visível */
+            min-height: 0; 
+            flex-basis: auto;
         }
+        .chat-messages.empty-state {
+            justify-content: center; /* Centraliza verticalmente o conteúdo */
+            align-items: center; /* Centraliza horizontalmente o conteúdo */
+            text-align: center;
+            min-height: 200px; /* Altura mínima para centralização visual */
+        }
+        .chat-messages.empty-state .message {
+            max-width: 80%; /* Para que as bolhas não estiquem demais ao centralizar */
+        }
+
 
         .message {
             margin-bottom: 15px;
@@ -379,7 +465,7 @@
             background-color: var(--color-primary);
             color: white;
             border: none;
-            border-radius: 50%; /* Garante o formato redondo */
+            border-radius: 50%;
             width: 45px;
             height: 45px;
             min-width: 45px;
@@ -449,6 +535,100 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
+        /* NOVO: Estilos para o Menu Lateral (Sidebar/Overlay) */
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            left: -100%; /* Começa escondido à esquerda */
+            width: var(--menu-width);
+            max-width: 80%; /* Para telas menores */
+            height: 100vh;
+            background-color: var(--bg-container);
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+            z-index: 1003;
+            transition: left 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            padding-top: calc(var(--header-height) + 20px); /* Espaço para o cabeçalho */
+            box-sizing: border-box;
+            color: var(--text-color);
+        }
+        .sidebar-menu.open {
+            left: 0; /* Desliza para a posição visível */
+        }
+        .sidebar-menu-header {
+            padding: 15px 20px;
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            font-size: 1.3em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute; /* Fixa o cabeçalho do menu no topo */
+            top: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            height: var(--header-height);
+        }
+        .sidebar-menu-header .close-btn {
+            font-size: 1.8em;
+            cursor: pointer;
+            color: var(--header-text);
+            transition: transform 0.2s ease;
+        }
+        .sidebar-menu-header .close-btn:hover {
+            transform: scale(1.1);
+        }
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .sidebar-menu ul li {
+            margin-bottom: 15px;
+        }
+        .sidebar-menu ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 1.1em;
+            padding: 10px;
+            display: block;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .sidebar-menu ul li a:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: var(--color-primary);
+        }
+        .sidebar-menu ul li a i {
+            margin-right: 10px;
+            width: 20px; /* Garante alinhamento dos ícones */
+            text-align: center;
+        }
+
+        /* Overlay para escurecer o fundo quando o menu está aberto */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
         @media (max-width: 768px) {
             .chat-container {
                 width: 100%;
@@ -467,6 +647,10 @@
             }
             .header-left img {
                 height: 25px;
+            }
+            .menu-icon {
+                font-size: 1.2em;
+                margin-right: 10px;
             }
             .main-central-message {
                 font-size: 1.3em;
@@ -501,7 +685,7 @@
             }
             .chat-messages {
                 padding: 15px;
-                min-height: 80px; /* Ajusta min-height em mobile */
+                min-height: 80px;
             }
             .chat-footer {
                 padding: 8px 15px;
@@ -524,7 +708,7 @@
 <body>
     <div class="chat-header">
         <div class="header-left">
-            <img src="https://instagram.fgyn2-1.fna.fbcdn.net/v/t51.2885-15/520952018_18331977901200472_2824370372702394731_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0uaW1hZ2VfdXJsZ2VuLjE0NDB4MTQ0MC5zZHIuZjgyNzg3LmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fgyn2-1.fna.fbcdn.net&_nc_cat=104&_nc_oc=Q6cZ2QFWuAO8zCIxBQZFWyX5UDQ8SiBg7oXN7Y3vKxdCtm21HmoBXfssebdE8sL1VuKTuuvs63JBQMAiRqjacmeFbs63&_nc_ohc=jndlw_09xvEQ7kNvwGvUSmX&_nc_gid=vH3LOlSayot746CSkLeepg&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzY4MDIyMDY0NTA0ODgwNDIzOA%3D%3D.3-ccb7-5&oh=00_AfRtlMESRvXlYG3uzN6Pxyn3T6R158JwVpp8QalrnPqGnA&oe=6881B533&_nc_sid=7a9f4b">
+            <i class="fas fa-bars menu-icon" id="menuIcon"></i>
             <span>CatólIA</span>
         </div>
         <div class="header-right">
@@ -572,6 +756,25 @@
     <div class="theme-toggle-button" id="themeToggleButton">
         <i class="fas fa-moon"></i>
     </div>
+
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-menu-header">
+            <span>Menu CatólIA</span>
+            <i class="fas fa-times close-btn" id="closeMenuBtn"></i>
+        </div>
+        <ul>
+            <li><a href="https://www.cnbb.org.br/liturgia-diaria/" target="_blank"><i class="fas fa-book-open"></i>Liturgia Diária (CNBB)</a></li>
+            <li><a href="https://santo.cancaonova.com/" target="_blank"><i class="fas fa-user-circle"></i>Santo do Dia (Canção Nova)</a></li>
+            <li><a href="https://www.vatican.va/content/vatican/pt.html" target="_blank"><i class="fas fa-church"></i>Santa Sé (Vaticano)</a></li>
+            <li><a href="https://nunciaturaapostolica.org.br/nuncio-2/" target="_blank"><i class="fas fa-cross"></i>Núncio Apostólico</a></li>
+            <li><a href="https://arquidiocesedegoiania.org.br/" target="_blank"><i class="fas fa-map-marker-alt"></i>Arquidiocese de Goiânia</a></li>
+            <li><a href="https://www.diocesedejatai.org/" target="_blank"><i class="fas fa-compass"></i>Diocese de Jataí</a></li>
+            <li><a href="https://www.instagram.com/paroquiasaosebastiaojatai/" target="_blank"><i class="fas fa-instagram"></i>Paróquia São Sebastião</a></li>
+            </ul>
+    </div>
+
+    <div class="overlay" id="menuOverlay"></div>
+
 
     <script>
         let selectedProfile = 'leigo';
@@ -633,6 +836,25 @@
             '--footer-bg': '#BBDEFB',
             '--footer-text': '#424242'
         };
+        
+        const priestThemeColors = {
+            '--bg-body': '#1a1a1a',
+            '--bg-container': '#2c2c2c',
+            '--text-color': '#e0e0e0',
+            '--border-color': '#444444',
+            '--header-bg': '#000000',
+            '--header-text': '#ffffff',
+            '--header-link': '#cccccc',
+            '--bubble-user': '#424242',
+            '--bubble-bot': '#333333',
+            '--profile-bg': '#222222',
+            '--profile-btn-bg': '#424242',
+            '--profile-btn-color': '#ffffff',
+            '--input-bg': '#222222',
+            '--input-border': '#555555',
+            '--footer-bg': '#000000',
+            '--footer-text': '#aaaaaa'
+        };
 
         function applyTheme(themeColors) {
             const root = document.documentElement;
@@ -640,7 +862,7 @@
                 root.style.setProperty(property, value);
             }
             const themeToggleButton = document.getElementById('themeToggleButton');
-            if (root.classList.contains('dark-mode')) {
+            if (root.classList.contains('dark-mode') || root.classList.contains('priest-mode')) {
                 themeToggleButton.innerHTML = '<i class="fas fa-sun"></i>';
             } else {
                 themeToggleButton.innerHTML = '<i class="fas fa-moon"></i>';
@@ -650,14 +872,15 @@
         function toggleDarkMode() {
             const body = document.body;
             body.classList.toggle('dark-mode');
+            // Garante que o modo "criança" e "sacerdote" seja desativado ao mudar o tema manualmente
+            body.classList.remove('child-mode', 'priest-mode'); 
+            
             localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
 
-            if (selectedProfile !== 'crianca') {
-                if (body.classList.contains('dark-mode')) {
-                    applyTheme(darkThemeColors);
-                } else {
-                    applyTheme(defaultThemeColors);
-                }
+            if (body.classList.contains('dark-mode')) {
+                applyTheme(darkThemeColors);
+            } else {
+                applyTheme(defaultThemeColors);
             }
         }
 
@@ -670,18 +893,23 @@
             selectedProfile = profile;
             console.log('Perfil selecionado:', selectedProfile);
 
+            // Remove todos os modos de perfil antes de aplicar o novo
+            document.body.classList.remove('child-mode', 'priest-mode', 'dark-mode'); 
+
             if (profile === 'crianca') {
                 document.body.classList.add('child-mode');
-                document.body.classList.remove('dark-mode');
                 applyTheme(childThemeColors);
-            } else {
-                document.body.classList.remove('child-mode');
+            } else if (profile === 'sacerdote') { // NOVO: Tema Sacerdote
+                document.body.classList.add('priest-mode');
+                applyTheme(priestThemeColors);
+            }
+            else {
+                // Se não for criança nem sacerdote, aplica o tema light/dark salvo ou padrão
                 const savedTheme = localStorage.getItem('theme');
                 if (savedTheme === 'dark') {
                     document.body.classList.add('dark-mode');
                     applyTheme(darkThemeColors);
                 } else {
-                    document.body.classList.remove('dark-mode');
                     applyTheme(defaultThemeColors);
                 }
             }
@@ -720,7 +948,12 @@
             const sendMessageButton = document.getElementById('sendMessageButton');
             const profileButtonsContainer = document.getElementById('profileButtons');
             const themeToggleButton = document.getElementById('themeToggleButton');
+            const chatMessages = document.getElementById('chatMessages'); // Referência à área de mensagens
 
+            // NOVO: Adiciona a classe 'empty-state' na carga inicial
+            chatMessages.classList.add('empty-state');
+
+            // Carrega o tema salvo ao iniciar
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
@@ -749,6 +982,36 @@
             themeToggleButton.addEventListener('click', toggleDarkMode);
 
             autoResizeTextarea();
+
+            // NOVO: Lógica para abrir/fechar o menu lateral
+            const menuIcon = document.getElementById('menuIcon');
+            const sidebarMenu = document.getElementById('sidebarMenu');
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+            const menuOverlay = document.getElementById('menuOverlay');
+
+            menuIcon.addEventListener('click', () => {
+                sidebarMenu.classList.add('open');
+                menuOverlay.classList.add('open');
+            });
+
+            closeMenuBtn.addEventListener('click', () => {
+                sidebarMenu.classList.remove('open');
+                menuOverlay.classList.remove('open');
+            });
+
+            menuOverlay.addEventListener('click', () => {
+                sidebarMenu.classList.remove('open');
+                menuOverlay.classList.remove('open');
+            });
+
+            // Fechar menu ao clicar em um link (opcional, se os links levam a outras páginas)
+            sidebarMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    sidebarMenu.classList.remove('open');
+                    menuOverlay.classList.remove('open');
+                });
+            });
+
         });
 
 
@@ -760,11 +1023,12 @@
 
             if (!userMessage) return;
 
-            if (chatMessages.children.length === 0) {
-                 const initialBotMessage = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
-                 appendMessage(initialBotMessage, 'bot');
+            // NOVO: Remove a classe 'empty-state' após a primeira mensagem
+            if (chatMessages.classList.contains('empty-state')) {
+                chatMessages.classList.remove('empty-state');
+                chatMessages.innerHTML = ''; // Limpa a área se ela tinha uma mensagem inicial de placeholder
             }
-
+            
             appendMessage(userMessage, 'user');
             userMessageInput.value = '';
             autoResizeTextarea();
