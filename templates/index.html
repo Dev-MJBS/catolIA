@@ -9,10 +9,12 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
+            /* Cores Gerais */
             --color-primary: #4CAF50;
             --color-primary-dark: #388E3C;
             --color-accent: #FF5722;
 
+            /* Cores do Tema CLARO (Light Mode) */
             --light-bg-body: #eceff1;
             --light-bg-container: #ffffff;
             --light-text-color: #212121;
@@ -30,6 +32,7 @@
             --light-footer-bg: #e0e0e0;
             --light-footer-text: #616161;
 
+            /* Cores do Tema ESCURO (Dark Mode) */
             --dark-bg-body: #263238;
             --dark-bg-container: #37474F;
             --dark-text-color: #eceff1;
@@ -47,6 +50,7 @@
             --dark-footer-bg: #263238;
             --dark-footer-text: #9e9e9e;
 
+            /* Cores do Tema 'Criança' */
             --child-bg-body: #E3F2FD;
             --child-bg-container: #FFFFFF;
             --child-text-color: #424242;
@@ -64,6 +68,7 @@
             --child-footer-bg: #BBDEFB;
             --child-footer-text: #424242;
             
+            /* Cores do Tema 'Sacerdote' (Preto) */
             --priest-bg-body: #1a1a1a;
             --priest-bg-container: #2c2c2c;
             --priest-text-color: #e0e0e0;
@@ -71,8 +76,8 @@
             --priest-header-bg: #000000;
             --priest-header-text: #ffffff;
             --priest-header-link: #cccccc;
-            --priest-bubble-user: #424242;
-            --priest-bubble-bot: #333333;
+            --priest-bubble-user: #606060; /* NOVO: Balão do usuário para sacerdote (cinza escuro) */
+            --priest-bubble-bot: #333333; /* NOVO: Balão do bot para sacerdote (cinza mais escuro) */
             --priest-profile-bg: #222222;
             --priest-profile-btn-bg: #424242;
             --priest-profile-btn-color: #ffffff;
@@ -81,6 +86,7 @@
             --priest-footer-bg: #000000;
             --priest-footer-text: #aaaaaa;
 
+            /* Variáveis para o Tema ATUAL (usadas no CSS) */
             --bg-body: var(--light-bg-body);
             --bg-container: var(--light-bg-container);
             --text-color: var(--light-text-color);
@@ -98,6 +104,7 @@
             --footer-bg: var(--light-footer-bg);
             --footer-text: var(--light-footer-text);
 
+            /* Alturas de elementos fixos */
             --header-height: 60px;
             --input-area-height: 85px;
             --footer-height: 40px;
@@ -138,8 +145,8 @@
             --header-bg: var(--child-header-bg);
             --header-text: var(--child-header-text);
             --header-link: var(--child-header-link);
-            --child-bubble-user: #FFCDD2;
-            --child-bubble-bot: #E1F5FE;
+            --bubble-user: var(--child-bubble-user);
+            --bubble-bot: var(--child-bubble-bot);
             --profile-bg: var(--child-profile-bg);
             --profile-btn-bg: var(--child-profile-btn-bg);
             --profile-btn-color: var(--child-profile-btn-color);
@@ -160,11 +167,11 @@
             --header-bg: var(--priest-header-bg);
             --header-text: var(--priest-header-text);
             --header-link: var(--priest-header-link);
-            --priest-bubble-user: #424242;
-            --priest-bubble-bot: #333333;
+            --bubble-user: var(--priest-bubble-user);
+            --bubble-bot: var(--priest-bubble-bot);
             --profile-bg: var(--priest-profile-bg);
             --profile-btn-bg: var(--priest-profile-btn-bg);
-            --priest-profile-btn-color: #ffffff;
+            --profile-btn-color: var(--priest-profile-btn-color);
             --input-bg: var(--priest-input-bg);
             --input-border: var(--priest-input-border);
             --footer-bg: var(--priest-footer-bg);
@@ -200,12 +207,13 @@
             transition: background-color 0.5s ease, box-shadow 0.5s ease;
             position: relative;
             z-index: 1;
-            margin-top: calc(var(--header-height) + 20px);
-            align-self: center;
         }
+
         body > .chat-container {
-            height: calc(100vh - var(--header-height) - 20px); /* Ajusta altura para ocupar a tela */
-            max-height: calc(100vh - var(--header-height) - 20px);
+            margin-top: calc(var(--header-height) + 20px);
+            height: calc(100vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height) - 20px);
+            max-height: calc(100vh - var(--header-height) - 20px); /* Ajustado para caber na viewport */
+            align-self: center;
         }
 
 
@@ -283,7 +291,7 @@
             justify-content: flex-start; 
             align-items: stretch;
             text-align: left;
-            /* NOVO: Altura para o chat-scrollable-content */
+            /* Altura para o chat-scrollable-content */
             height: calc(100% - var(--input-area-height) - var(--footer-height)); 
         }
         .chat-scrollable-content.initial-state {
@@ -308,6 +316,7 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         
+        /* Seção de Prompts - Sempre visível no topo da área rolável */
         .profile-selection {
             padding: 15px 20px;
             background-color: var(--profile-bg);
@@ -320,44 +329,20 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             width: 100%;
             box-sizing: border-box;
+            /* NOVO: Garante que os prompts não sumam e sejam menores no topo */
+            flex-shrink: 0; /* Impede que ele encolha */
+            padding-top: 10px; /* Reduz padding superior */
+            padding-bottom: 10px; /* Reduz padding inferior */
+            margin-top: 10px; /* Menos margem do elemento acima */
+            font-size: 0.85em; /* Fonte um pouco menor */
         }
         .profile-selection p {
-            margin-bottom: 15px;
-            font-weight: bold;
-            font-size: 1.1em;
-            text-align: center;
-        }
-        .profile-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
+            margin-bottom: 10px; /* Margem menor para o texto "Eu sou um(a):" */
+            font-size: 1em; /* Fonte ajustada */
         }
         .profile-buttons button {
-            background-color: var(--profile-btn-bg);
-            color: var(--profile-btn-color);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 0.95em;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-transform: capitalize;
-        }
-        .profile-buttons button:hover {
-            background-color: var(--color-primary);
-            color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transform: translateY(-2px);
-        }
-        .profile-buttons button.selected {
-            background-color: var(--color-primary);
-            color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255,255,255,0.5);
-            transform: translateY(-1px);
+            padding: 6px 12px; /* Botões menores */
+            font-size: 0.85em; /* Fonte menor nos botões */
         }
 
         .chat-messages {
@@ -375,7 +360,8 @@
             flex-basis: auto;
             width: 100%;
             box-sizing: border-box;
-            padding-bottom: 10px; 
+            /* NOVO: Ajuste do padding inferior para balões não serem cortados */
+            padding-bottom: 85px; /* Altura da input area + um pouco mais de respiro */ 
         }
 
         .message {
@@ -441,7 +427,7 @@
         }
         .message.bot .message-content {
             background-color: var(--bubble-bot);
-            color: var(--text-color);
+            color: var(--text-color); /* Garante a cor do texto do bot */
         }
 
         .typing-indicator {
@@ -454,9 +440,8 @@
             align-items: center;
             margin-bottom: 15px;
         }
-        /* Removendo o spinner que estava girando */
         .typing-indicator .spinner {
-            display: none; 
+            display: none; /* Remove o spinner que girava */
         }
         .typing-indicator span {
             display: inline-block;
@@ -477,7 +462,7 @@
 
         @keyframes bounce {
             0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-8px); }
+            40% { transform: translateY(-8px); } /* Bolinhas pulam um pouco mais alto */
         }
 
         @keyframes spin { /* Mantido caso queira reativar um spinner em outro lugar */
@@ -570,7 +555,7 @@
             padding-bottom: calc(10px + env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center; /* NOVO: Centraliza itens verticalmente */
             gap: 10px;
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
             height: var(--footer-height);
@@ -868,7 +853,8 @@
                 <div class="profile-buttons" id="profileButtons">
                     <button data-profile="leigo" class="selected">Leigo</button>
                     <button data-profile="catequista">Catequista</button>
-                    <button data-profile="seminarista">Seminarista</button> <button data-profile="crianca">Criança</button>
+                    <button data-profile="seminarista">Seminarista</button>
+                    <button data-profile="crianca">Criança</button>
                     <button data-profile="sacerdote">Sacerdote</button>
                 </div>
             </div>
@@ -986,8 +972,8 @@
             '--header-bg': '#64B5F6',
             '--header-text': '#FFFFFF',
             '--header-link': '#FFFFFF',
-            '--child-bubble-user': '#FFCDD2',
-            '--child-bubble-bot': '#E1F5FE',
+            '--bubble-user': '#FFCDD2',
+            '--bubble-bot': '#E1F5FE',
             '--profile-bg': '#BBDEFB',
             '--profile-btn-bg': '#90CAF9',
             '--profile-btn-color': '#FFFFFF',
@@ -1008,11 +994,11 @@
             '--header-bg': '#000000',
             '--header-text': '#ffffff',
             '--header-link': '#cccccc',
-            '--priest-bubble-user': '#424242',
-            '--priest-bubble-bot': '#333333',
+            '--bubble-user': '#606060',
+            '--bubble-bot': '#333333',
             '--profile-bg': '#222222',
             '--profile-btn-bg': '#424242',
-            '--priest-profile-btn-color': '#ffffff',
+            '--profile-btn-color': '#ffffff',
             '--input-bg': '#222222',
             '--input-border': '#555555',
             '--footer-bg': '#000000',
@@ -1157,9 +1143,7 @@
             const chatScrollableContent = document.getElementById('chatScrollableContent');
 
             const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
-            appendMessage(initialBotMessageContent, 'bot'); 
-
-            chatScrollableContent.classList.add('initial-state');
+            appendMessage(initialBotMessageContent, 'bot', true); // TRUE para mensagem inicial
 
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
@@ -1238,12 +1222,17 @@
 
             if (!userMessage) return;
 
+            // Transiciona do estado inicial para o estado de chat
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
                 chatScrollableContent.classList.add('has-content'); 
+                // Ajusta os estilos do chat-messages para o modo de conversa
                 chatMessages.style.justifyContent = 'flex-start';
                 chatMessages.style.alignItems = 'stretch';
                 chatMessages.style.textAlign = 'left';
+                // Garante que a mensagem inicial da IA já adicionada se alinhe ao topo
+                // chatMessages.firstElementChild.style.justifyContent = 'flex-start'; // Não é necessário mais
+                // chatMessages.firstElementChild.style.textAlign = 'left'; // Não é necessário mais
             }
 
             appendMessage(userMessage, 'user');
@@ -1280,7 +1269,7 @@
             }
         }
 
-        function appendMessage(message, sender) {
+        function appendMessage(message, sender, isInitial = false) {
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
@@ -1302,6 +1291,12 @@
             messageDiv.appendChild(contentDiv);
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // NOVO: Se for a mensagem inicial, centraliza o próprio elemento
+            if (isInitial) {
+                messageDiv.style.justifyContent = 'center';
+                messageDiv.style.textAlign = 'center';
+            }
         }
     </script>
 </body>
