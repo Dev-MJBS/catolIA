@@ -9,19 +9,40 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
-            --primary-color: #4CAF50;
+            /* Cores Padrão */
+            --primary-color: #4CAF50; /* Verde */
             --primary-dark: #388E3C;
             --background-light: #f0f2f5;
             --background-dark: #e9ebee;
             --text-color: #333;
             --border-color: #ddd;
             --container-bg: #fff;
-            --user-bubble: #DCF8C6;
-            --bot-bubble: #f1f1f1;
+            --user-bubble: #DCF8C6; /* Verde claro */
+            --bot-bubble: #f1f1f1; /* Cinza claro */
             --profile-bg: #f9f9f9;
             --profile-btn-bg: #e0e0e0;
             --profile-btn-color: #555;
+            --footer-bg: #f0f0f0; /* Cor do rodapé */
+            --footer-text-color: #777; /* Cor do texto do rodapé */
+
+            /* Cores para o Tema 'Criança' */
+            --child-primary-color: #64B5F6; /* Azul claro */
+            --child-primary-dark: #2196F3;
+            --child-background-light: #E3F2FD; /* Azul muito claro */
+            --child-background-dark: #BBDEFB; /* Azul um pouco mais escuro */
+            --child-text-color: #424242;
+            --child-border-color: #90CAF9;
+            --child-container-bg: #FFFFFF;
+            --child-user-bubble: #FFCDD2; /* Rosa claro */
+            --child-bot-bubble: #E1F5FE; /* Azul bebê */
+            --child-profile-bg: #BBDEFB;
+            --child-profile-btn-bg: #90CAF9;
+            --child-profile-btn-color: #FFFFFF;
+            --child-footer-bg: #BBDEFB;
+            --child-footer-text-color: #424242;
+
             --input-area-height: 85px; /* Altura aproximada da área de input + padding */
+            --footer-height: 40px; /* Altura aproximada do novo rodapé */
         }
 
         body {
@@ -34,6 +55,7 @@
             margin: 0;
             color: var(--text-color);
             overflow: hidden;
+            transition: background-color 0.5s ease; /* Transição suave para mudança de tema */
         }
 
         .chat-container {
@@ -46,6 +68,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transition: background-color 0.5s ease; /* Transição suave para mudança de tema */
         }
 
         .chat-header {
@@ -57,6 +80,7 @@
             text-align: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             flex-shrink: 0;
+            transition: background-color 0.5s ease; /* Transição suave para mudança de tema */
         }
 
         .profile-selection {
@@ -67,6 +91,7 @@
             font-size: 0.95em;
             color: var(--text-color);
             flex-shrink: 0;
+            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease; /* Transição suave */
         }
 
         .profile-selection p {
@@ -89,7 +114,7 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.9em;
-            transition: all 0.2s ease;
+            transition: all 0.2s ease, background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease; /* Transição suave */
             white-space: nowrap;
         }
 
@@ -104,6 +129,7 @@
             border-color: var(--primary-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             font-weight: bold;
+            transition: all 0.2s ease, background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease; /* Transição suave */
         }
 
         .chat-messages {
@@ -112,8 +138,9 @@
             overflow-y: auto;
             background-color: var(--background-dark);
             -webkit-overflow-scrolling: touch;
-            /* NOVO: Padding extra na parte inferior para a barra de URL/input */
-            padding-bottom: var(--input-area-height); 
+            /* Padding extra para a barra de input e o novo rodapé */
+            padding-bottom: calc(var(--input-area-height) + var(--footer-height)); 
+            transition: background-color 0.5s ease; /* Transição suave */
         }
 
         .message {
@@ -138,6 +165,7 @@
             word-wrap: break-word;
             line-height: 1.6;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.5s ease, color 0.5s ease; /* Transição suave */
         }
 
         .message.user .message-content {
@@ -193,15 +221,14 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             align-items: flex-end;
-            /* NOVO: Posição fixa na parte inferior */
+            /* Posição fixa na parte inferior */
             position: fixed; 
-            bottom: 0;
+            bottom: var(--footer-height); /* Ajustado para ficar acima do rodapé */
             left: 0;
             width: 100%;
-            box-sizing: border-box; /* Garante que padding e borda não aumentem a largura total */
-            z-index: 1000; /* Garante que fique por cima de outros elementos */
-            /* Ajuste para mobile em geral, para garantir que não fique "colado" */
-            padding-bottom: calc(15px + env(safe-area-inset-bottom)); 
+            box-sizing: border-box; 
+            z-index: 999; /* Abaixo do rodapé */
+            transition: background-color 0.5s ease, border-color 0.5s ease; /* Transição suave */
         }
 
         .chat-input-area .textarea-wrapper {
@@ -214,6 +241,7 @@
             padding: 8px 15px;
             display: flex;
             align-items: center;
+            transition: background-color 0.5s ease, border-color 0.5s ease; /* Transição suave */
         }
 
         .chat-input-area textarea {
@@ -229,6 +257,7 @@
             background-color: transparent;
             overflow-y: auto;
             line-height: 1.5;
+            color: var(--text-color); /* Garante que o texto mude de cor com o tema */
         }
 
         .chat-input-area button {
@@ -253,6 +282,53 @@
             transform: translateY(-1px);
         }
 
+        /* NOVO: Rodapé com informações */
+        .chat-footer {
+            flex-shrink: 0;
+            padding: 10px 20px;
+            background-color: var(--footer-bg);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--footer-text-color);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 1000; /* Garante que fique por cima da barra de URL do Safari */
+            padding-bottom: calc(10px + env(safe-area-inset-bottom)); /* Ajuste para áreas seguras */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease; /* Transição suave */
+            height: var(--footer-height); /* Define a altura para o padding */
+        }
+
+        .chat-footer a {
+            color: var(--footer-text-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.5s ease; /* Transição suave */
+        }
+
+        .chat-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .chat-footer .icon-text {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chat-footer .icon-text img {
+            height: 16px; /* Tamanho dos ícones */
+            width: auto;
+            vertical-align: middle;
+        }
+
         @media (max-width: 768px) {
             .chat-container {
                 width: 100%;
@@ -275,6 +351,13 @@
             .profile-buttons button {
                 padding: 6px 12px;
                 font-size: 0.85em;
+            }
+            .chat-footer {
+                padding: 8px 15px;
+                font-size: 0.75em;
+            }
+            .chat-footer .icon-text img {
+                height: 14px;
             }
         }
     </style>
@@ -310,11 +393,61 @@
                 <i class="fas fa-paper-plane"></i>
             </button>
         </div>
+
+        <div class="chat-footer">
+            <span class="icon-text">
+                Desenvolvido com Google Gemini
+            </span>
+            <span>|</span>
+            <a href="https://www.instagram.com/job.brito" target="_blank">@job.brito</a>
+        </div>
     </div>
 
     <script>
         let selectedProfile = 'leigo';
         let typingIndicatorElement = null;
+
+        // NOVO: Cores para os temas
+        const defaultThemeColors = {
+            '--primary-color': '#4CAF50',
+            '--primary-dark': '#388E3C',
+            '--background-light': '#f0f2f5',
+            '--background-dark': '#e9ebee',
+            '--text-color': '#333',
+            '--border-color': '#ddd',
+            '--container-bg': '#fff',
+            '--user-bubble': '#DCF8C6',
+            '--bot-bubble': '#f1f1f1',
+            '--profile-bg': '#f9f9f9',
+            '--profile-btn-bg': '#e0e0e0',
+            '--profile-btn-color': '#555',
+            '--footer-bg': '#f0f0f0',
+            '--footer-text-color': '#777'
+        };
+
+        const childThemeColors = {
+            '--primary-color': '#64B5F6', /* Azul claro */
+            '--primary-dark': '#2196F3',
+            '--background-light': '#E3F2FD', /* Azul muito claro */
+            '--background-dark': '#BBDEFB', /* Azul um pouco mais escuro */
+            '--text-color': '#424242',
+            '--border-color': '#90CAF9',
+            '--container-bg': '#FFFFFF',
+            '--user-bubble': '#FFCDD2', /* Rosa claro */
+            '--bot-bubble': '#E1F5FE', /* Azul bebê */
+            '--profile-bg': '#BBDEFB',
+            '--profile-btn-bg': '#90CAF9',
+            '--profile-btn-color': '#FFFFFF',
+            '--footer-bg': '#BBDEFB',
+            '--footer-text-color': '#424242'
+        };
+
+        function applyTheme(themeColors) {
+            const root = document.documentElement;
+            for (const [property, value] of Object.entries(themeColors)) {
+                root.style.setProperty(property, value);
+            }
+        }
 
         function selectProfile(profile) {
             const buttons = document.querySelectorAll('.profile-buttons button');
@@ -324,6 +457,13 @@
             document.querySelector(`button[data-profile="${profile}"]`).classList.add('selected');
             selectedProfile = profile;
             console.log('Perfil selecionado:', selectedProfile);
+
+            // NOVO: Aplica o tema de cores
+            if (profile === 'crianca') {
+                applyTheme(childThemeColors);
+            } else {
+                applyTheme(defaultThemeColors);
+            }
         }
 
         function autoResizeTextarea() {
@@ -377,6 +517,8 @@
             });
 
             autoResizeTextarea();
+            // NOVO: Aplica o tema padrão ao carregar a página
+            applyTheme(defaultThemeColors); 
         });
 
 
@@ -418,7 +560,7 @@
             } catch (error) {
                 console.error('Erro ao comunicar com o servidor:', error);
                 hideTypingIndicator();
-                appendMessage('Desculpe, não foi possível conectar ao servidor. Tente novamente.', 'bot');
+                appendMessage('Desculpe, não foi possível conectar ao servidor. Por favor, tente novamente.', 'bot');
             }
         }
 
