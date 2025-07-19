@@ -68,7 +68,7 @@
             --child-footer-bg: #BBDEFB;
             --child-footer-text: #424242;
 
-            /* NOVO: Cores do Tema 'Sacerdote' (Preto) */
+            /* Cores do Tema 'Sacerdote' (Preto) */
             --priest-bg-body: #1a1a1a; /* Preto quase absoluto */
             --priest-bg-container: #2c2c2c; /* Cinza bem escuro */
             --priest-text-color: #e0e0e0; /* Texto claro */
@@ -233,12 +233,13 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
         }
-        .header-left img {
+        /* NOVO: Remove a logo da CatolIA, deixando apenas o texto */
+        /* .header-left img {
             height: 35px;
             width: auto;
             border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
+        } */
         .menu-icon {
             font-size: 1.5em;
             cursor: pointer;
@@ -278,27 +279,21 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; 
-            align-items: stretch; /* Garante que os elementos se estiquem horizontalmente */
-            text-align: left; /* Alinha o texto por padrão à esquerda */
-        }
-        /* NOVO: Classe para o estado inicial/vazio, que centraliza o conteúdo */
-        .chat-scrollable-content.initial-state {
-            justify-content: center; /* Centraliza verticalmente o conteúdo */
-            align-items: center; /* Centraliza horizontalmente o conteúdo */
+            /* Começa com justify-content: center para centralizar verticalmente no início */
+            justify-content: center; 
+            align-items: center; /* Centraliza itens horizontalmente */
             text-align: center; /* Centraliza o texto */
         }
-        /* NOVO: Oculta a área de mensagens no estado inicial para mostrar apenas a mensagem central e prompts */
-        .chat-scrollable-content.initial-state .chat-messages {
-            display: none; 
+        /* Classe para quando o conteúdo já foi carregado e deve ir para o topo */
+        .chat-scrollable-content.has-content {
+            justify-content: flex-start; /* Alinha ao topo quando tem conteúdo */
+            align-items: stretch; /* Permite que as mensagens ocupem a largura total */
+            text-align: left; /* Alinha o texto das mensagens à esquerda/direita */
         }
-        /* Estilos para os elementos iniciais (mensagem central e prompts) */
-        .main-central-message,
-        .profile-selection {
-            align-self: center; /* Centraliza esses elementos no chat-scrollable-content */
-            width: 100%;
-            max-width: 600px; /* Limita a largura para que não fiquem gigantes em telas grandes */
-            box-sizing: border-box;
+        /* Oculta os elementos iniciais (frase e prompts) quando o chat tem conteúdo */
+        .chat-scrollable-content.has-content .main-central-message,
+        .chat-scrollable-content.has-content .profile-selection {
+            display: none; /* NOVO: Oculta a mensagem central e prompts */
         }
 
 
@@ -325,6 +320,8 @@
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            box-sizing: border-box;
         }
         .profile-selection p {
             margin-bottom: 15px;
@@ -379,8 +376,8 @@
             justify-content: flex-start;
             min-height: 0; 
             flex-basis: auto;
-            width: 100%; /* Garante que ocupe a largura completa do chat-scrollable-content */
-            box-sizing: border-box; /* Inclui padding na largura total */
+            width: 100%;
+            box-sizing: border-box;
         }
 
 
@@ -388,24 +385,43 @@
             margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
-            text-align: left; /* Mensagens em si são alinhadas à esquerda/direita */
+            text-align: left;
         }
-        .message.user {
-            justify-content: flex-end;
+        /* NOVO: Estilos para os ícones de usuário/bot */
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            min-width: 35px;
+            border-radius: 50%;
+            background-color: var(--profile-btn-bg);
+            color: var(--profile-btn-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            margin-top: 5px; /* Alinha com o topo da bolha */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .message.bot {
-            justify-content: flex-start;
+        .message.user .message-avatar {
+            order: 2; /* Move o avatar do usuário para o lado direito */
+            margin-left: 10px;
+            background-color: var(--color-primary); /* Cor mais vibrante para o usuário */
+            color: white;
         }
-        .message-content {
-            max-width: 75%;
-            padding: 12px 18px;
-            border-radius: 22px;
-            position: relative;
-            word-wrap: break-word;
-            line-height: 1.6;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+        .message.bot .message-avatar {
+            order: 0; /* Avatar do bot à esquerda */
+            margin-right: 10px;
+            background-color: var(--color-primary-dark); /* Cor da IA */
+            color: white;
+            position: relative; /* Para o efeito de giro do typing indicator */
         }
+        /* Ícone da bandeira do Vaticano */
+        .message.bot .message-avatar img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
         .message.user .message-content {
             background-color: var(--bubble-user);
             color: var(--text-color);
@@ -415,21 +431,45 @@
             color: var(--text-color);
         }
 
+        /* NOVO: Indicador de digitação girando ao redor do ícone do Vaticano */
         .typing-indicator {
-            background-color: var(--bubble-bot);
-            padding: 12px 18px;
-            border-radius: 22px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            background-color: transparent; /* Fundo transparente */
+            padding: 0; /* Padding removido aqui */
+            border-radius: 0;
+            box-shadow: none;
+            width: auto;
             display: flex;
             align-items: center;
-            width: fit-content;
             margin-bottom: 15px;
         }
-        .typing-indicator span {
-            background-color: var(--text-color);
-            opacity: 0.6;
-            animation: bounce 1.4s infinite ease-in-out;
+        .typing-indicator .spinner {
+            position: absolute;
+            width: 45px; /* Tamanho da bolha do avatar */
+            height: 45px;
+            border: 2px solid rgba(0, 0, 0, 0.1); /* Borda sutil */
+            border-top: 2px solid var(--color-primary); /* Cor da borda que gira */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            left: -5px; /* Ajusta a posição para girar ao redor do avatar */
+            top: -5px;
+            z-index: -1; /* Fica por trás do avatar */
         }
+        .typing-indicator span {
+            display: inline-block;
+            background-color: var(--text-color);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
 
         /* Área de Input Fixo no Rodapé */
         .chat-input-area {
@@ -443,7 +483,7 @@
             bottom: var(--footer-height);
             left: 50%;
             transform: translateX(-50%);
-            width: 100%;
+            width: 100%; /* Ocupa toda a largura do contêiner pai */
             max-width: 800px;
             box-sizing: border-box;
             z-index: 999;
@@ -528,28 +568,22 @@
             color: var(--footer-text);
             font-weight: 500;
         }
-        
-        .theme-toggle-button {
-            position: fixed;
-            bottom: calc(var(--footer-height) + var(--input-area-height) + 20px);
-            right: 20px;
-            width: var(--toggle-button-size);
-            height: var(--toggle-button-size);
-            background-color: var(--bg-container);
-            color: var(--text-color);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
-            z-index: 1002;
-            transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+        /* NOVO: Botão de Alternar Tema dentro do Footer */
+        .chat-footer .theme-toggle-button {
+            position: static; /* Tira a posição fixa para ser parte do fluxo do footer */
+            margin-left: auto; /* Empurra para a direita */
+            bottom: auto; /* Redefine bottom */
+            right: auto; /* Redefine right */
+            width: 30px; /* Tamanho menor para o rodapé */
+            height: 30px;
+            font-size: 1em;
+            box-shadow: none; /* Remove sombra para ser mais integrado */
+            border: 1px solid var(--border-color); /* Adiciona borda sutil */
         }
-        .theme-toggle-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        .chat-footer .theme-toggle-button:hover {
+            transform: none; /* Remove transformação no hover */
+            box-shadow: none;
+            background-color: rgba(0,0,0,0.1); /* Efeito de hover mais discreto */
         }
 
         /* Estilos para o Menu Lateral (Sidebar/Overlay) */
@@ -728,7 +762,6 @@
     <div class="chat-header">
         <div class="header-left">
             <i class="fas fa-bars menu-icon" id="menuIcon"></i>
-            <img src="http://googleusercontent.com/image_generation_content/38" alt="CatólIA Logo">
             <span>CatólIA</span>
         </div>
         <div class="header-right">
@@ -770,11 +803,10 @@
             </span>
             <span>|</span>
             <a href="https://www.instagram.com/job.brito" target="_blank">@job.brito</a>
+            <div class="theme-toggle-button" id="themeToggleButton">
+                <i class="fas fa-moon"></i>
+            </div>
         </div>
-    </div>
-
-    <div class="theme-toggle-button" id="themeToggleButton">
-        <i class="fas fa-moon"></i>
     </div>
 
     <div class="sidebar-menu" id="sidebarMenu">
@@ -789,7 +821,7 @@
             <li><a href="https://nunciaturaapostolica.org.br/nuncio-2/" target="_blank"><i class="fas fa-cross"></i>Núncio Apostólico</a></li>
             <li><a href="https://arquidiocesedegoiania.org.br/" target="_blank"><i class="fas fa-map-marker-alt"></i>Arquidiocese de Goiânia</a></li>
             <li><a href="https://www.diocesedejatai.org/" target="_blank"><i class="fas fa-compass"></i>Diocese de Jataí</a></li>
-            <li><a href="https://www.instagram.com/paroquiasaosebastiaojatai/" target="_blank"><i class="fas fa-instagram"></i>Paróquia São Sebastião</a></li>
+            <li><a href="https://www.instagram.com/paroquiasaosebastiaojatai/" target="_blank"><i class="fas fa-heart"></i>Paróquia São Sebastião</a></li>
         </ul>
     </div>
 
@@ -942,12 +974,14 @@
         function showTypingIndicator() {
             const chatMessages = document.getElementById('chatMessages');
             typingIndicatorElement = document.createElement('div');
-            typingIndicatorElement.classList.add('message', 'bot');
+            typingIndicatorElement.classList.add('message', 'bot', 'typing-indicator');
             typingIndicatorElement.innerHTML = `
-                <div class="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div class="message-avatar">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Flag_of_Vatican_City_%28bordered%29.svg/800px-Flag_of_Vatican_City_%28bordered%29.svg.png" alt="Vaticano">
+                    <div class="spinner"></div>
+                </div>
+                <div class="message-content">
+                    <span></span><span></span><span></span>
                 </div>
             `;
             chatMessages.appendChild(typingIndicatorElement);
@@ -966,13 +1000,11 @@
             const sendMessageButton = document.getElementById('sendMessageButton');
             const profileButtonsContainer = document.getElementById('profileButtons');
             const themeToggleButton = document.getElementById('themeToggleButton');
-            const chatMessages = document.getElementById('chatMessages'); 
-            const chatScrollableContent = document.getElementById('chatScrollableContent'); // NOVO: Referência ao chat-scrollable-content
+            const chatMessages = document.getElementById('chatMessages');
+            const chatScrollableContent = document.getElementById('chatScrollableContent');
 
-            // NOVO: Adiciona a classe 'initial-state' na carga inicial para centralizar o conteúdo
             chatScrollableContent.classList.add('initial-state');
 
-            // Carrega o tema salvo ao iniciar
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
@@ -1002,7 +1034,6 @@
 
             autoResizeTextarea();
 
-            // Lógica para abrir/fechar o menu lateral
             const menuIcon = document.getElementById('menuIcon');
             const sidebarMenu = document.getElementById('sidebarMenu');
             const closeMenuBtn = document.getElementById('closeMenuBtn');
@@ -1036,16 +1067,18 @@
         async function sendMessage() {
             const userMessageInput = document.getElementById('userMessageInput');
             const chatMessages = document.getElementById('chatMessages');
-            const chatScrollableContent = document.getElementById('chatScrollableContent'); // Referência ao scrollable content
+            const chatScrollableContent = document.getElementById('chatScrollableContent');
 
             const userMessage = userMessageInput.value.trim();
 
             if (!userMessage) return;
 
-            // NOVO: Remove a classe 'initial-state' do chat-scrollable-content na primeira mensagem
-            // E adiciona a mensagem inicial da IA AQUI
+            // Remove a classe 'initial-state' na primeira mensagem do usuário
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
+                // Limpa a área de mensagens apenas se ela tiver conteúdo de placeholder ou estava vazia antes
+                chatMessages.innerHTML = ''; 
+                // Adiciona a mensagem inicial da IA como a primeira bolha de chat
                 const initialBotMessage = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
                 appendMessage(initialBotMessage, 'bot');
             }
@@ -1089,10 +1122,22 @@
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
 
+            // NOVO: Adiciona o avatar
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('message-avatar');
+            if (sender === 'user') {
+                avatarDiv.innerHTML = '<i class="fas fa-user"></i>'; // Ícone de usuário
+            } else {
+                avatarDiv.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Flag_of_Vatican_City_%28bordered%29.svg/800px-Flag_of_Vatican_City_%28bordered%29.svg.png" alt="Vaticano">'; // Bandeira do Vaticano
+            }
+            messageDiv.appendChild(avatarDiv);
+
+
             const contentDiv = document.createElement('div');
             contentDiv.classList.add('message-content');
             contentDiv.innerHTML = marked.parse(message);
 
+            messageDiv.appendChild(contentDiv);
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
