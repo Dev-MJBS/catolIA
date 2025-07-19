@@ -10,21 +10,21 @@
     <style>
         :root {
             /* Cores Gerais */
-            --color-primary: #4CAF50; /* Verde principal */
+            --color-primary: #4CAF50;
             --color-primary-dark: #388E3C;
-            --color-accent: #FF5722; /* Laranja (para botões/destaques) */
+            --color-accent: #FF5722;
 
             /* Cores do Tema CLARO (Light Mode) */
-            --light-bg-body: #eceff1; /* Fundo do corpo */
-            --light-bg-container: #ffffff; /* Fundo do container principal */
-            --light-text-color: #212121; /* Cor do texto */
+            --light-bg-body: #eceff1;
+            --light-bg-container: #ffffff;
+            --light-text-color: #212121;
             --light-border-color: #e0e0e0;
             --light-header-bg: var(--color-primary);
             --light-header-text: #ffffff;
             --light-header-link: #ffffff;
-            --light-bubble-user: #DCF8C6; /* Balão do usuário (verde claro) */
-            --light-bubble-bot: #f1f1f1; /* Balão do bot (cinza claro) */
-            --light-profile-bg: #e0f2f7; /* Fundo da seleção de perfil (azul muito claro) */
+            --light-bubble-user: #DCF8C6;
+            --light-bubble-bot: #f1f1f1;
+            --light-profile-bg: #e0f2f7;
             --light-profile-btn-bg: #bbdefb;
             --light-profile-btn-color: #424242;
             --light-input-bg: #f5f5f5;
@@ -33,15 +33,15 @@
             --light-footer-text: #616161;
 
             /* Cores do Tema ESCURO (Dark Mode) */
-            --dark-bg-body: #263238; /* Fundo do corpo */
-            --dark-bg-container: #37474F; /* Fundo do container principal */
-            --dark-text-color: #eceff1; /* Cor do texto */
+            --dark-bg-body: #263238;
+            --dark-bg-container: #37474F;
+            --dark-text-color: #eceff1;
             --dark-border-color: #455a64;
             --dark-header-bg: var(--color-primary-dark);
             --dark-header-text: #ffffff;
             --dark-header-link: #cfd8dc;
-            --dark-bubble-user: #4CAF50; /* Balão do usuário (verde mais escuro) */
-            --dark-bubble-bot: #546E7A; /* Balão do bot (cinza azulado) */
+            --dark-bubble-user: #4CAF50;
+            --dark-bubble-bot: #546E7A;
             --dark-profile-bg: #37474F;
             --dark-profile-btn-bg: #4CAF50;
             --dark-profile-btn-color: #ffffff;
@@ -51,15 +51,15 @@
             --dark-footer-text: #9e9e9e;
 
             /* Cores do Tema 'Criança' */
-            --child-bg-body: #E3F2FD; /* Azul muito claro */
+            --child-bg-body: #E3F2FD;
             --child-bg-container: #FFFFFF;
             --child-text-color: #424242;
             --child-border-color: #90CAF9;
             --child-header-bg: #64B5F6;
             --child-header-text: #FFFFFF;
             --child-header-link: #FFFFFF;
-            --child-bubble-user: #FFCDD2; /* Rosa claro */
-            --child-bubble-bot: #E1F5FE; /* Azul bebê */
+            --child-bubble-user: #FFCDD2;
+            --child-bubble-bot: #E1F5FE;
             --child-profile-bg: #BBDEFB;
             --child-profile-btn-bg: #90CAF9;
             --child-profile-btn-color: #FFFFFF;
@@ -69,15 +69,15 @@
             --child-footer-text: #424242;
 
             /* Cores do Tema 'Sacerdote' (Preto) */
-            --priest-bg-body: #1a1a1a; /* Preto quase absoluto */
-            --priest-bg-container: #2c2c2c; /* Cinza bem escuro */
-            --priest-text-color: #e0e0e0; /* Texto claro */
+            --priest-bg-body: #1a1a1a;
+            --priest-bg-container: #2c2c2c;
+            --priest-text-color: #e0e0e0;
             --priest-border-color: #444444;
-            --priest-header-bg: #000000; /* Preto absoluto */
+            --priest-header-bg: #000000;
             --priest-header-text: #ffffff;
             --priest-header-link: #cccccc;
-            --priest-bubble-user: #424242; /* Cinza para balão do usuário */
-            --priest-bubble-bot: #333333; /* Cinza mais escuro para balão do bot */
+            --priest-bubble-user: #424242;
+            --priest-bubble-bot: #333333;
             --priest-profile-bg: #222222;
             --priest-profile-btn-bg: #424242;
             --priest-profile-btn-color: #ffffff;
@@ -111,6 +111,9 @@
             --footer-height: 40px;
             --toggle-button-size: 40px;
             --menu-width: 280px; /* Largura do menu lateral */
+            --modal-overlay-bg: rgba(0, 0, 0, 0.7); /* Fundo do modal */
+            --modal-bg: var(--bg-container);
+            --modal-text: var(--text-color);
         }
 
         body.dark-mode {
@@ -130,6 +133,9 @@
             --input-border: var(--dark-input-border);
             --footer-bg: var(--dark-footer-bg);
             --footer-text: var(--dark-footer-text);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.85);
+            --modal-bg: var(--dark-bg-container);
+            --modal-text: var(--dark-text-color);
         }
 
         body.child-mode {
@@ -149,6 +155,9 @@
             --input-border: var(--child-input-border);
             --footer-bg: var(--child-footer-bg);
             --footer-text: var(--child-footer-text);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.6);
+            --modal-bg: var(--child-bg-container);
+            --modal-text: var(--child-text-color);
         }
         
         body.priest-mode {
@@ -168,6 +177,9 @@
             --input-border: var(--priest-input-border);
             --footer-bg: var(--priest-footer-bg);
             --footer-text: var(--priest-footer-text);
+            --modal-overlay-bg: rgba(0, 0, 0, 0.9);
+            --modal-bg: var(--priest-bg-container);
+            --modal-text: var(--priest-text-color);
         }
 
         body {
@@ -233,13 +245,10 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
         }
-        /* NOVO: Remove a logo da CatolIA, deixando apenas o texto */
-        /* .header-left img {
-            height: 35px;
-            width: auto;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        } */
+        /* NOVO: Esconde a logo da CatolIA */
+        .header-left img {
+            display: none; 
+        }
         .menu-icon {
             font-size: 1.5em;
             cursor: pointer;
@@ -279,21 +288,20 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            /* Começa com justify-content: center para centralizar verticalmente no início */
-            justify-content: center; 
-            align-items: center; /* Centraliza itens horizontalmente */
-            text-align: center; /* Centraliza o texto */
+            justify-content: flex-start; 
+            align-items: stretch;
+            text-align: left;
         }
-        /* Classe para quando o conteúdo já foi carregado e deve ir para o topo */
-        .chat-scrollable-content.has-content {
-            justify-content: flex-start; /* Alinha ao topo quando tem conteúdo */
-            align-items: stretch; /* Permite que as mensagens ocupem a largura total */
-            text-align: left; /* Alinha o texto das mensagens à esquerda/direita */
+        /* Classe para o estado inicial/vazio, que centraliza o conteúdo */
+        .chat-scrollable-content.initial-state {
+            justify-content: center; /* Centraliza verticalmente o conteúdo */
+            align-items: center; /* Centraliza horizontalmente o conteúdo */
+            text-align: center; /* Centraliza o texto */
         }
         /* Oculta os elementos iniciais (frase e prompts) quando o chat tem conteúdo */
         .chat-scrollable-content.has-content .main-central-message,
         .chat-scrollable-content.has-content .profile-selection {
-            display: none; /* NOVO: Oculta a mensagem central e prompts */
+            display: none;
         }
 
 
@@ -364,19 +372,19 @@
 
         /* Área de Mensagens (Zona de Diálogo) */
         .chat-messages {
-            background-color: var(--bg-container);
+            background-color: var(--bg-container); /* Pode ser ajustado para um bg mais transparente se quiser efeito */
             transition: background-color 0.5s ease;
             padding: 15px;
             border-radius: 12px;
-            flex-grow: 1;
+            flex-grow: 1; /* Ocupa todo o espaço vertical disponível */
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
             margin-top: 0;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: flex-start; /* Mensagens se alinham ao topo */
             min-height: 0; 
             flex-basis: auto;
-            width: 100%;
+            width: 100%; /* Ocupa toda a largura disponível */
             box-sizing: border-box;
         }
 
@@ -387,7 +395,12 @@
             align-items: flex-start;
             text-align: left;
         }
-        /* NOVO: Estilos para os ícones de usuário/bot */
+        .message.user {
+            justify-content: flex-end;
+        }
+        .message.bot {
+            justify-content: flex-start;
+        }
         .message-avatar {
             width: 35px;
             height: 35px;
@@ -399,29 +412,39 @@
             justify-content: center;
             align-items: center;
             font-size: 1.2em;
-            margin-top: 5px; /* Alinha com o topo da bolha */
+            margin-top: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0; /* Impede que o avatar encolha */
         }
         .message.user .message-avatar {
-            order: 2; /* Move o avatar do usuário para o lado direito */
+            order: 2;
             margin-left: 10px;
-            background-color: var(--color-primary); /* Cor mais vibrante para o usuário */
+            background-color: var(--color-primary);
             color: white;
         }
         .message.bot .message-avatar {
-            order: 0; /* Avatar do bot à esquerda */
+            order: 0;
             margin-right: 10px;
-            background-color: var(--color-primary-dark); /* Cor da IA */
+            background-color: var(--color-primary-dark);
             color: white;
-            position: relative; /* Para o efeito de giro do typing indicator */
+            position: relative;
         }
-        /* Ícone da bandeira do Vaticano */
         .message.bot .message-avatar img {
             width: 80%;
             height: 80%;
             object-fit: contain;
         }
 
+        .message-content {
+            max-width: 75%;
+            padding: 12px 18px;
+            border-radius: 22px;
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.6;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+        }
         .message.user .message-content {
             background-color: var(--bubble-user);
             color: var(--text-color);
@@ -431,10 +454,9 @@
             color: var(--text-color);
         }
 
-        /* NOVO: Indicador de digitação girando ao redor do ícone do Vaticano */
         .typing-indicator {
-            background-color: transparent; /* Fundo transparente */
-            padding: 0; /* Padding removido aqui */
+            background-color: transparent;
+            padding: 0;
             border-radius: 0;
             box-shadow: none;
             width: auto;
@@ -444,15 +466,15 @@
         }
         .typing-indicator .spinner {
             position: absolute;
-            width: 45px; /* Tamanho da bolha do avatar */
+            width: 45px;
             height: 45px;
-            border: 2px solid rgba(0, 0, 0, 0.1); /* Borda sutil */
-            border-top: 2px solid var(--color-primary); /* Cor da borda que gira */
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top: 2px solid var(--color-primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            left: -5px; /* Ajusta a posição para girar ao redor do avatar */
+            left: -5px;
             top: -5px;
-            z-index: -1; /* Fica por trás do avatar */
+            z-index: -1;
         }
         .typing-indicator span {
             display: inline-block;
@@ -469,7 +491,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
 
         /* Área de Input Fixo no Rodapé */
         .chat-input-area {
@@ -568,22 +589,22 @@
             color: var(--footer-text);
             font-weight: 500;
         }
-        /* NOVO: Botão de Alternar Tema dentro do Footer */
+        
         .chat-footer .theme-toggle-button {
-            position: static; /* Tira a posição fixa para ser parte do fluxo do footer */
-            margin-left: auto; /* Empurra para a direita */
-            bottom: auto; /* Redefine bottom */
-            right: auto; /* Redefine right */
-            width: 30px; /* Tamanho menor para o rodapé */
+            position: static;
+            margin-left: auto;
+            bottom: auto;
+            right: auto;
+            width: 30px;
             height: 30px;
             font-size: 1em;
-            box-shadow: none; /* Remove sombra para ser mais integrado */
-            border: 1px solid var(--border-color); /* Adiciona borda sutil */
+            box-shadow: none;
+            border: 1px solid var(--border-color);
         }
         .chat-footer .theme-toggle-button:hover {
-            transform: none; /* Remove transformação no hover */
+            transform: none;
             box-shadow: none;
-            background-color: rgba(0,0,0,0.1); /* Efeito de hover mais discreto */
+            background-color: rgba(0,0,0,0.1);
         }
 
         /* Estilos para o Menu Lateral (Sidebar/Overlay) */
@@ -678,6 +699,156 @@
             visibility: visible;
         }
 
+        /* NOVO: Estilos do Modal de Doação */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--modal-overlay-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1004;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: var(--modal-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            color: var(--modal-text);
+            position: relative;
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--modal-text);
+            opacity: 0.7;
+        }
+        .modal-close-button:hover {
+            opacity: 1;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: var(--color-primary-dark);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .modal-content p {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            word-break: break-all; /* Quebra a palavra do pix se for muito longa */
+        }
+        .modal-content .copy-pix-button {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        .modal-content .copy-pix-button:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        /* NOVO: Seção de Artigos do Medium */
+        .articles-section {
+            background-color: var(--bg-body);
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--text-color);
+            margin-top: 40px; /* Espaço entre o chat e os artigos */
+            border-top: 1px solid var(--border-color);
+            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+        }
+        .articles-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--color-primary-dark);
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            justify-content: center;
+        }
+        .article-card {
+            background-color: var(--bg-container);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.5s ease;
+            text-decoration: none; /* Garante que o card não tenha sublinhado */
+            color: var(--text-color); /* Cor do texto no card */
+            display: flex;
+            flex-direction: column;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        .article-card img {
+            width: 100%;
+            height: 180px; /* Altura fixa para imagem */
+            object-fit: cover;
+        }
+        .article-card-content {
+            padding: 20px;
+            flex-grow: 1; /* Faz o conteúdo ocupar o espaço restante */
+            display: flex;
+            flex-direction: column;
+        }
+        .article-card-content h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        .article-card-content p {
+            font-size: 0.9em;
+            line-height: 1.5;
+            color: var(--footer-text); /* Cor mais suave para o resumo */
+            margin-bottom: 15px;
+            flex-grow: 1; /* Ocupa o espaço restante antes do link */
+        }
+        .article-card-content .read-more {
+            font-size: 0.9em;
+            color: var(--color-primary);
+            font-weight: bold;
+            text-decoration: none;
+            align-self: flex-start; /* Alinha o botão "Leia mais" */
+            transition: color 0.3s ease;
+        }
+        .article-card-content .read-more:hover {
+            text-decoration: underline;
+            color: var(--color-primary-dark);
+        }
+
 
         @media (max-width: 768px) {
             .chat-container {
@@ -755,6 +926,16 @@
             .sidebar-menu {
                 width: 250px;
             }
+            .modal-content {
+                max-width: 90%;
+                padding: 20px;
+            }
+            .articles-section {
+                padding: 20px 15px;
+            }
+            .articles-section h2 {
+                font-size: 1.6em;
+            }
         }
     </style>
 </head>
@@ -770,7 +951,7 @@
     </div>
 
     <div class="chat-container">
-        <div class="chat-scrollable-content initial-state">
+        <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
             <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
             
             <div class="profile-selection">
@@ -808,6 +989,49 @@
             </div>
         </div>
     </div>
+
+    <div class="modal" id="donateModal">
+        <div class="modal-content">
+            <button class="modal-close-button" id="closeModalBtn">&times;</button>
+            <h3>Apoie a CatólIA!</h3>
+            <p>Se você tem sido abençoado(a) por este projeto, sua doação faz a diferença para continuarmos evangelizando através da tecnologia.</p>
+            <p>Faça seu Pix (e-mail):</p>
+            <p style="font-size:1.3em; font-weight:bold; color:var(--color-primary-dark);" id="pixKey">mateus.job@outlook.com</p>
+            <button class="copy-pix-button" id="copyPixBtn">Copiar Chave Pix</button>
+            <p style="margin-top:20px;">Deus lhe pague! 🙏</p>
+            <button class="copy-pix-button" id="thanksBtn" style="background-color:var(--color-accent);">Obrigado!</button>
+        </div>
+    </div>
+
+    <section class="articles-section">
+        <h2>Meus Artigos no Medium</h2>
+        <div class="articles-grid">
+            <a href="https://medium.com/@mjobbrito/autoria-intencionalidade-e-a-ilus%C3%A3o-da-arte-na-era-da-intelig%C3%AAncia-artificial-5bfe1b716e04" target="_blank" class="article-card">
+                <img src="https://miro.medium.com/v2/resize:fit:780/1*T-Fp7M_Q0Pq9j4y_z1G-wQ.jpeg" alt="Imagem do Artigo 1">
+                <div class="article-card-content">
+                    <h3>Autoria, Intencionalidade e a Ilusão da Arte na Era da IA</h3>
+                    <p>Uma reflexão sobre o impacto da Inteligência Artificial na criação artística e na percepção de autoria.</p>
+                    <span class="read-more">Leia mais &rarr;</span>
+                </div>
+            </a>
+            <a href="https://medium.com/@mjobbrito/desvendando-a-magia-dos-algoritmos-um-guia-acess%C3%ADvel-para-todos-b30a0034bf3f" target="_blank" class="article-card">
+                <img src="https://miro.medium.com/v2/resize:fit:780/1*lX7g-r_b0a8x5a3z9oTf3g.png" alt="Imagem do Artigo 2">
+                <div class="article-card-content">
+                    <h3>Desvendando a Magia dos Algoritmos: Um Guia Acessível</h3>
+                    <p>Um guia simplificado para entender o que são algoritmos e como eles funcionam no nosso dia a dia.</p>
+                    <span class="read-more">Leia mais &rarr;</span>
+                </div>
+            </a>
+            <a href="https://medium.com/@mjobbrito/a-sede-de-aprender-um-aluno-em-busca-de-uma-educa%C3%A7%C3%A3o-transformadora-48a2916f59aa" target="_blank" class="article-card">
+                <img src="https://miro.medium.com/v2/resize:fit:780/1*d-e1Z1Z1Z1Z1Z1Z1Z1Z1ZA.jpeg" alt="Imagem do Artigo 3">
+                <div class="article-card-content">
+                    <h3>A Sede de Aprender: Em Busca de Educação Transformadora</h3>
+                    <p>Uma jornada pessoal sobre a busca por conhecimento e o poder de uma educação que realmente transforma.</p>
+                    <span class="read-more">Leia mais &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </section>
 
     <div class="sidebar-menu" id="sidebarMenu">
         <div class="sidebar-menu-header">
@@ -848,7 +1072,10 @@
             '--input-bg': '#f5f5f5',
             '--input-border': '#bdbdbd',
             '--footer-bg': '#e0e0e0',
-            '--footer-text': '#616161'
+            '--footer-text': '#616161',
+            '--modal-overlay-bg': 'rgba(0, 0, 0, 0.7)',
+            '--modal-bg': '#ffffff',
+            '--modal-text': '#212121'
         };
 
         const darkThemeColors = {
@@ -867,7 +1094,10 @@
             '--input-bg': '#424242',
             '--input-border': '#607d8b',
             '--footer-bg': '#263238',
-            '--footer-text': '#9e9e9e'
+            '--footer-text': '#9e9e9e',
+            '--modal-overlay-bg': 'rgba(0, 0, 0, 0.85)',
+            '--modal-bg': '#37474F',
+            '--modal-text': '#eceff1'
         };
 
         const childThemeColors = {
@@ -886,7 +1116,10 @@
             '--input-bg': '#E1F5FE',
             '--input-border': '#90CAF9',
             '--footer-bg': '#BBDEFB',
-            '--footer-text': '#424242'
+            '--footer-text': '#424242',
+            '--modal-overlay-bg': 'rgba(0, 0, 0, 0.6)',
+            '--modal-bg': '#FFFFFF',
+            '--modal-text': '#424242'
         };
         
         const priestThemeColors = {
@@ -905,7 +1138,10 @@
             '--input-bg': '#222222',
             '--input-border': '#555555',
             '--footer-bg': '#000000',
-            '--footer-text': '#aaaaaa'
+            '--footer-text': '#aaaaaa',
+            '--modal-overlay-bg': 'rgba(0, 0, 0, 0.9)',
+            '--modal-bg': '#2c2c2c',
+            '--modal-text': '#e0e0e0'
         };
 
         function applyTheme(themeColors) {
@@ -918,6 +1154,20 @@
                 themeToggleButton.innerHTML = '<i class="fas fa-sun"></i>';
             } else {
                 themeToggleButton.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+            // NOVO: Atualiza cores do modal
+            const modalContent = document.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.style.backgroundColor = themeColors['--modal-bg'];
+                modalContent.style.color = themeColors['--modal-text'];
+            }
+            const modalCloseButton = document.querySelector('.modal-close-button');
+            if (modalCloseButton) {
+                modalCloseButton.style.color = themeColors['--modal-text'];
+            }
+            const modalOverlay = document.querySelector('#donateModal');
+            if (modalOverlay) {
+                modalOverlay.style.backgroundColor = themeColors['--modal-overlay-bg'];
             }
         }
 
@@ -995,12 +1245,41 @@
             }
         }
 
+        // NOVO: Funções para o Modal de Doação
+        function openDonateModal() {
+            const donateModal = document.getElementById('donateModal');
+            const menuOverlay = document.getElementById('menuOverlay'); // Reusa o overlay principal
+            donateModal.classList.add('open');
+            menuOverlay.classList.add('open');
+            // Fechar menu lateral se estiver aberto
+            const sidebarMenu = document.getElementById('sidebarMenu');
+            sidebarMenu.classList.remove('open');
+        }
+
+        function closeDonateModal() {
+            const donateModal = document.getElementById('donateModal');
+            const menuOverlay = document.getElementById('menuOverlay');
+            donateModal.classList.remove('open');
+            menuOverlay.classList.remove('open');
+        }
+
+        function copyPixKey() {
+            const pixKey = document.getElementById('pixKey').innerText;
+            navigator.clipboard.writeText(pixKey).then(() => {
+                alert('Chave Pix copiada: ' + pixKey);
+            }).catch(err => {
+                console.error('Erro ao copiar Pix: ', err);
+                alert('Não foi possível copiar a chave Pix. Por favor, copie manualmente: ' + pixKey);
+            });
+        }
+
+
         document.addEventListener('DOMContentLoaded', () => {
             const userMessageInput = document.getElementById('userMessageInput');
             const sendMessageButton = document.getElementById('sendMessageButton');
             const profileButtonsContainer = document.getElementById('profileButtons');
             const themeToggleButton = document.getElementById('themeToggleButton');
-            const chatMessages = document.getElementById('chatMessages');
+            const chatMessages = document.getElementById('chatMessages'); 
             const chatScrollableContent = document.getElementById('chatScrollableContent');
 
             chatScrollableContent.classList.add('initial-state');
@@ -1061,6 +1340,16 @@
                 });
             });
 
+            // NOVO: Eventos para o Modal de Doação
+            const donateLink = document.getElementById('donateLink');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const copyPixBtn = document.getElementById('copyPixBtn');
+            const thanksBtn = document.getElementById('thanksBtn');
+
+            if (donateLink) donateLink.addEventListener('click', (e) => { e.preventDefault(); openDonateModal(); });
+            if (closeModalBtn) closeModalBtn.addEventListener('click', closeDonateModal);
+            if (copyPixBtn) copyPixBtn.addEventListener('click', copyPixKey);
+            if (thanksBtn) thanksBtn.addEventListener('click', closeDonateModal); // Fechar ao clicar em Obrigado
         });
 
 
@@ -1074,11 +1363,11 @@
             if (!userMessage) return;
 
             // Remove a classe 'initial-state' na primeira mensagem do usuário
+            // E adiciona a mensagem inicial da IA
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
-                // Limpa a área de mensagens apenas se ela tiver conteúdo de placeholder ou estava vazia antes
-                chatMessages.innerHTML = ''; 
-                // Adiciona a mensagem inicial da IA como a primeira bolha de chat
+                chatScrollableContent.classList.add('has-content'); // Adiciona a classe has-content
+                chatMessages.innerHTML = ''; // Limpa a área de mensagens, se houver conteúdo anterior
                 const initialBotMessage = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
                 appendMessage(initialBotMessage, 'bot');
             }
@@ -1122,13 +1411,13 @@
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
 
-            // NOVO: Adiciona o avatar
+            // Adiciona o avatar
             const avatarDiv = document.createElement('div');
             avatarDiv.classList.add('message-avatar');
             if (sender === 'user') {
-                avatarDiv.innerHTML = '<i class="fas fa-user"></i>'; // Ícone de usuário
+                avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
             } else {
-                avatarDiv.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Flag_of_Vatican_City_%28bordered%29.svg/800px-Flag_of_Vatican_City_%28bordered%29.svg.png" alt="Vaticano">'; // Bandeira do Vaticano
+                avatarDiv.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Flag_of_Vatican_City_%28bordered%29.svg/800px-Flag_of_Vatican_City_%28bordered%29.svg.png" alt="Vaticano">';
             }
             messageDiv.appendChild(avatarDiv);
 
