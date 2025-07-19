@@ -193,9 +193,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
             width: 95%;
             max-width: 800px;
-            /* NOVO: Ajuste de altura e padding para ocupar o espaço de forma consistente */
-            height: calc(100vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height) - 20px); 
-            min-height: 400px;
+            height: 95vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -206,9 +204,10 @@
             align-self: center;
         }
         body > .chat-container {
-            height: auto;
-            max-height: calc(95vh - var(--header-height) - 20px); 
+            height: calc(100vh - var(--header-height) - 20px); /* Ajusta altura para ocupar a tela */
+            max-height: calc(100vh - var(--header-height) - 20px);
         }
+
 
         .chat-header {
             background-color: var(--header-bg);
@@ -271,6 +270,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
 
+        /* Área de Conteúdo Principal Rolável */
         .chat-scrollable-content {
             flex-grow: 1;
             overflow-y: auto;
@@ -283,6 +283,8 @@
             justify-content: flex-start; 
             align-items: stretch;
             text-align: left;
+            /* NOVO: Altura para o chat-scrollable-content */
+            height: calc(100% - var(--input-area-height) - var(--footer-height)); 
         }
         .chat-scrollable-content.initial-state {
             justify-content: center;
@@ -863,7 +865,7 @@
                 <div class="profile-buttons" id="profileButtons">
                     <button data-profile="leigo" class="selected">Leigo</button>
                     <button data-profile="catequista">Catequista</button>
-                    <button data-profile="seminarista">Seminarista</button>
+                    <button data-profile="seminarista">Seminara</button>
                     <button data-profile="crianca">Criança</button>
                     <button data-profile="sacerdote">Sacerdote</button>
                 </div>
@@ -1100,7 +1102,7 @@
             typingIndicatorElement.classList.add('message', 'bot', 'typing-indicator');
             typingIndicatorElement.innerHTML = `
                 <div class="message-avatar">
-                    <i class="fi fi-ss-home"></i>
+                    <i class="fas fa-church"></i>
                     <div class="spinner"></div>
                 </div>
                 <div class="message-content">
@@ -1154,13 +1156,7 @@
             const chatScrollableContent = document.getElementById('chatScrollableContent');
 
             const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
-            const welcomeMessageDiv = document.createElement('div');
-            welcomeMessageDiv.classList.add('message', 'bot');
-            welcomeMessageDiv.style.justifyContent = 'center';
-            welcomeMessageDiv.style.textAlign = 'center';
-            welcomeMessageDiv.innerHTML = `<div class="message-content">${marked.parse(initialBotMessageContent)}</div>`;
-            chatMessages.appendChild(welcomeMessageDiv);
-
+            appendMessage(initialBotMessageContent, 'bot'); 
 
             chatScrollableContent.classList.add('initial-state');
 
