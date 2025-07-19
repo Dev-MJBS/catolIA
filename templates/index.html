@@ -110,7 +110,7 @@
             --input-area-height: 85px;
             --footer-height: 40px;
             --toggle-button-size: 40px;
-            --menu-width: 280px; /* Largura do menu lateral */
+            --menu-width: 280px;
             --modal-overlay-bg: rgba(0, 0, 0, 0.7);
             --modal-bg: var(--bg-container);
             --modal-text: var(--text-color);
@@ -201,20 +201,18 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
             width: 95%;
             max-width: 800px;
-            /* Altura para ocupar o espaço disponível, permitindo a rolagem da página */
+            /* NOVO: Altura para ocupar o espaço disponível e se alinhar corretamente */
             height: calc(100vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height) - 20px); 
             min-height: 400px; /* Garante um tamanho mínimo */
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* O contêiner principal não rola, o conteúdo interno rola */
+            overflow: hidden;
             transition: background-color 0.5s ease, box-shadow 0.5s ease;
             position: relative;
             z-index: 1;
-            margin-top: calc(var(--header-height) + 20px); /* Ajuste para cabeçalho fixo */
-            align-self: center; /* Centraliza o chat-container na página */
-            /* REMOVIDO: margin-bottom, pois os artigos serão fora do chat-container */
+            margin-top: calc(var(--header-height) + 20px);
+            align-self: center;
         }
-        /* Remove o ajuste de altura direto no body para o chat-container, pois agora ele tem altura própria */
         body > .chat-container {
             height: auto;
             max-height: calc(95vh - var(--header-height) - 20px); 
@@ -378,21 +376,20 @@
 
         /* Área de Mensagens (Zona de Diálogo) */
         .chat-messages {
-            background-color: var(--bg-container); /* Pode ser ajustado para um bg mais transparente se quiser efeito */
+            background-color: var(--bg-container);
             transition: background-color 0.5s ease;
             padding: 15px;
             border-radius: 12px;
-            flex-grow: 1; /* Ocupa todo o espaço vertical disponível */
+            flex-grow: 1;
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
             margin-top: 0;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Mensagens se alinham ao topo */
+            justify-content: flex-start;
             min-height: 0; 
             flex-basis: auto;
-            width: 100%; /* Ocupa toda a largura disponível */
+            width: 100%;
             box-sizing: border-box;
-            /* Adiciona um pequeno padding inferior para a última mensagem não ficar grudada no input */
             padding-bottom: 10px; 
         }
 
@@ -437,9 +434,9 @@
             color: white;
             position: relative;
         }
-        /* Ícone da bandeira do Vaticano ou novo ícone da IA */
+        /* Ícone da IA */
         .message.bot .message-avatar img,
-        .message.bot .message-avatar i { /* NOVO: Para suportar ícone Flaticons */
+        .message.bot .message-avatar i {
             width: 80%;
             height: 80%;
             object-fit: contain;
@@ -782,9 +779,9 @@
         }
 
         /* Seção de Artigos do Medium (Removida por enquanto) */
-        /* .articles-section {
-            display: none;
-        } */
+        .articles-section {
+            display: none; /* Mantém oculto */
+        }
 
 
         @media (max-width: 768px) {
@@ -866,10 +863,6 @@
             .modal-content {
                 max-width: 90%;
                 padding: 20px;
-            }
-            /* Remove a seção de artigos em mobile também para evitar problemas */
-            .articles-section {
-                display: none; 
             }
         }
     </style>
@@ -995,7 +988,7 @@
             '--bubble-bot': '#546E7A',
             '--profile-bg': '#37474F',
             '--profile-btn-bg': '#4CAF50',
-            --profile-btn-color: '#ffffff',
+            '--profile-btn-color': '#ffffff',
             '--input-bg': '#424242',
             '--input-border': '#607d8b',
             '--footer-bg': '#263238',
@@ -1038,8 +1031,8 @@
             '--bubble-user': '#424242',
             '--bubble-bot': '#333333',
             '--profile-bg': '#222222',
-            --profile-btn-bg: '#424242',
-            --profile-btn-color: '#ffffff',
+            '--profile-btn-bg': '#424242',
+            '--profile-btn-color': '#ffffff',
             '--input-bg': '#222222',
             '--input-border': '#555555',
             '--footer-bg': '#000000',
@@ -1131,7 +1124,8 @@
             typingIndicatorElement.classList.add('message', 'bot', 'typing-indicator');
             typingIndicatorElement.innerHTML = `
                 <div class="message-avatar">
-                    <i class="fi fi-ss-home"></i> <div class="spinner"></div>
+                    <i class="fi fi-ss-home"></i>
+                    <div class="spinner"></div>
                 </div>
                 <div class="message-content">
                     <span></span><span></span><span></span>
@@ -1183,10 +1177,17 @@
             const chatMessages = document.getElementById('chatMessages'); 
             const chatScrollableContent = document.getElementById('chatScrollableContent');
 
-            // NOVO: Adiciona a mensagem inicial da IA diretamente na área de mensagens.
-            // A classe 'initial-state' no chat-scrollable-content cuida da centralização.
-            const initialBotMessage = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
-            appendMessage(initialBotMessage, 'bot'); // Adiciona a mensagem inicial
+            // Adiciona a mensagem inicial da IA diretamente na área de mensagens.
+            const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
+            // NÃO usar appendMessage aqui, pois ela adiciona avatares.
+            // Vamos adicionar a mensagem de boas-vindas manualmente para que ela não tenha avatar.
+            const welcomeMessageDiv = document.createElement('div');
+            welcomeMessageDiv.classList.add('message', 'bot');
+            welcomeMessageDiv.style.justifyContent = 'center'; /* Centraliza a mensagem */
+            welcomeMessageDiv.style.textAlign = 'center'; /* Centraliza o texto */
+            welcomeMessageDiv.innerHTML = `<div class="message-content">${marked.parse(initialBotMessageContent)}</div>`;
+            chatMessages.appendChild(welcomeMessageDiv);
+
 
             chatScrollableContent.classList.add('initial-state');
 
@@ -1267,12 +1268,13 @@
 
             if (!userMessage) return;
 
-            // NOVO: Remove a classe 'initial-state' na primeira mensagem do usuário,
-            // permitindo que o conteúdo do chat suba.
+            // NOVO: Remove as classes de estado inicial após a primeira mensagem do usuário
+            // A mensagem inicial da IA já foi adicionada na DOMContentLoaded
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
                 chatScrollableContent.classList.add('has-content'); // Ativa o modo de conteúdo
-                // NÃO limpamos chatMessages.innerHTML aqui, pois a mensagem inicial já foi adicionada.
+                // Não limpamos chatMessages.innerHTML aqui, pois já temos a mensagem inicial
+                // e queremos que ela permaneça.
             }
 
             appendMessage(userMessage, 'user');
@@ -1319,7 +1321,6 @@
             if (sender === 'user') {
                 avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
             } else {
-                // NOVO: Ícone da IA para o bot
                 avatarDiv.innerHTML = '<i class="fi fi-ss-home"></i>';
             }
             messageDiv.appendChild(avatarDiv);
