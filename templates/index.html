@@ -9,10 +9,12 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
+            /* Cores Gerais */
             --color-primary: #4CAF50;
             --color-primary-dark: #388E3C;
             --color-accent: #FF5722;
 
+            /* Cores do Tema CLARO (Light Mode) */
             --light-bg-body: #eceff1;
             --light-bg-container: #ffffff;
             --light-text-color: #212121;
@@ -30,6 +32,7 @@
             --light-footer-bg: #e0e0e0;
             --light-footer-text: #616161;
 
+            /* Cores do Tema ESCURO (Dark Mode) */
             --dark-bg-body: #263238;
             --dark-bg-container: #37474F;
             --dark-text-color: #eceff1;
@@ -47,6 +50,7 @@
             --dark-footer-bg: #263238;
             --dark-footer-text: #9e9e9e;
 
+            /* Cores do Tema 'Criança' */
             --child-bg-body: #E3F2FD;
             --child-bg-container: #FFFFFF;
             --child-text-color: #424242;
@@ -64,6 +68,7 @@
             --child-footer-bg: #BBDEFB;
             --child-footer-text: #424242;
             
+            /* Cores do Tema 'Sacerdote' (Preto) */
             --priest-bg-body: #1a1a1a;
             --priest-bg-container: #2c2c2c;
             --priest-text-color: #e0e0e0;
@@ -81,6 +86,7 @@
             --priest-footer-bg: #000000;
             --priest-footer-text: #aaaaaa;
 
+            /* Variáveis para o Tema ATUAL */
             --bg-body: var(--light-bg-body);
             --bg-container: var(--light-bg-container);
             --text-color: var(--light-text-color);
@@ -98,11 +104,12 @@
             --footer-bg: var(--light-footer-bg);
             --footer-text: var(--light-footer-text);
 
+            /* Alturas de elementos fixos */
             --header-height: 60px;
             --input-area-height: 85px;
             --footer-height: 40px;
-            --profile-selection-height: 100px;
-            --total-fixed-bottom-height: calc(var(--input-area-height) + var(--footer-height) + var(--profile-selection-height));
+            --profile-selection-height: 100px; /* Altura aproximada da seção de prompts */
+            --total-fixed-bottom-height: calc(var(--input-area-height) + var(--footer-height)); /* Apenas input e footer no bottom */
 
             --toggle-button-size: 40px;
             --menu-width: 280px;
@@ -141,8 +148,8 @@
             --header-bg: var(--child-header-bg);
             --header-text: var(--child-header-text);
             --header-link: var(--child-header-link);
-            --bubble-user: var(--child-bubble-user);
-            --bubble-bot: var(--child-bubble-bot);
+            --child-bubble-user: var(--child-bubble-user);
+            --child-bubble-bot: var(--child-bubble-bot);
             --profile-bg: var(--child-profile-bg);
             --profile-btn-bg: var(--child-profile-btn-bg);
             --profile-btn-color: var(--child-profile-btn-color);
@@ -205,13 +212,15 @@
             z-index: 1;
         }
 
+        /* Ajuste do chat-container para ocupar toda a tela, mas respeitando elementos fixos */
         body > .chat-container {
-            height: calc(100vh - var(--header-height) - var(--footer-height));
+            height: calc(100vh - var(--header-height) - var(--footer-height)); /* Ocupa a altura da viewport menos header e footer */
             max-height: calc(100vh - var(--header-height) - var(--footer-height));
-            margin-top: var(--header-height);
-            align-self: center;
-            border-radius: 0;
+            margin-top: var(--header-height); /* Empurra para baixo do header */
+            align-self: center; /* Centraliza o container na página */
+            border-radius: 0; /* Remove bordas arredondadas se for full-height */
         }
+
 
         .chat-header {
             background-color: var(--header-bg);
@@ -274,70 +283,20 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
 
-        /* Área de Conteúdo Principal Rolável */
-        .chat-scrollable-content {
-            flex-grow: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            background-color: var(--bg-body);
-            transition: background-color 0.5s ease;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start; 
-            align-items: stretch;
-            text-align: left;
-            /* NOVO: Ajuste do padding inferior para a área de input fixa e prompts fixos */
-            padding-bottom: calc(var(--input-area-height) + var(--profile-selection-height) + 20px); 
-        }
-        .chat-scrollable-content.initial-state {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        .chat-scrollable-content.has-content .main-central-message {
-            display: none;
-        }
-
-        .main-central-message {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--color-primary-dark);
-            margin-bottom: 30px;
-            transition: color 0.5s ease;
-            padding: 0 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            align-self: center;
-            width: 100%;
-            max-width: 600px;
-            box-sizing: border-box;
-        }
-        
-        /* Seção de Prompts - Agora Fixa no Rodapé */
+        /* Seção de Prompts - De volta ao topo */
         .profile-selection {
             padding: 15px 20px;
             background-color: var(--profile-bg);
-            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color); /* Borda na parte inferior */
             text-align: center;
             font-size: 0.95em;
             color: var(--text-color);
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); /* Sombra para baixo */
+            flex-shrink: 0; /* Não permite que encolha */
             width: 100%;
             box-sizing: border-box;
-            
-            position: fixed;
-            bottom: calc(var(--footer-height) + var(--input-area-height));
-            left: 50%;
-            transform: translateX(-50%);
-            max-width: 800px;
-            z-index: 998;
-            border-radius: 0;
-            height: var(--profile-selection-height);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            z-index: 998; /* Abaixo do header, acima do chat */
         }
         .profile-selection p {
             margin-bottom: 10px;
@@ -378,6 +337,46 @@
             transform: translateY(-2px);
         }
 
+        /* Área de Conteúdo Principal Rolável */
+        .chat-scrollable-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background-color: var(--bg-body);
+            transition: background-color 0.5s ease;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: stretch;
+            text-align: left;
+            /* Padding inferior ajustado apenas para a área de input fixa */
+            padding-bottom: calc(var(--input-area-height) + 20px); 
+        }
+        .chat-scrollable-content.initial-state {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .chat-scrollable-content.has-content .main-central-message {
+            display: none;
+        }
+
+        .main-central-message {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--color-primary-dark);
+            margin-bottom: 30px;
+            transition: color 0.5s ease;
+            padding: 0 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            align-self: center;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        
         .chat-messages {
             background-color: var(--bg-container);
             transition: background-color 0.5s ease;
@@ -511,7 +510,7 @@
             display: flex;
             align-items: flex-end;
             position: fixed;
-            bottom: var(--footer-height); /* NOVO: Posicionado acima do footer */
+            bottom: var(--footer-height); /* Posicionado acima do footer */
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
@@ -813,7 +812,6 @@
             }
             .profile-selection {
                 padding: 10px 15px;
-                margin-bottom: 15px;
                 font-size: 0.9em;
             }
             .profile-buttons {
@@ -878,14 +876,6 @@
     </div>
 
     <div class="chat-container">
-        <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
-            <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
-            
-            <div class="chat-messages" id="chatMessages">
-                
-            </div>
-        </div>
-
         <div class="profile-selection">
             <p>Eu sou um(a):</p>
             <div class="profile-buttons" id="profileButtons">
@@ -894,6 +884,14 @@
                 <button data-profile="seminarista">Seminarista</button>
                 <button data-profile="crianca">Criança</button>
                 <button data-profile="sacerdote">Sacerdote</button>
+            </div>
+        </div>
+
+        <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
+            <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
+            
+            <div class="chat-messages" id="chatMessages">
+                
             </div>
         </div>
 
@@ -1239,7 +1237,7 @@
             const donateLink = document.getElementById('donateLink');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const copyPixBtn = document.getElementById('copyPixBtn');
-            const thanksBtn = document.getElementById('thanksBtn');
+            const thanksBtn = document.getElementById('thanks(');
 
             if (donateLink) donateLink.addEventListener('click', (e) => { e.preventDefault(); openDonateModal(); });
             if (closeModalBtn) closeModalBtn.addEventListener('click', closeDonateModal);
