@@ -143,7 +143,7 @@
             --bubble-user: var(--child-bubble-user);
             --bubble-bot: var(--child-bubble-bot);
             --profile-bg: var(--child-profile-bg);
-            --child-profile-btn-bg: var(--child-profile-btn-bg);
+            --profile-btn-bg: var(--child-profile-btn-bg);
             --profile-btn-color: var(--child-profile-btn-color);
             --input-bg: var(--child-input-bg);
             --input-border: var(--child-input-border);
@@ -276,11 +276,34 @@
             background-color: var(--bg-body);
             transition: background-color 0.5s ease;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: stretch; /* Garante que os elementos se estiquem horizontalmente */
+            text-align: left; /* Alinha o texto por padrão à esquerda */
         }
+        /* NOVO: Classe para o estado inicial/vazio, que centraliza o conteúdo */
+        .chat-scrollable-content.initial-state {
+            justify-content: center; /* Centraliza verticalmente o conteúdo */
+            align-items: center; /* Centraliza horizontalmente o conteúdo */
+            text-align: center; /* Centraliza o texto */
+        }
+        /* NOVO: Oculta a área de mensagens no estado inicial para mostrar apenas a mensagem central e prompts */
+        .chat-scrollable-content.initial-state .chat-messages {
+            display: none; 
+        }
+        /* Estilos para os elementos iniciais (mensagem central e prompts) */
+        .main-central-message,
+        .profile-selection {
+            align-self: center; /* Centraliza esses elementos no chat-scrollable-content */
+            width: 100%;
+            max-width: 600px; /* Limita a largura para que não fiquem gigantes em telas grandes */
+            box-sizing: border-box;
+        }
+
 
         /* Mensagem Central */
         .main-central-message {
-            text-align: center;
             font-family: 'Montserrat', sans-serif;
             font-size: 1.8em;
             font-weight: 700;
@@ -297,7 +320,6 @@
             background-color: var(--profile-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            text-align: center;
             font-size: 0.95em;
             color: var(--text-color);
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
@@ -308,6 +330,7 @@
             margin-bottom: 15px;
             font-weight: bold;
             font-size: 1.1em;
+            text-align: center;
         }
         .profile-buttons {
             display: flex;
@@ -356,15 +379,8 @@
             justify-content: flex-start;
             min-height: 0; 
             flex-basis: auto;
-        }
-        .chat-messages.empty-state {
-            justify-content: center; /* Centraliza verticalmente o conteúdo */
-            align-items: center; /* Centraliza horizontalmente o conteúdo */
-            text-align: center;
-            min-height: 200px; /* Altura mínima para centralização visual */
-        }
-        .chat-messages.empty-state .message {
-            max-width: 80%; /* Para que as bolhas não estiquem demais ao centralizar */
+            width: 100%; /* Garante que ocupe a largura completa do chat-scrollable-content */
+            box-sizing: border-box; /* Inclui padding na largura total */
         }
 
 
@@ -372,6 +388,7 @@
             margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
+            text-align: left; /* Mensagens em si são alinhadas à esquerda/direita */
         }
         .message.user {
             justify-content: flex-end;
@@ -535,13 +552,13 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
-        /* NOVO: Estilos para o Menu Lateral (Sidebar/Overlay) */
+        /* Estilos para o Menu Lateral (Sidebar/Overlay) */
         .sidebar-menu {
             position: fixed;
             top: 0;
-            left: -100%; /* Começa escondido à esquerda */
+            left: -100%;
             width: var(--menu-width);
-            max-width: 80%; /* Para telas menores */
+            max-width: 80%;
             height: 100vh;
             background-color: var(--bg-container);
             box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
@@ -549,12 +566,12 @@
             transition: left 0.3s ease-in-out;
             display: flex;
             flex-direction: column;
-            padding-top: calc(var(--header-height) + 20px); /* Espaço para o cabeçalho */
+            padding-top: calc(var(--header-height) + 20px);
             box-sizing: border-box;
             color: var(--text-color);
         }
         .sidebar-menu.open {
-            left: 0; /* Desliza para a posição visível */
+            left: 0;
         }
         .sidebar-menu-header {
             padding: 15px 20px;
@@ -565,7 +582,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: absolute; /* Fixa o cabeçalho do menu no topo */
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -606,11 +623,10 @@
         }
         .sidebar-menu ul li a i {
             margin-right: 10px;
-            width: 20px; /* Garante alinhamento dos ícones */
+            width: 20px;
             text-align: center;
         }
 
-        /* Overlay para escurecer o fundo quando o menu está aberto */
         .overlay {
             position: fixed;
             top: 0;
@@ -702,6 +718,9 @@
                 height: 35px;
                 font-size: 1em;
             }
+            .sidebar-menu {
+                width: 250px;
+            }
         }
     </style>
 </head>
@@ -709,6 +728,7 @@
     <div class="chat-header">
         <div class="header-left">
             <i class="fas fa-bars menu-icon" id="menuIcon"></i>
+            <img src="http://googleusercontent.com/image_generation_content/38" alt="CatólIA Logo">
             <span>CatólIA</span>
         </div>
         <div class="header-right">
@@ -717,7 +737,7 @@
     </div>
 
     <div class="chat-container">
-        <div class="chat-scrollable-content">
+        <div class="chat-scrollable-content initial-state">
             <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
             
             <div class="profile-selection">
@@ -770,7 +790,7 @@
             <li><a href="https://arquidiocesedegoiania.org.br/" target="_blank"><i class="fas fa-map-marker-alt"></i>Arquidiocese de Goiânia</a></li>
             <li><a href="https://www.diocesedejatai.org/" target="_blank"><i class="fas fa-compass"></i>Diocese de Jataí</a></li>
             <li><a href="https://www.instagram.com/paroquiasaosebastiaojatai/" target="_blank"><i class="fas fa-instagram"></i>Paróquia São Sebastião</a></li>
-            </ul>
+        </ul>
     </div>
 
     <div class="overlay" id="menuOverlay"></div>
@@ -872,7 +892,6 @@
         function toggleDarkMode() {
             const body = document.body;
             body.classList.toggle('dark-mode');
-            // Garante que o modo "criança" e "sacerdote" seja desativado ao mudar o tema manualmente
             body.classList.remove('child-mode', 'priest-mode'); 
             
             localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
@@ -893,23 +912,22 @@
             selectedProfile = profile;
             console.log('Perfil selecionado:', selectedProfile);
 
-            // Remove todos os modos de perfil antes de aplicar o novo
             document.body.classList.remove('child-mode', 'priest-mode', 'dark-mode'); 
 
             if (profile === 'crianca') {
                 document.body.classList.add('child-mode');
                 applyTheme(childThemeColors);
-            } else if (profile === 'sacerdote') { // NOVO: Tema Sacerdote
+            } else if (profile === 'sacerdote') {
                 document.body.classList.add('priest-mode');
                 applyTheme(priestThemeColors);
             }
             else {
-                // Se não for criança nem sacerdote, aplica o tema light/dark salvo ou padrão
                 const savedTheme = localStorage.getItem('theme');
                 if (savedTheme === 'dark') {
                     document.body.classList.add('dark-mode');
                     applyTheme(darkThemeColors);
                 } else {
+                    document.body.classList.remove('dark-mode');
                     applyTheme(defaultThemeColors);
                 }
             }
@@ -948,10 +966,11 @@
             const sendMessageButton = document.getElementById('sendMessageButton');
             const profileButtonsContainer = document.getElementById('profileButtons');
             const themeToggleButton = document.getElementById('themeToggleButton');
-            const chatMessages = document.getElementById('chatMessages'); // Referência à área de mensagens
+            const chatMessages = document.getElementById('chatMessages'); 
+            const chatScrollableContent = document.getElementById('chatScrollableContent'); // NOVO: Referência ao chat-scrollable-content
 
-            // NOVO: Adiciona a classe 'empty-state' na carga inicial
-            chatMessages.classList.add('empty-state');
+            // NOVO: Adiciona a classe 'initial-state' na carga inicial para centralizar o conteúdo
+            chatScrollableContent.classList.add('initial-state');
 
             // Carrega o tema salvo ao iniciar
             const savedTheme = localStorage.getItem('theme');
@@ -983,7 +1002,7 @@
 
             autoResizeTextarea();
 
-            // NOVO: Lógica para abrir/fechar o menu lateral
+            // Lógica para abrir/fechar o menu lateral
             const menuIcon = document.getElementById('menuIcon');
             const sidebarMenu = document.getElementById('sidebarMenu');
             const closeMenuBtn = document.getElementById('closeMenuBtn');
@@ -1004,7 +1023,6 @@
                 menuOverlay.classList.remove('open');
             });
 
-            // Fechar menu ao clicar em um link (opcional, se os links levam a outras páginas)
             sidebarMenu.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     sidebarMenu.classList.remove('open');
@@ -1018,17 +1036,20 @@
         async function sendMessage() {
             const userMessageInput = document.getElementById('userMessageInput');
             const chatMessages = document.getElementById('chatMessages');
+            const chatScrollableContent = document.getElementById('chatScrollableContent'); // Referência ao scrollable content
 
             const userMessage = userMessageInput.value.trim();
 
             if (!userMessage) return;
 
-            // NOVO: Remove a classe 'empty-state' após a primeira mensagem
-            if (chatMessages.classList.contains('empty-state')) {
-                chatMessages.classList.remove('empty-state');
-                chatMessages.innerHTML = ''; // Limpa a área se ela tinha uma mensagem inicial de placeholder
+            // NOVO: Remove a classe 'initial-state' do chat-scrollable-content na primeira mensagem
+            // E adiciona a mensagem inicial da IA AQUI
+            if (chatScrollableContent.classList.contains('initial-state')) {
+                chatScrollableContent.classList.remove('initial-state');
+                const initialBotMessage = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
+                appendMessage(initialBotMessage, 'bot');
             }
-            
+
             appendMessage(userMessage, 'user');
             userMessageInput.value = '';
             autoResizeTextarea();
@@ -1072,7 +1093,6 @@
             contentDiv.classList.add('message-content');
             contentDiv.innerHTML = marked.parse(message);
 
-            messageDiv.appendChild(contentDiv);
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
