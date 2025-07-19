@@ -2,54 +2,122 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>CatolIA - Seu Guia de Fé</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
-            /* Cores Padrão */
-            --primary-color: #4CAF50; /* Verde */
-            --primary-dark: #388E3C;
-            --background-light: #f0f2f5;
-            --background-dark: #e9ebee;
-            --text-color: #333;
-            --border-color: #ddd;
-            --container-bg: #fff;
-            --user-bubble: #DCF8C6; /* Verde claro */
-            --bot-bubble: #f1f1f1; /* Cinza claro */
-            --profile-bg: #f9f9f9;
-            --profile-btn-bg: #e0e0e0;
-            --profile-btn-color: #555;
-            --header-link-color: #f0f0f0;
-            --footer-bg: #f0f0f0;
-            --footer-text-color: #777;
+            /* Cores Gerais */
+            --color-primary: #4CAF50; /* Verde principal */
+            --color-primary-dark: #388E3C;
+            --color-accent: #FF5722; /* Laranja (para botões/destaques) */
 
-            /* Cores para o Tema 'Criança' */
-            --child-primary-color: #64B5F6; /* Azul claro */
-            --child-primary-dark: #2196F3;
-            --child-background-light: #E3F2FD; /* Azul muito claro */
-            --child-background-dark: #BBDEFB; /* Azul um pouco mais escuro */
-            --child-text-color: #424242;
-            --child-border-color: #90CAF9;
-            --child-container-bg: #FFFFFF;
-            --child-user-bubble: #FFCDD2; /* Rosa claro */
-            --child-bot-bubble: #E1F5FE; /* Azul bebê */
-            --child-profile-bg: #BBDEFB;
-            --child-profile-btn-bg: #90CAF9;
-            --child-profile-btn-color: #FFFFFF;
-            --child-header-link-color: #FFFFFF;
-            --child-footer-bg: #BBDEFB;
-            --child-footer-text-color: #424242;
+            /* Cores do Tema CLARO (Light Mode) */
+            --light-bg-body: #eceff1; /* Fundo do corpo */
+            --light-bg-container: #ffffff; /* Fundo do container principal */
+            --light-text-color: #212121; /* Cor do texto */
+            --light-border-color: #e0e0e0;
+            --light-header-bg: var(--color-primary);
+            --light-header-text: #ffffff;
+            --light-header-link: #ffffff;
+            --light-bubble-user: #DCF8C6; /* Balão do usuário (verde claro) */
+            --light-bubble-bot: #f1f1f1; /* Balão do bot (cinza claro) */
+            --light-profile-bg: #e0f2f7; /* Fundo da seleção de perfil (azul muito claro) */
+            --light-profile-btn-bg: #bbdefb;
+            --light-profile-btn-color: #424242;
+            --light-input-bg: #f5f5f5;
+            --light-input-border: #bdbdbd;
+            --light-footer-bg: #e0e0e0;
+            --light-footer-text: #616161;
 
-            --input-area-height: 85px; /* Altura aproximada da área de input + padding */
-            --footer-height: 40px; /* Altura aproximada do novo rodapé */
+            /* Cores do Tema ESCURO (Dark Mode) */
+            --dark-bg-body: #263238; /* Fundo do corpo */
+            --dark-bg-container: #37474F; /* Fundo do container principal */
+            --dark-text-color: #eceff1; /* Cor do texto */
+            --dark-border-color: #455a64;
+            --dark-header-bg: var(--color-primary-dark);
+            --dark-header-text: #ffffff;
+            --dark-header-link: #cfd8dc;
+            --dark-bubble-user: #4CAF50; /* Balão do usuário (verde mais escuro) */
+            --dark-bubble-bot: #546E7A; /* Balão do bot (cinza azulado) */
+            --dark-profile-bg: #37474F;
+            --dark-profile-btn-bg: #4CAF50;
+            --dark-profile-btn-color: #ffffff;
+            --dark-input-bg: #424242;
+            --dark-input-border: #607d8b;
+            --dark-footer-bg: #263238;
+            --dark-footer-text: #9e9e9e;
+
+            /* Variáveis para o Tema ATUAL (usadas no CSS) */
+            --bg-body: var(--light-bg-body);
+            --bg-container: var(--light-bg-container);
+            --text-color: var(--light-text-color);
+            --border-color: var(--light-border-color);
+            --header-bg: var(--light-header-bg);
+            --header-text: var(--light-header-text);
+            --header-link: var(--light-header-link);
+            --bubble-user: var(--light-bubble-user);
+            --bubble-bot: var(--light-bubble-bot);
+            --profile-bg: var(--light-profile-bg);
+            --profile-btn-bg: var(--light-profile-btn-bg);
+            --profile-btn-color: var(--light-profile-btn-color);
+            --input-bg: var(--light-input-bg);
+            --input-border: var(--light-input-border);
+            --footer-bg: var(--light-footer-bg);
+            --footer-text: var(--light-footer-text);
+
+            /* Alturas de elementos fixos */
+            --header-height: 60px;
+            --input-area-height: 85px;
+            --footer-height: 40px;
+            --toggle-button-size: 40px;
+        }
+
+        /* Estilos do Tema Escuro */
+        body.dark-mode {
+            --bg-body: var(--dark-bg-body);
+            --bg-container: var(--dark-bg-container);
+            --text-color: var(--dark-text-color);
+            --border-color: var(--dark-border-color);
+            --header-bg: var(--dark-header-bg);
+            --header-text: var(--dark-header-text);
+            --header-link: var(--dark-header-link);
+            --bubble-user: var(--dark-bubble-user);
+            --bubble-bot: var(--dark-bubble-bot);
+            --profile-bg: var(--dark-profile-bg);
+            --profile-btn-bg: var(--dark-profile-btn-bg);
+            --profile-btn-color: var(--dark-profile-btn-color);
+            --input-bg: var(--dark-input-bg);
+            --input-border: var(--dark-input-border);
+            --footer-bg: var(--dark-footer-bg);
+            --footer-text: var(--dark-footer-text);
+        }
+
+        /* Estilos para o Tema 'Criança' (sobrepõem o light/dark) */
+        body.child-mode {
+            --bg-body: #E3F2FD; /* Azul muito claro */
+            --bg-container: #FFFFFF;
+            --text-color: #424242;
+            --border-color: #90CAF9;
+            --header-bg: #64B5F6; /* Azul claro */
+            --header-text: #FFFFFF;
+            --header-link: #FFFFFF;
+            --bubble-user: #FFCDD2; /* Rosa claro */
+            --bubble-bot: #E1F5FE; /* Azul bebê */
+            --profile-bg: #BBDEFB;
+            --profile-btn-bg: #90CAF9;
+            --profile-btn-color: #FFFFFF;
+            --input-bg: #E1F5FE;
+            --input-border: #90CAF9;
+            --footer-bg: #BBDEFB;
+            --footer-text: #424242;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-light);
+            font-family: 'Montserrat', sans-serif; /* Fonte principal */
+            background-color: var(--bg-body);
             display: flex;
             justify-content: center;
             align-items: flex-start; /* Alinha no topo para dar espaço ao conteúdo */
@@ -57,44 +125,51 @@
             margin: 0;
             color: var(--text-color);
             overflow: hidden;
-            transition: background-color 0.5s ease;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         .chat-container {
-            background-color: var(--container-bg);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: var(--bg-container);
+            border-radius: 15px; /* Cantos mais arredondados */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1); /* Sombra mais 3D */
             width: 95%;
             max-width: 800px;
             height: 95vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: background-color 0.5s ease;
-            position: relative; /* Para posicionar elementos internos */
-            padding-top: 60px; /* Espaço para o header fixo */
+            transition: background-color 0.5s ease, box-shadow 0.5s ease;
+            position: relative;
+            z-index: 1; /* Para estar acima do botão de toggle */
         }
 
+        /* Ajuste para o contêiner principal se adequar ao cabeçalho fixo */
+        body > .chat-container {
+            margin-top: calc(var(--header-height) + 20px);
+            height: calc(95vh - var(--header-height) - 20px - var(--footer-height)); /* Ajusta a altura total considerando o footer */
+            align-self: center;
+        }
+
+        /* Cabeçalho Fixo Superior e Full-Width */
         .chat-header {
-            background-color: var(--primary-color);
+            background-color: var(--header-bg);
             padding: 10px 20px;
-            color: white;
+            color: var(--header-text);
             font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada */
             flex-shrink: 0;
-            transition: background-color 0.5s ease;
+            transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: fixed; /* Fixa o cabeçalho no topo */
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            max-width: 800px; /* Ajusta para a largura máxima do container */
-            z-index: 1001; /* Fica acima de tudo */
-            box-sizing: border-box; /* Inclui padding na largura total */
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
+            width: 100%; /* Largura total da viewport */
+            z-index: 1001;
+            box-sizing: border-box;
+            border-radius: 0;
+            height: var(--header-height);
         }
 
         .header-left {
@@ -102,236 +177,213 @@
             align-items: center;
             gap: 10px;
             font-size: 1.2em;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
         }
         .header-left img {
-            height: 30px; /* Tamanho da logo */
+            height: 35px; /* Tamanho ligeiramente maior para logo */
             width: auto;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra na logo */
         }
 
         .header-right a {
             background-color: rgba(255, 255, 255, 0.2);
-            color: var(--header-link-color);
-            padding: 5px 15px;
-            border-radius: 20px;
+            color: var(--header-link);
+            padding: 8px 18px; /* Padding maior */
+            border-radius: 25px; /* Mais arredondado */
             text-decoration: none;
-            font-size: 0.9em;
+            font-size: 0.95em;
+            font-weight: bold;
             transition: background-color 0.3s ease, color 0.5s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Sombra no botão */
+            text-transform: uppercase; /* Maiúsculas */
+            letter-spacing: 0.5px;
         }
         .header-right a:hover {
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px); /* Efeito sutil de levantar */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
 
-        .main-content-area {
+        /* Área de Conteúdo Principal Rolável */
+        .chat-scrollable-content {
             flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Centraliza verticalmente */
-            align-items: center; /* Centraliza horizontalmente */
-            padding: 20px;
-            text-align: center;
-            background-color: var(--background-light); /* Fundo da área principal */
+            overflow-y: auto; /* Apenas esta área vai rolar */
+            -webkit-overflow-scrolling: touch;
+            background-color: var(--bg-body); /* Fundo comum para a área de conteúdo */
             transition: background-color 0.5s ease;
-            height: 100%; /* Ocupa todo o espaço vertical disponível */
-            box-sizing: border-box;
-            overflow-y: auto; /* Permite scroll se o conteúdo for grande */
+            padding: 20px;
+            padding-bottom: calc(var(--input-area-height) + var(--footer-height) + 20px); /* Ajuste para input e footer */
         }
 
-        .main-title {
-            font-size: 2em;
-            font-weight: bold;
-            color: var(--primary-dark);
-            margin-bottom: 20px;
+        /* Mensagem Central */
+        .main-central-message {
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--color-primary-dark); /* Usa a cor primária escura */
+            margin-bottom: 30px;
             transition: color 0.5s ease;
+            padding: 0 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Sutil efeito 3D no texto */
         }
         
-        .chat-input-area {
-            display: flex;
-            padding: 15px;
-            background-color: var(--container-bg);
-            border: 1px solid var(--border-color); /* Borda ao redor da caixa de input */
-            border-radius: 25px; /* Cantos arredondados */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-            width: 80%; /* Largura da caixa de texto */
-            max-width: 500px; /* Largura máxima */
-            margin-bottom: 20px; /* Espaço abaixo da caixa */
-            transition: background-color 0.5s ease, border-color 0.5s ease;
-        }
-        .chat-input-area .textarea-wrapper {
-            flex-grow: 1;
-            position: relative;
-            margin-right: 10px;
-            background-color: transparent; /* Transparente para usar o fundo da .chat-input-area */
-            border: none;
-            padding: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .chat-input-area textarea {
-            flex-grow: 1;
-            border: none;
-            outline: none;
-            font-family: 'Roboto', sans-serif;
-            font-size: 1em;
-            resize: none;
-            min-height: 24px;
-            max-height: 100px; /* Altura máxima menor para não dominar a tela */
-            padding: 0;
-            background-color: transparent;
-            overflow-y: auto;
-            line-height: 1.5;
-            color: var(--text-color);
-        }
-
-        .chat-input-area button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            min-width: 45px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 1.2em;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        .chat-input-area button:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
+        /* Seção de Prompts */
         .profile-selection {
             padding: 15px 20px;
             background-color: var(--profile-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px; /* Cantos arredondados */
             text-align: center;
             font-size: 0.95em;
             color: var(--text-color);
-            flex-shrink: 0;
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            /* NOVO: Ajuste de margem para ficar abaixo da caixa de texto */
-            margin-top: 0; 
             margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra mais suave */
         }
-
         .profile-selection p {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-weight: bold;
+            font-size: 1.1em;
         }
-
         .profile-buttons {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
+            gap: 10px; /* Espaço maior entre botões */
         }
-
         .profile-buttons button {
             background-color: var(--profile-btn-bg);
             color: var(--profile-btn-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 15px;
-            border-radius: 20px;
+            border: none; /* Remove a borda */
+            padding: 10px 20px; /* Mais padding */
+            border-radius: 25px; /* Mais arredondado */
             cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.2s ease, background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+            font-size: 0.95em;
+            font-weight: 500; /* Peso da fonte */
+            transition: all 0.3s ease;
             white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+            text-transform: capitalize; /* Capitaliza a primeira letra */
         }
-
-        .profile-buttons button.selected {
-            background-color: var(--primary-color);
+        .profile-buttons button:hover {
+            background-color: var(--color-primary); /* Destaque no hover */
             color: white;
-            border-color: var(--primary-color);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px); /* Efeito 3D sutil */
+        }
+        .profile-buttons button.selected {
+            background-color: var(--color-primary);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255,255,255,0.5); /* Sombra e brilho internos */
+            transform: translateY(-1px);
         }
 
-        /* NOVO: Área para as mensagens, agora abaixo dos prompts */
+        /* Área de Mensagens */
         .chat-messages {
-            flex-grow: 1; /* Ocupa o espaço restante */
-            padding: 20px;
-            overflow-y: auto; /* Scroll para as mensagens */
-            background-color: var(--background-dark);
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 20px; /* Padding normal, sem barra fixa */
+            background-color: var(--bg-container); /* Mesma cor do container principal */
             transition: background-color 0.5s ease;
+            padding: 15px;
+            border-radius: 12px;
+            min-height: 150px; /* Altura mínima para começar a ver as mensagens */
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* Sombra interna para profundidade */
+            margin-top: 0; /* Removido margin-top para flexibilidade */
         }
-
 
         .message {
             margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
         }
-
         .message.user {
             justify-content: flex-end;
         }
-
         .message.bot {
             justify-content: flex-start;
         }
-
         .message-content {
             max-width: 75%;
             padding: 12px 18px;
-            border-radius: 18px;
+            border-radius: 22px; /* Mais arredondado */
             position: relative;
             word-wrap: break-word;
             line-height: 1.6;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.5s ease, color 0.5s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+            transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
         }
-
         .message.user .message-content {
-            background-color: var(--user-bubble);
+            background-color: var(--bubble-user);
             color: var(--text-color);
-            border-bottom-right-radius: 5px;
         }
-
         .message.bot .message-content {
-            background-color: var(--bot-bubble);
+            background-color: var(--bubble-bot);
             color: var(--text-color);
-            border-bottom-left-radius: 5px;
         }
 
         .typing-indicator {
-            background-color: var(--bot-bubble);
+            background-color: var(--bubble-bot);
             padding: 12px 18px;
-            border-radius: 18px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            border-radius: 22px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             width: fit-content;
             margin-bottom: 15px;
         }
-
         .typing-indicator span {
-            display: inline-block;
-            background-color: #888;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin: 0 2px;
+            background-color: var(--text-color); /* Cor dos pontos se adapta ao tema */
+            opacity: 0.6;
             animation: bounce 1.4s infinite ease-in-out;
         }
 
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
+        /* Área de Input Fixo no Rodapé */
+        .chat-input-area {
+            flex-shrink: 0;
+            padding: 15px 20px;
+            background-color: var(--bg-container);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-end;
+            position: fixed;
+            bottom: var(--footer-height); /* Acima do rodapé fixo */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%; /* Largura total */
+            max-width: 800px; /* Largura máxima do container */
+            box-sizing: border-box;
+            z-index: 999;
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+            border-radius: 0; /* Sem arredondamento para alinhar com o footer */
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1); /* Sombra para cima */
+        }
+        .chat-input-area .textarea-wrapper {
+            flex-grow: 1;
+            margin-right: 10px;
+            background-color: var(--input-bg); /* Fundo do textarea */
+            border: 1px solid var(--input-border); /* Borda do textarea */
+            border-radius: 25px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra interna para 3D */
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
+        .chat-input-area textarea {
+            color: var(--text-color);
+        }
+        .chat-input-area button {
+            background-color: var(--color-primary);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+        .chat-input-area button:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-5px); }
-        }
-
+        /* Rodapé Inferior Fixo */
         .chat-footer {
             flex-shrink: 0;
             padding: 10px 20px;
@@ -339,102 +391,143 @@
             border-top: 1px solid var(--border-color);
             text-align: center;
             font-size: 0.8em;
-            color: var(--footer-text-color);
-            position: relative; /* Agora é relativo, não fixo */
-            width: 100%;
+            color: var(--footer-text);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
             box-sizing: border-box;
-            z-index: 990; /* Pode ser menor se não é fixo */
-            padding-bottom: 10px; /* Ajuste para espaçamento */
+            z-index: 1000;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 10px;
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+            height: var(--footer-height);
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.15); /* Sombra para cima */
         }
 
         .chat-footer a {
-            color: var(--footer-text-color);
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.5s ease;
+            color: var(--footer-text);
+            font-weight: 500;
         }
-        .chat-footer a:hover {
-            text-decoration: underline;
-        }
-        .chat-footer .icon-text {
+        
+        /* NOVO: Botão de Alternar Tema (Modo Claro/Escuro) */
+        .theme-toggle-button {
+            position: fixed;
+            bottom: calc(var(--total-fixed-bottom-height) + 20px); /* Acima do input e footer */
+            right: 20px;
+            width: var(--toggle-button-size);
+            height: var(--toggle-button-size);
+            background-color: var(--bg-container);
+            color: var(--text-color);
+            border-radius: 50%;
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
+            z-index: 1002; /* Acima de tudo, exceto o header */
+            transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
         }
-        .chat-footer .icon-text img {
-            height: 16px;
-            width: auto;
-            vertical-align: middle;
+        .theme-toggle-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
+        /* Media Queries para responsividade */
         @media (max-width: 768px) {
+            body {
+                align-items: stretch; /* Ocupa toda a altura */
+            }
             .chat-container {
                 width: 100%;
                 height: 100vh;
                 border-radius: 0;
                 box-shadow: none;
             }
-            .chat-header {
-                max-width: 100%; /* Fixa o cabeçalho em 100% da largura em mobile */
+            body > .chat-container {
+                margin-top: var(--header-height);
+                height: calc(100vh - var(--header-height) - var(--footer-height));
                 border-radius: 0;
             }
-            .main-title {
-                font-size: 1.5em;
+            .chat-header {
+                padding: 8px 15px;
+                font-size: 1.1em;
             }
-            .chat-input-area {
-                width: 90%; /* Ajusta largura em mobile */
+            .header-left img {
+                height: 25px;
             }
-            .chat-input-area textarea {
-                font-size: 0.95em;
+            .main-central-message {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+                padding: 0 5px;
             }
             .profile-selection {
                 padding: 10px 15px;
+                margin-bottom: 15px;
+                font-size: 0.9em;
             }
             .profile-buttons {
                 gap: 5px;
             }
             .profile-buttons button {
                 padding: 6px 12px;
-                font-size: 0.85em;
+                font-size: 0.8em;
+            }
+            .chat-input-area {
+                padding: 10px 15px;
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .chat-input-area textarea {
+                font-size: 0.9em;
+            }
+            .chat-input-area button {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                font-size: 1em;
+            }
+            .chat-messages {
+                padding: 15px;
+                /* Removido padding-bottom aqui, pois o chat-scrollable-content já gerencia */
             }
             .chat-footer {
                 padding: 8px 15px;
-                font-size: 0.75em;
+                font-size: 0.7em;
+                width: 100%;
             }
             .chat-footer .icon-text img {
-                height: 14px;
+                height: 12px;
+            }
+            .theme-toggle-button {
+                bottom: calc(var(--total-fixed-bottom-height) + 10px); /* Ajuste para mobile */
+                right: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
             }
         }
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <div class="header-left">
-                <img src="https://lh3.googleusercontent.com/pw/AP1GczOS7y4wR1eX8_g-m312-dF3f4n-e2S-5R_z_L9s4iQ9j8n9wJ8oB9Y-0r-7f-4n3k6p5q5h4j3f7l8t3y6i0j5k2l1m4n0o1q2r3s4t5u6v7w8x9y0z_0f/catolia_logo.png" alt="CatolIA Logo"> <span>CatolIA</span>
-            </div>
-            <div class="header-right">
-                <a href="#" id="donateLink">Doe</a>
-            </div>
+    <div class="chat-header">
+        <div class="header-left">
+            <img src="http://googleusercontent.com/image_generation_content/38" alt="CatolIA Logo">
+            <span>CatolIA</span>
         </div>
+        <div class="header-right">
+            <a href="#" id="donateLink">Doe</a>
+        </div>
+    </div>
 
-        <div class="main-content-area">
-            <div class="main-title">Primeira IA católica feita por católicos</div>
+    <div class="chat-container">
+        <div class="chat-scrollable-content">
+            <div class="main-central-message">Primeira IA católica feita por católicos</div>
             
-            <div class="chat-input-area">
-                <div class="textarea-wrapper">
-                    <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
-                </div>
-                <button id="sendMessageButton">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-
             <div class="profile-selection">
                 <p>Eu sou um(a):</p>
                 <div class="profile-buttons" id="profileButtons">
@@ -447,10 +540,16 @@
             </div>
 
             <div class="chat-messages" id="chatMessages">
-                <div class="message bot">
-                    <div class="message-content">Olá! Eu sou sua IA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.</div>
                 </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="textarea-wrapper">
+                <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
             </div>
+            <button id="sendMessageButton">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
 
         <div class="chat-footer">
@@ -462,50 +561,99 @@
         </div>
     </div>
 
+    <div class="theme-toggle-button" id="themeToggleButton">
+        <i class="fas fa-moon"></i> </div>
+
     <script>
         let selectedProfile = 'leigo';
         let typingIndicatorElement = null;
 
+        // Cores para os temas
         const defaultThemeColors = {
-            '--primary-color': '#4CAF50',
-            '--primary-dark': '#388E3C',
-            '--background-light': '#f0f2f5',
-            '--background-dark': '#e9ebee',
-            '--text-color': '#333',
-            '--border-color': '#ddd',
-            '--container-bg': '#fff',
-            '--user-bubble': '#DCF8C6',
-            '--bot-bubble': '#f1f1f1',
-            '--profile-bg': '#f9f9f9',
-            '--profile-btn-bg': '#e0e0e0',
-            '--profile-btn-color': '#555',
-            '--header-link-color': '#f0f0f0',
-            '--footer-bg': '#f0f0f0',
-            '--footer-text-color': '#777'
+            '--bg-body': '#eceff1',
+            '--bg-container': '#ffffff',
+            '--text-color': '#212121',
+            '--border-color': '#e0e0e0',
+            '--header-bg': '#4CAF50',
+            '--header-text': '#ffffff',
+            '--header-link': '#ffffff',
+            '--bubble-user': '#DCF8C6',
+            '--bubble-bot': '#f1f1f1',
+            '--profile-bg': '#e0f2f7',
+            '--profile-btn-bg': '#bbdefb',
+            '--profile-btn-color': '#424242',
+            '--input-bg': '#f5f5f5',
+            '--input-border': '#bdbdbd',
+            '--footer-bg': '#e0e0e0',
+            '--footer-text': '#616161'
+        };
+
+        const darkThemeColors = {
+            '--bg-body': '#263238',
+            '--bg-container': '#37474F',
+            '--text-color': '#eceff1',
+            '--border-color': '#455a64',
+            '--header-bg': '#388E3C',
+            '--header-text': '#ffffff',
+            '--header-link': '#cfd8dc',
+            '--bubble-user': '#4CAF50',
+            '--bubble-bot': '#546E7A',
+            '--profile-bg': '#37474F',
+            '--profile-btn-bg': '#4CAF50',
+            '--profile-btn-color': '#ffffff',
+            '--input-bg': '#424242',
+            '--input-border': '#607d8b',
+            '--footer-bg': '#263238',
+            '--footer-text': '#9e9e9e'
         };
 
         const childThemeColors = {
-            '--primary-color': '#64B5F6', /* Azul claro */
-            '--primary-dark': '#2196F3',
-            '--background-light': '#E3F2FD', /* Azul muito claro */
-            '--background-dark': '#BBDEFB', /* Azul um pouco mais escuro */
+            '--bg-body': '#E3F2FD',
+            '--bg-container': '#FFFFFF',
             '--text-color': '#424242',
             '--border-color': '#90CAF9',
-            '--container-bg': '#FFFFFF',
-            '--user-bubble': '#FFCDD2', /* Rosa claro */
-            '--bot-bubble': '#E1F5FE', /* Azul bebê */
+            '--header-bg': '#64B5F6',
+            '--header-text': '#FFFFFF',
+            '--header-link': '#FFFFFF',
+            '--bubble-user': '#FFCDD2',
+            '--bubble-bot': '#E1F5FE',
             '--profile-bg': '#BBDEFB',
             '--profile-btn-bg': '#90CAF9',
             '--profile-btn-color': '#FFFFFF',
-            '--header-link-color': '#FFFFFF',
+            '--input-bg': '#E1F5FE',
+            '--input-border': '#90CAF9',
             '--footer-bg': '#BBDEFB',
-            '--footer-text-color': '#424242'
+            '--footer-text': '#424242'
         };
 
         function applyTheme(themeColors) {
             const root = document.documentElement;
             for (const [property, value] of Object.entries(themeColors)) {
                 root.style.setProperty(property, value);
+            }
+            // Atualiza o ícone do toggle conforme o tema
+            const themeToggleButton = document.getElementById('themeToggleButton');
+            if (root.classList.contains('dark-mode')) {
+                themeToggleButton.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                themeToggleButton.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+
+        // NOVO: Função para alternar entre modo claro e escuro
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+
+            // Garante que o tema de perfil não sobreponha a escolha de light/dark
+            // A menos que seja o tema 'crianca' que tem prioridade
+            if (selectedProfile !== 'crianca') {
+                if (body.classList.contains('dark-mode')) {
+                    applyTheme(darkThemeColors);
+                } else {
+                    applyTheme(defaultThemeColors);
+                }
             }
         }
 
@@ -519,9 +667,20 @@
             console.log('Perfil selecionado:', selectedProfile);
 
             if (profile === 'crianca') {
+                document.body.classList.add('child-mode');
+                document.body.classList.remove('dark-mode'); // Remove dark-mode se for criança
                 applyTheme(childThemeColors);
             } else {
-                applyTheme(defaultThemeColors);
+                document.body.classList.remove('child-mode');
+                // Aplica o tema light/dark salvo ou padrão
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    applyTheme(darkThemeColors);
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    applyTheme(defaultThemeColors);
+                }
             }
         }
 
@@ -557,6 +716,16 @@
             const userMessageInput = document.getElementById('userMessageInput');
             const sendMessageButton = document.getElementById('sendMessageButton');
             const profileButtonsContainer = document.getElementById('profileButtons');
+            const themeToggleButton = document.getElementById('themeToggleButton');
+
+            // Carrega o tema salvo ao iniciar
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                applyTheme(darkThemeColors);
+            } else {
+                applyTheme(defaultThemeColors);
+            }
 
             userMessageInput.addEventListener('keypress', function (event) {
                 if (event.key === 'Enter' && !event.shiftKey) {
@@ -575,9 +744,11 @@
                 }
             });
 
+            themeToggleButton.addEventListener('click', toggleDarkMode); // Evento para o botão de toggle
+
             autoResizeTextarea();
-            applyTheme(defaultThemeColors);
         });
+
 
         async function sendMessage() {
             const userMessageInput = document.getElementById('userMessageInput');
@@ -586,6 +757,12 @@
             const userMessage = userMessageInput.value.trim();
 
             if (!userMessage) return;
+
+            // Adiciona a mensagem inicial da IA (se a área de chat estiver vazia)
+            if (chatMessages.children.length === 0) {
+                 const initialBotMessage = `Olá! Eu sou sua IA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
+                 appendMessage(initialBotMessage, 'bot');
+            }
 
             appendMessage(userMessage, 'user');
             userMessageInput.value = '';
