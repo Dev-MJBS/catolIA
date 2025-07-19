@@ -106,10 +106,10 @@
 
             /* Alturas de elementos fixos */
             --header-height: 60px;
-            --input-area-height: 85px;
-            --footer-height: 40px;
-            --profile-selection-height: 100px; /* Altura aproximada da seção de prompts */
-            --total-fixed-bottom-height: calc(var(--input-area-height) + var(--footer-height)); /* Apenas input e footer no bottom */
+            --input-area-height: 85px; /* Altura da caixa de input + padding */
+            --profile-selection-height: 100px; /* Altura da seção de prompts */
+            --footer-height: 40px; /* Altura do rodapé */
+            --total-fixed-bottom-height: calc(var(--input-area-height) + var(--profile-selection-height) + var(--footer-height));
 
             --toggle-button-size: 40px;
             --menu-width: 280px;
@@ -148,8 +148,8 @@
             --header-bg: var(--child-header-bg);
             --header-text: var(--child-header-text);
             --header-link: var(--child-header-link);
-            --child-bubble-user: var(--child-bubble-user);
-            --child-bubble-bot: var(--child-bubble-bot);
+            --bubble-user: var(--child-bubble-user);
+            --bubble-bot: var(--child-bubble-bot);
             --profile-bg: var(--child-profile-bg);
             --profile-btn-bg: var(--child-profile-btn-bg);
             --profile-btn-color: var(--child-profile-btn-color);
@@ -214,11 +214,11 @@
 
         /* Ajuste do chat-container para ocupar toda a tela, mas respeitando elementos fixos */
         body > .chat-container {
-            height: calc(100vh - var(--header-height) - var(--footer-height)); /* Ocupa a altura da viewport menos header e footer */
+            height: calc(100vh - var(--header-height) - var(--footer-height));
             max-height: calc(100vh - var(--header-height) - var(--footer-height));
-            margin-top: var(--header-height); /* Empurra para baixo do header */
-            align-self: center; /* Centraliza o container na página */
-            border-radius: 0; /* Remove bordas arredondadas se for full-height */
+            margin-top: var(--header-height);
+            align-self: center;
+            border-radius: 0;
         }
 
 
@@ -283,20 +283,73 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
 
-        /* Seção de Prompts - De volta ao topo */
+        /* Área de Conteúdo Principal Rolável */
+        .chat-scrollable-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background-color: var(--bg-body);
+            transition: background-color 0.5s ease;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: stretch;
+            text-align: left;
+            /* NOVO: Padding inferior ajustado para a área de input fixa */
+            padding-bottom: calc(var(--input-area-height) + 20px); 
+        }
+        .chat-scrollable-content.initial-state {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%; 
+        }
+        .chat-scrollable-content.has-content .main-central-message {
+            display: none;
+        }
+
+        .main-central-message {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--color-primary-dark);
+            margin-bottom: 30px;
+            transition: color 0.5s ease;
+            padding: 0 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            align-self: center;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        
+        /* Seção de Prompts - Agora Fixa no Rodapé */
         .profile-selection {
             padding: 15px 20px;
             background-color: var(--profile-bg);
-            border-bottom: 1px solid var(--border-color); /* Borda na parte inferior */
+            border-top: 1px solid var(--border-color);
             text-align: center;
             font-size: 0.95em;
             color: var(--text-color);
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); /* Sombra para baixo */
-            flex-shrink: 0; /* Não permite que encolha */
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
             width: 100%;
             box-sizing: border-box;
-            z-index: 998; /* Abaixo do header, acima do chat */
+            
+            position: fixed;
+            bottom: var(--footer-height); /* Posicionado acima do footer e input area */
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 800px;
+            z-index: 998;
+            border-radius: 0;
+            height: var(--profile-selection-height); /* Altura definida */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* NOVO: Borda inferior removida, pois a input area fica abaixo */
+            border-bottom: none; 
         }
         .profile-selection p {
             margin-bottom: 10px;
@@ -325,58 +378,18 @@
             text-transform: capitalize;
         }
         .profile-buttons button.selected {
-            background-color: var(--color-primary); /* Cor primária para o selecionado */
+            background-color: var(--color-primary);
             color: white;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255,255,255,0.5);
             transform: translateY(-1px);
         }
-        .profile-buttons button:hover { /* Garante hover funciona bem com selecionado */
+        .profile-buttons button:hover {
             background-color: var(--color-primary-dark);
             color: white;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             transform: translateY(-2px);
         }
 
-        /* Área de Conteúdo Principal Rolável */
-        .chat-scrollable-content {
-            flex-grow: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            background-color: var(--bg-body);
-            transition: background-color 0.5s ease;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start; 
-            align-items: stretch;
-            text-align: left;
-            /* Padding inferior ajustado apenas para a área de input fixa */
-            padding-bottom: calc(var(--input-area-height) + 20px); 
-        }
-        .chat-scrollable-content.initial-state {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        .chat-scrollable-content.has-content .main-central-message {
-            display: none;
-        }
-
-        .main-central-message {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--color-primary-dark);
-            margin-bottom: 30px;
-            transition: color 0.5s ease;
-            padding: 0 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            align-self: center;
-            width: 100%;
-            max-width: 600px;
-            box-sizing: border-box;
-        }
-        
         .chat-messages {
             background-color: var(--bg-container);
             transition: background-color 0.5s ease;
@@ -392,7 +405,9 @@
             flex-basis: auto;
             width: 100%;
             box-sizing: border-box;
-            padding-bottom: 10px; 
+            /* NOVO: Padding inferior ajustado para a área de input fixa e prompts fixos */
+            padding-bottom: calc(var(--input-area-height) + var(--profile-selection-height) + 20px); 
+            font-size: 0.9em; /* NOVO: Diminui o tamanho da fonte das mensagens */
         }
 
         .message {
@@ -471,7 +486,6 @@
             align-items: center;
             margin-bottom: 15px;
         }
-        /* Remover o spinner que girava (mantendo só as bolinhas) */
         .typing-indicator .spinner {
             display: none; 
         }
@@ -497,7 +511,7 @@
             40% { transform: translateY(-8px); }
         }
 
-        @keyframes spin {
+        @keyframes spin { 
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
@@ -587,7 +601,7 @@
             padding-bottom: calc(10px + env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
-            align-items: center; /* Centraliza verticalmente */
+            align-items: center;
             gap: 10px;
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
             height: var(--footer-height);
@@ -1237,7 +1251,7 @@
             const donateLink = document.getElementById('donateLink');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const copyPixBtn = document.getElementById('copyPixBtn');
-            const thanksBtn = document.getElementById('thanks(');
+            const thanksBtn = document.getElementById('thanksBtn');
 
             if (donateLink) donateLink.addEventListener('click', (e) => { e.preventDefault(); openDonateModal(); });
             if (closeModalBtn) closeModalBtn.addEventListener('click', closeDonateModal);
@@ -1297,7 +1311,7 @@
             }
         }
 
-        function appendMessage(message, sender) {
+        function appendMessage(message, sender, isInitial = false) {
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
@@ -1319,6 +1333,14 @@
             messageDiv.appendChild(contentDiv);
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            if (isInitial) {
+                messageDiv.style.justifyContent = 'center';
+                messageDiv.style.textAlign = 'center';
+                // A mensagem inicial precisa de um padding extra no bot para não se sobrepor
+                // à barra de input quando o chat-scrollable-content não tem has-content.
+                // Isso é feito em CSS no .chat-messages para quando está no initial-state.
+            }
         }
     </script>
 </body>
