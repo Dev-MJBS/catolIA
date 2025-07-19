@@ -9,12 +9,10 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
-            /* Cores Gerais */
             --color-primary: #4CAF50;
             --color-primary-dark: #388E3C;
             --color-accent: #FF5722;
 
-            /* Cores do Tema CLARO (Light Mode) */
             --light-bg-body: #eceff1;
             --light-bg-container: #ffffff;
             --light-text-color: #212121;
@@ -32,7 +30,6 @@
             --light-footer-bg: #e0e0e0;
             --light-footer-text: #616161;
 
-            /* Cores do Tema ESCURO (Dark Mode) */
             --dark-bg-body: #263238;
             --dark-bg-container: #37474F;
             --dark-text-color: #eceff1;
@@ -50,7 +47,6 @@
             --dark-footer-bg: #263238;
             --dark-footer-text: #9e9e9e;
 
-            /* Cores do Tema 'Criança' */
             --child-bg-body: #E3F2FD;
             --child-bg-container: #FFFFFF;
             --child-text-color: #424242;
@@ -67,8 +63,7 @@
             --child-input-border: #90CAF9;
             --child-footer-bg: #BBDEFB;
             --child-footer-text: #424242;
-
-            /* Cores do Tema 'Sacerdote' (Preto) */
+            
             --priest-bg-body: #1a1a1a;
             --priest-bg-container: #2c2c2c;
             --priest-text-color: #e0e0e0;
@@ -86,8 +81,6 @@
             --priest-footer-bg: #000000;
             --priest-footer-text: #aaaaaa;
 
-
-            /* Variáveis para o Tema ATUAL (usadas no CSS) */
             --bg-body: var(--light-bg-body);
             --bg-container: var(--light-bg-container);
             --text-color: var(--light-text-color);
@@ -105,7 +98,6 @@
             --footer-bg: var(--light-footer-bg);
             --footer-text: var(--light-footer-text);
 
-            /* Alturas de elementos fixos */
             --header-height: 60px;
             --input-area-height: 85px;
             --footer-height: 40px;
@@ -201,9 +193,9 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
             width: 95%;
             max-width: 800px;
-            /* NOVO: Altura para ocupar o espaço disponível e se alinhar corretamente */
+            /* NOVO: Ajuste de altura e padding para ocupar o espaço de forma consistente */
             height: calc(100vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height) - 20px); 
-            min-height: 400px; /* Garante um tamanho mínimo */
+            min-height: 400px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -217,7 +209,6 @@
             height: auto;
             max-height: calc(95vh - var(--header-height) - 20px); 
         }
-
 
         .chat-header {
             background-color: var(--header-bg);
@@ -248,7 +239,6 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
         }
-        /* Esconde a logo da CatolIA */
         .header-left img {
             display: none; 
         }
@@ -281,7 +271,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
 
-        /* Área de Conteúdo Principal Rolável */
         .chat-scrollable-content {
             flex-grow: 1;
             overflow-y: auto;
@@ -295,21 +284,17 @@
             align-items: stretch;
             text-align: left;
         }
-        /* Classe para o estado inicial/vazio, que centraliza o conteúdo */
         .chat-scrollable-content.initial-state {
             justify-content: center;
             align-items: center;
             text-align: center;
             height: 100%; 
         }
-        /* Oculta os elementos iniciais (frase e prompts) quando o chat tem conteúdo */
         .chat-scrollable-content.has-content .main-central-message,
         .chat-scrollable-content.has-content .profile-selection {
             display: none;
         }
 
-
-        /* Mensagem Central */
         .main-central-message {
             font-family: 'Montserrat', sans-serif;
             font-size: 1.8em;
@@ -321,7 +306,6 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         
-        /* Seção de Prompts */
         .profile-selection {
             padding: 15px 20px;
             background-color: var(--profile-bg);
@@ -374,7 +358,6 @@
             transform: translateY(-1px);
         }
 
-        /* Área de Mensagens (Zona de Diálogo) */
         .chat-messages {
             background-color: var(--bg-container);
             transition: background-color 0.5s ease;
@@ -392,7 +375,6 @@
             box-sizing: border-box;
             padding-bottom: 10px; 
         }
-
 
         .message {
             margin-bottom: 15px;
@@ -434,7 +416,6 @@
             color: white;
             position: relative;
         }
-        /* Ícone da IA */
         .message.bot .message-avatar img,
         .message.bot .message-avatar i {
             width: 80%;
@@ -499,7 +480,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Área de Input Fixo no Rodapé */
         .chat-input-area {
             flex-shrink: 0;
             padding: 15px 20px;
@@ -614,7 +594,6 @@
             background-color: rgba(0,0,0,0.1);
         }
 
-        /* Estilos para o Menu Lateral (Sidebar/Overlay) */
         .sidebar-menu {
             position: fixed;
             top: 0;
@@ -706,7 +685,6 @@
             visibility: visible;
         }
 
-        /* Estilos do Modal de Doação */
         .modal {
             position: fixed;
             top: 0;
@@ -778,11 +756,9 @@
             background-color: var(--color-primary-dark);
         }
 
-        /* Seção de Artigos do Medium (Removida por enquanto) */
         .articles-section {
-            display: none; /* Mantém oculto */
+            display: none; 
         }
-
 
         @media (max-width: 768px) {
             .chat-container {
@@ -894,7 +870,8 @@
             </div>
 
             <div class="chat-messages" id="chatMessages">
-                </div>
+                
+            </div>
         </div>
 
         <div class="chat-input-area">
@@ -948,7 +925,6 @@
     </div>
 
     <div class="overlay" id="menuOverlay"></div>
-
 
     <script>
         let selectedProfile = 'leigo';
@@ -1177,14 +1153,11 @@
             const chatMessages = document.getElementById('chatMessages'); 
             const chatScrollableContent = document.getElementById('chatScrollableContent');
 
-            // Adiciona a mensagem inicial da IA diretamente na área de mensagens.
             const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
-            // NÃO usar appendMessage aqui, pois ela adiciona avatares.
-            // Vamos adicionar a mensagem de boas-vindas manualmente para que ela não tenha avatar.
             const welcomeMessageDiv = document.createElement('div');
             welcomeMessageDiv.classList.add('message', 'bot');
-            welcomeMessageDiv.style.justifyContent = 'center'; /* Centraliza a mensagem */
-            welcomeMessageDiv.style.textAlign = 'center'; /* Centraliza o texto */
+            welcomeMessageDiv.style.justifyContent = 'center';
+            welcomeMessageDiv.style.textAlign = 'center';
             welcomeMessageDiv.innerHTML = `<div class="message-content">${marked.parse(initialBotMessageContent)}</div>`;
             chatMessages.appendChild(welcomeMessageDiv);
 
@@ -1268,13 +1241,12 @@
 
             if (!userMessage) return;
 
-            // NOVO: Remove as classes de estado inicial após a primeira mensagem do usuário
-            // A mensagem inicial da IA já foi adicionada na DOMContentLoaded
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
-                chatScrollableContent.classList.add('has-content'); // Ativa o modo de conteúdo
-                // Não limpamos chatMessages.innerHTML aqui, pois já temos a mensagem inicial
-                // e queremos que ela permaneça.
+                chatScrollableContent.classList.add('has-content'); 
+                chatMessages.style.justifyContent = 'flex-start';
+                chatMessages.style.alignItems = 'stretch';
+                chatMessages.style.textAlign = 'left';
             }
 
             appendMessage(userMessage, 'user');
@@ -1321,7 +1293,7 @@
             if (sender === 'user') {
                 avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
             } else {
-                avatarDiv.innerHTML = '<i class="fi fi-ss-home"></i>';
+                avatarDiv.innerHTML = '<i class="fas fa-church"></i>';
             }
             messageDiv.appendChild(avatarDiv);
 
