@@ -9,12 +9,10 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
-            /* Cores Gerais */
             --color-primary: #4CAF50;
             --color-primary-dark: #388E3C;
             --color-accent: #FF5722;
 
-            /* Cores do Tema CLARO (Light Mode) */
             --light-bg-body: #eceff1;
             --light-bg-container: #ffffff;
             --light-text-color: #212121;
@@ -32,7 +30,6 @@
             --light-footer-bg: #e0e0e0;
             --light-footer-text: #616161;
 
-            /* Cores do Tema ESCURO (Dark Mode) */
             --dark-bg-body: #263238;
             --dark-bg-container: #37474F;
             --dark-text-color: #eceff1;
@@ -50,7 +47,6 @@
             --dark-footer-bg: #263238;
             --dark-footer-text: #9e9e9e;
 
-            /* Cores do Tema 'Criança' */
             --child-bg-body: #E3F2FD;
             --child-bg-container: #FFFFFF;
             --child-text-color: #424242;
@@ -68,7 +64,6 @@
             --child-footer-bg: #BBDEFB;
             --child-footer-text: #424242;
             
-            /* Cores do Tema 'Sacerdote' (Preto) */
             --priest-bg-body: #1a1a1a;
             --priest-bg-container: #2c2c2c;
             --priest-text-color: #e0e0e0;
@@ -76,8 +71,8 @@
             --priest-header-bg: #000000;
             --priest-header-text: #ffffff;
             --priest-header-link: #cccccc;
-            --priest-bubble-user: #606060; /* NOVO: Balão do usuário para sacerdote (cinza escuro) */
-            --priest-bubble-bot: #333333; /* NOVO: Balão do bot para sacerdote (cinza mais escuro) */
+            --priest-bubble-user: #606060;
+            --priest-bubble-bot: #333333;
             --priest-profile-bg: #222222;
             --priest-profile-btn-bg: #424242;
             --priest-profile-btn-color: #ffffff;
@@ -86,7 +81,6 @@
             --priest-footer-bg: #000000;
             --priest-footer-text: #aaaaaa;
 
-            /* Variáveis para o Tema ATUAL (usadas no CSS) */
             --bg-body: var(--light-bg-body);
             --bg-container: var(--light-bg-container);
             --text-color: var(--light-text-color);
@@ -104,10 +98,12 @@
             --footer-bg: var(--light-footer-bg);
             --footer-text: var(--light-footer-text);
 
-            /* Alturas de elementos fixos */
             --header-height: 60px;
             --input-area-height: 85px;
             --footer-height: 40px;
+            --profile-selection-height: 100px;
+            --total-fixed-bottom-height: calc(var(--input-area-height) + var(--footer-height) + var(--profile-selection-height));
+
             --toggle-button-size: 40px;
             --menu-width: 280px;
             --modal-overlay-bg: rgba(0, 0, 0, 0.7);
@@ -210,12 +206,12 @@
         }
 
         body > .chat-container {
-            margin-top: calc(var(--header-height) + 20px);
-            height: calc(100vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height) - 20px);
-            max-height: calc(100vh - var(--header-height) - 20px); /* Ajustado para caber na viewport */
+            height: calc(100vh - var(--header-height) - var(--footer-height));
+            max-height: calc(100vh - var(--header-height) - var(--footer-height));
+            margin-top: var(--header-height);
             align-self: center;
+            border-radius: 0;
         }
-
 
         .chat-header {
             background-color: var(--header-bg);
@@ -291,17 +287,15 @@
             justify-content: flex-start; 
             align-items: stretch;
             text-align: left;
-            /* Altura para o chat-scrollable-content */
-            height: calc(100% - var(--input-area-height) - var(--footer-height)); 
+            /* NOVO: Ajuste do padding inferior para a área de input fixa e prompts fixos */
+            padding-bottom: calc(var(--input-area-height) + var(--profile-selection-height) + 20px); 
         }
         .chat-scrollable-content.initial-state {
             justify-content: center;
             align-items: center;
             text-align: center;
-            height: 100%; 
         }
-        .chat-scrollable-content.has-content .main-central-message,
-        .chat-scrollable-content.has-content .profile-selection {
+        .chat-scrollable-content.has-content .main-central-message {
             display: none;
         }
 
@@ -314,35 +308,74 @@
             transition: color 0.5s ease;
             padding: 0 10px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            align-self: center;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
         }
         
-        /* Seção de Prompts - Sempre visível no topo da área rolável */
+        /* Seção de Prompts - Agora Fixa no Rodapé */
         .profile-selection {
             padding: 15px 20px;
             background-color: var(--profile-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
             font-size: 0.95em;
             color: var(--text-color);
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
             width: 100%;
             box-sizing: border-box;
-            /* NOVO: Garante que os prompts não sumam e sejam menores no topo */
-            flex-shrink: 0; /* Impede que ele encolha */
-            padding-top: 10px; /* Reduz padding superior */
-            padding-bottom: 10px; /* Reduz padding inferior */
-            margin-top: 10px; /* Menos margem do elemento acima */
-            font-size: 0.85em; /* Fonte um pouco menor */
+            
+            position: fixed;
+            bottom: calc(var(--footer-height) + var(--input-area-height));
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 800px;
+            z-index: 998;
+            border-radius: 0;
+            height: var(--profile-selection-height);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .profile-selection p {
-            margin-bottom: 10px; /* Margem menor para o texto "Eu sou um(a):" */
-            font-size: 1em; /* Fonte ajustada */
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1em;
+            text-align: center;
+        }
+        .profile-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
         .profile-buttons button {
-            padding: 6px 12px; /* Botões menores */
-            font-size: 0.85em; /* Fonte menor nos botões */
+            background-color: var(--profile-btn-bg);
+            color: var(--profile-btn-color);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-transform: capitalize;
+        }
+        .profile-buttons button.selected {
+            background-color: var(--color-primary); /* Cor primária para o selecionado */
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255,255,255,0.5);
+            transform: translateY(-1px);
+        }
+        .profile-buttons button:hover { /* Garante hover funciona bem com selecionado */
+            background-color: var(--color-primary-dark);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
         }
 
         .chat-messages {
@@ -360,8 +393,7 @@
             flex-basis: auto;
             width: 100%;
             box-sizing: border-box;
-            /* NOVO: Ajuste do padding inferior para balões não serem cortados */
-            padding-bottom: 85px; /* Altura da input area + um pouco mais de respiro */ 
+            padding-bottom: 10px; 
         }
 
         .message {
@@ -427,7 +459,7 @@
         }
         .message.bot .message-content {
             background-color: var(--bubble-bot);
-            color: var(--text-color); /* Garante a cor do texto do bot */
+            color: var(--text-color);
         }
 
         .typing-indicator {
@@ -440,12 +472,13 @@
             align-items: center;
             margin-bottom: 15px;
         }
+        /* Remover o spinner que girava (mantendo só as bolinhas) */
         .typing-indicator .spinner {
-            display: none; /* Remove o spinner que girava */
+            display: none; 
         }
         .typing-indicator span {
             display: inline-block;
-            background-color: var(--text-color); /* Cor das bolinhas */
+            background-color: var(--text-color);
             width: 8px;
             height: 8px;
             border-radius: 50%;
@@ -462,10 +495,10 @@
 
         @keyframes bounce {
             0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-8px); } /* Bolinhas pulam um pouco mais alto */
+            40% { transform: translateY(-8px); }
         }
 
-        @keyframes spin { /* Mantido caso queira reativar um spinner em outro lugar */
+        @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
@@ -478,7 +511,7 @@
             display: flex;
             align-items: flex-end;
             position: fixed;
-            bottom: var(--footer-height);
+            bottom: var(--footer-height); /* NOVO: Posicionado acima do footer */
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
@@ -555,7 +588,7 @@
             padding-bottom: calc(10px + env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
-            align-items: center; /* NOVO: Centraliza itens verticalmente */
+            align-items: center; /* Centraliza verticalmente */
             gap: 10px;
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
             height: var(--footer-height);
@@ -848,19 +881,19 @@
         <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
             <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
             
-            <div class="profile-selection">
-                <p>Eu sou um(a):</p>
-                <div class="profile-buttons" id="profileButtons">
-                    <button data-profile="leigo" class="selected">Leigo</button>
-                    <button data-profile="catequista">Catequista</button>
-                    <button data-profile="seminarista">Seminarista</button>
-                    <button data-profile="crianca">Criança</button>
-                    <button data-profile="sacerdote">Sacerdote</button>
-                </div>
-            </div>
-
             <div class="chat-messages" id="chatMessages">
                 
+            </div>
+        </div>
+
+        <div class="profile-selection">
+            <p>Eu sou um(a):</p>
+            <div class="profile-buttons" id="profileButtons">
+                <button data-profile="leigo" class="selected">Leigo</button>
+                <button data-profile="catequista">Catequista</button>
+                <button data-profile="seminarista">Seminarista</button>
+                <button data-profile="crianca">Criança</button>
+                <button data-profile="sacerdote">Sacerdote</button>
             </div>
         </div>
 
@@ -1143,7 +1176,9 @@
             const chatScrollableContent = document.getElementById('chatScrollableContent');
 
             const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
-            appendMessage(initialBotMessageContent, 'bot', true); // TRUE para mensagem inicial
+            appendMessage(initialBotMessageContent, 'bot', true); 
+
+            chatScrollableContent.classList.add('initial-state');
 
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
@@ -1222,17 +1257,12 @@
 
             if (!userMessage) return;
 
-            // Transiciona do estado inicial para o estado de chat
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
                 chatScrollableContent.classList.add('has-content'); 
-                // Ajusta os estilos do chat-messages para o modo de conversa
                 chatMessages.style.justifyContent = 'flex-start';
                 chatMessages.style.alignItems = 'stretch';
                 chatMessages.style.textAlign = 'left';
-                // Garante que a mensagem inicial da IA já adicionada se alinhe ao topo
-                // chatMessages.firstElementChild.style.justifyContent = 'flex-start'; // Não é necessário mais
-                // chatMessages.firstElementChild.style.textAlign = 'left'; // Não é necessário mais
             }
 
             appendMessage(userMessage, 'user');
@@ -1269,7 +1299,7 @@
             }
         }
 
-        function appendMessage(message, sender, isInitial = false) {
+        function appendMessage(message, sender) {
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
@@ -1291,12 +1321,6 @@
             messageDiv.appendChild(contentDiv);
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // NOVO: Se for a mensagem inicial, centraliza o próprio elemento
-            if (isInitial) {
-                messageDiv.style.justifyContent = 'center';
-                messageDiv.style.textAlign = 'center';
-            }
         }
     </script>
 </body>
