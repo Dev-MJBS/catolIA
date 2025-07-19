@@ -111,7 +111,7 @@
             --footer-height: 40px;
             --toggle-button-size: 40px;
             --menu-width: 280px; /* Largura do menu lateral */
-            --modal-overlay-bg: rgba(0, 0, 0, 0.7); /* Fundo do modal */
+            --modal-overlay-bg: rgba(0, 0, 0, 0.7);
             --modal-bg: var(--bg-container);
             --modal-text: var(--text-color);
         }
@@ -169,7 +169,7 @@
             --header-text: var(--priest-header-text);
             --header-link: var(--priest-header-link);
             --bubble-user: var(--priest-bubble-user);
-            --bubble-bot: var(--priest-bubble-bot);
+            --priest-bubble-bot: var(--priest-bubble-bot);
             --profile-bg: var(--priest-profile-bg);
             --profile-btn-bg: var(--priest-profile-btn-bg);
             --profile-btn-color: var(--priest-profile-btn-color);
@@ -201,20 +201,25 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
             width: 95%;
             max-width: 800px;
-            height: 95vh;
+            /* Altura para ocupar o espaço disponível, permitindo a rolagem da página */
+            height: calc(100vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height) - 20px); 
+            min-height: 400px; /* Garante um tamanho mínimo */
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* O contêiner principal não rola, o conteúdo interno rola */
             transition: background-color 0.5s ease, box-shadow 0.5s ease;
             position: relative;
             z-index: 1;
+            margin-top: calc(var(--header-height) + 20px); /* Ajuste para cabeçalho fixo */
+            align-self: center; /* Centraliza o chat-container na página */
+            /* REMOVIDO: margin-bottom, pois os artigos serão fora do chat-container */
+        }
+        /* Remove o ajuste de altura direto no body para o chat-container, pois agora ele tem altura própria */
+        body > .chat-container {
+            height: auto;
+            max-height: calc(95vh - var(--header-height) - 20px); 
         }
 
-        body > .chat-container {
-            margin-top: calc(var(--header-height) + 20px);
-            height: calc(95vh - var(--header-height) - 20px - var(--input-area-height) - var(--footer-height)); 
-            align-self: center;
-        }
 
         .chat-header {
             background-color: var(--header-bg);
@@ -245,7 +250,7 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
         }
-        /* NOVO: Esconde a logo da CatolIA */
+        /* Esconde a logo da CatolIA */
         .header-left img {
             display: none; 
         }
@@ -294,9 +299,10 @@
         }
         /* Classe para o estado inicial/vazio, que centraliza o conteúdo */
         .chat-scrollable-content.initial-state {
-            justify-content: center; /* Centraliza verticalmente o conteúdo */
-            align-items: center; /* Centraliza horizontalmente o conteúdo */
-            text-align: center; /* Centraliza o texto */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%; 
         }
         /* Oculta os elementos iniciais (frase e prompts) quando o chat tem conteúdo */
         .chat-scrollable-content.has-content .main-central-message,
@@ -386,6 +392,8 @@
             flex-basis: auto;
             width: 100%; /* Ocupa toda a largura disponível */
             box-sizing: border-box;
+            /* Adiciona um pequeno padding inferior para a última mensagem não ficar grudada no input */
+            padding-bottom: 10px; 
         }
 
 
@@ -414,7 +422,7 @@
             font-size: 1.2em;
             margin-top: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            flex-shrink: 0; /* Impede que o avatar encolha */
+            flex-shrink: 0;
         }
         .message.user .message-avatar {
             order: 2;
@@ -429,7 +437,9 @@
             color: white;
             position: relative;
         }
-        .message.bot .message-avatar img {
+        /* Ícone da bandeira do Vaticano ou novo ícone da IA */
+        .message.bot .message-avatar img,
+        .message.bot .message-avatar i { /* NOVO: Para suportar ícone Flaticons */
             width: 80%;
             height: 80%;
             object-fit: contain;
@@ -504,7 +514,7 @@
             bottom: var(--footer-height);
             left: 50%;
             transform: translateX(-50%);
-            width: 100%; /* Ocupa toda a largura do contêiner pai */
+            width: 100%;
             max-width: 800px;
             box-sizing: border-box;
             z-index: 999;
@@ -699,7 +709,7 @@
             visibility: visible;
         }
 
-        /* NOVO: Estilos do Modal de Doação */
+        /* Estilos do Modal de Doação */
         .modal {
             position: fixed;
             top: 0;
@@ -753,7 +763,7 @@
         .modal-content p {
             font-size: 1.1em;
             margin-bottom: 15px;
-            word-break: break-all; /* Quebra a palavra do pix se for muito longa */
+            word-break: break-all;
         }
         .modal-content .copy-pix-button {
             background-color: var(--color-primary);
@@ -771,83 +781,10 @@
             background-color: var(--color-primary-dark);
         }
 
-        /* NOVO: Seção de Artigos do Medium */
-        .articles-section {
-            background-color: var(--bg-body);
-            padding: 30px 20px;
-            text-align: center;
-            color: var(--text-color);
-            margin-top: 40px; /* Espaço entre o chat e os artigos */
-            border-top: 1px solid var(--border-color);
-            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
-        }
-        .articles-section h2 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--color-primary-dark);
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        .articles-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            justify-content: center;
-        }
-        .article-card {
-            background-color: var(--bg-container);
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            text-align: left;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.5s ease;
-            text-decoration: none; /* Garante que o card não tenha sublinhado */
-            color: var(--text-color); /* Cor do texto no card */
-            display: flex;
-            flex-direction: column;
-        }
-        .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-        .article-card img {
-            width: 100%;
-            height: 180px; /* Altura fixa para imagem */
-            object-fit: cover;
-        }
-        .article-card-content {
-            padding: 20px;
-            flex-grow: 1; /* Faz o conteúdo ocupar o espaço restante */
-            display: flex;
-            flex-direction: column;
-        }
-        .article-card-content h3 {
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: var(--text-color);
-        }
-        .article-card-content p {
-            font-size: 0.9em;
-            line-height: 1.5;
-            color: var(--footer-text); /* Cor mais suave para o resumo */
-            margin-bottom: 15px;
-            flex-grow: 1; /* Ocupa o espaço restante antes do link */
-        }
-        .article-card-content .read-more {
-            font-size: 0.9em;
-            color: var(--color-primary);
-            font-weight: bold;
-            text-decoration: none;
-            align-self: flex-start; /* Alinha o botão "Leia mais" */
-            transition: color 0.3s ease;
-        }
-        .article-card-content .read-more:hover {
-            text-decoration: underline;
-            color: var(--color-primary-dark);
-        }
+        /* Seção de Artigos do Medium (Removida por enquanto) */
+        /* .articles-section {
+            display: none;
+        } */
 
 
         @media (max-width: 768px) {
@@ -930,11 +867,9 @@
                 max-width: 90%;
                 padding: 20px;
             }
+            /* Remove a seção de artigos em mobile também para evitar problemas */
             .articles-section {
-                padding: 20px 15px;
-            }
-            .articles-section h2 {
-                font-size: 1.6em;
+                display: none; 
             }
         }
     </style>
@@ -1003,36 +938,6 @@
         </div>
     </div>
 
-    <section class="articles-section">
-        <h2>Meus Artigos no Medium</h2>
-        <div class="articles-grid">
-            <a href="https://medium.com/@mjobbrito/autoria-intencionalidade-e-a-ilus%C3%A3o-da-arte-na-era-da-intelig%C3%AAncia-artificial-5bfe1b716e04" target="_blank" class="article-card">
-                <img src="https://miro.medium.com/v2/resize:fit:780/1*T-Fp7M_Q0Pq9j4y_z1G-wQ.jpeg" alt="Imagem do Artigo 1">
-                <div class="article-card-content">
-                    <h3>Autoria, Intencionalidade e a Ilusão da Arte na Era da IA</h3>
-                    <p>Uma reflexão sobre o impacto da Inteligência Artificial na criação artística e na percepção de autoria.</p>
-                    <span class="read-more">Leia mais &rarr;</span>
-                </div>
-            </a>
-            <a href="https://medium.com/@mjobbrito/desvendando-a-magia-dos-algoritmos-um-guia-acess%C3%ADvel-para-todos-b30a0034bf3f" target="_blank" class="article-card">
-                <img src="https://miro.medium.com/v2/resize:fit:780/1*lX7g-r_b0a8x5a3z9oTf3g.png" alt="Imagem do Artigo 2">
-                <div class="article-card-content">
-                    <h3>Desvendando a Magia dos Algoritmos: Um Guia Acessível</h3>
-                    <p>Um guia simplificado para entender o que são algoritmos e como eles funcionam no nosso dia a dia.</p>
-                    <span class="read-more">Leia mais &rarr;</span>
-                </div>
-            </a>
-            <a href="https://medium.com/@mjobbrito/a-sede-de-aprender-um-aluno-em-busca-de-uma-educa%C3%A7%C3%A3o-transformadora-48a2916f59aa" target="_blank" class="article-card">
-                <img src="https://miro.medium.com/v2/resize:fit:780/1*d-e1Z1Z1Z1Z1Z1Z1Z1Z1ZA.jpeg" alt="Imagem do Artigo 3">
-                <div class="article-card-content">
-                    <h3>A Sede de Aprender: Em Busca de Educação Transformadora</h3>
-                    <p>Uma jornada pessoal sobre a busca por conhecimento e o poder de uma educação que realmente transforma.</p>
-                    <span class="read-more">Leia mais &rarr;</span>
-                </div>
-            </a>
-        </div>
-    </section>
-
     <div class="sidebar-menu" id="sidebarMenu">
         <div class="sidebar-menu-header">
             <span>Menu CatólIA</span>
@@ -1090,7 +995,7 @@
             '--bubble-bot': '#546E7A',
             '--profile-bg': '#37474F',
             '--profile-btn-bg': '#4CAF50',
-            '--profile-btn-color': '#ffffff',
+            --profile-btn-color: '#ffffff',
             '--input-bg': '#424242',
             '--input-border': '#607d8b',
             '--footer-bg': '#263238',
@@ -1133,8 +1038,8 @@
             '--bubble-user': '#424242',
             '--bubble-bot': '#333333',
             '--profile-bg': '#222222',
-            '--profile-btn-bg': '#424242',
-            '--profile-btn-color': '#ffffff',
+            --profile-btn-bg: '#424242',
+            --profile-btn-color: '#ffffff',
             '--input-bg': '#222222',
             '--input-border': '#555555',
             '--footer-bg': '#000000',
@@ -1155,7 +1060,6 @@
             } else {
                 themeToggleButton.innerHTML = '<i class="fas fa-moon"></i>';
             }
-            // NOVO: Atualiza cores do modal
             const modalContent = document.querySelector('.modal-content');
             if (modalContent) {
                 modalContent.style.backgroundColor = themeColors['--modal-bg'];
@@ -1227,8 +1131,7 @@
             typingIndicatorElement.classList.add('message', 'bot', 'typing-indicator');
             typingIndicatorElement.innerHTML = `
                 <div class="message-avatar">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Flag_of_Vatican_City_%28bordered%29.svg/800px-Flag_of_Vatican_City_%28bordered%29.svg.png" alt="Vaticano">
-                    <div class="spinner"></div>
+                    <i class="fi fi-ss-home"></i> <div class="spinner"></div>
                 </div>
                 <div class="message-content">
                     <span></span><span></span><span></span>
@@ -1245,13 +1148,11 @@
             }
         }
 
-        // NOVO: Funções para o Modal de Doação
         function openDonateModal() {
             const donateModal = document.getElementById('donateModal');
-            const menuOverlay = document.getElementById('menuOverlay'); // Reusa o overlay principal
+            const menuOverlay = document.getElementById('menuOverlay');
             donateModal.classList.add('open');
             menuOverlay.classList.add('open');
-            // Fechar menu lateral se estiver aberto
             const sidebarMenu = document.getElementById('sidebarMenu');
             sidebarMenu.classList.remove('open');
         }
@@ -1281,6 +1182,11 @@
             const themeToggleButton = document.getElementById('themeToggleButton');
             const chatMessages = document.getElementById('chatMessages'); 
             const chatScrollableContent = document.getElementById('chatScrollableContent');
+
+            // NOVO: Adiciona a mensagem inicial da IA diretamente na área de mensagens.
+            // A classe 'initial-state' no chat-scrollable-content cuida da centralização.
+            const initialBotMessage = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
+            appendMessage(initialBotMessage, 'bot'); // Adiciona a mensagem inicial
 
             chatScrollableContent.classList.add('initial-state');
 
@@ -1340,7 +1246,6 @@
                 });
             });
 
-            // NOVO: Eventos para o Modal de Doação
             const donateLink = document.getElementById('donateLink');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const copyPixBtn = document.getElementById('copyPixBtn');
@@ -1349,7 +1254,7 @@
             if (donateLink) donateLink.addEventListener('click', (e) => { e.preventDefault(); openDonateModal(); });
             if (closeModalBtn) closeModalBtn.addEventListener('click', closeDonateModal);
             if (copyPixBtn) copyPixBtn.addEventListener('click', copyPixKey);
-            if (thanksBtn) thanksBtn.addEventListener('click', closeDonateModal); // Fechar ao clicar em Obrigado
+            if (thanksBtn) thanksBtn.addEventListener('click', closeDonateModal);
         });
 
 
@@ -1362,14 +1267,12 @@
 
             if (!userMessage) return;
 
-            // Remove a classe 'initial-state' na primeira mensagem do usuário
-            // E adiciona a mensagem inicial da IA
+            // NOVO: Remove a classe 'initial-state' na primeira mensagem do usuário,
+            // permitindo que o conteúdo do chat suba.
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
-                chatScrollableContent.classList.add('has-content'); // Adiciona a classe has-content
-                chatMessages.innerHTML = ''; // Limpa a área de mensagens, se houver conteúdo anterior
-                const initialBotMessage = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
-                appendMessage(initialBotMessage, 'bot');
+                chatScrollableContent.classList.add('has-content'); // Ativa o modo de conteúdo
+                // NÃO limpamos chatMessages.innerHTML aqui, pois a mensagem inicial já foi adicionada.
             }
 
             appendMessage(userMessage, 'user');
@@ -1411,13 +1314,13 @@
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
 
-            // Adiciona o avatar
             const avatarDiv = document.createElement('div');
             avatarDiv.classList.add('message-avatar');
             if (sender === 'user') {
                 avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
             } else {
-                avatarDiv.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Flag_of_Vatican_City_%28bordered%29.svg/800px-Flag_of_Vatican_City_%28bordered%29.svg.png" alt="Vaticano">';
+                // NOVO: Ícone da IA para o bot
+                avatarDiv.innerHTML = '<i class="fi fi-ss-home"></i>';
             }
             messageDiv.appendChild(avatarDiv);
 
