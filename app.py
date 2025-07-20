@@ -3,12 +3,13 @@ import google.generativeai as genai
 from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from datetime import datetime
-import locale
+# REMOVIDO: import locale
 
-try:
-    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-except locale.Error:
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+# REMOVIDO: Bloco try-except para locale.setlocale
+# try:
+#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+# except locale.Error:
+#     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 load_dotenv()
 
@@ -24,6 +25,7 @@ model = genai.GenerativeModel('models/gemini-1.5-flash-latest')
 def get_liturgia_cnbb_redirecionamento():
     today = datetime.now()
     
+    # Formatação manual da data para português (agora mais crucial)
     meses_pt = {
         1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril", 
         5: "Maio", 6: "Junho", 7: "Julho", 8: "Agosto", 
@@ -55,7 +57,7 @@ def chat():
         data = request.get_json()
         user_message = data.get('message')
         user_profile = data.get('profile', 'leigo')
-        response_type = data.get('response_type', 'media') # NOVO: Pega o tipo de resposta
+        response_type = data.get('response_type', 'media')
 
         if not user_message:
             return jsonify({'error': 'Nenhuma mensagem fornecida'}), 400
@@ -63,7 +65,6 @@ def chat():
         system_instructions = ""
         bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (por exemplo, 'Mateus 1,1' e não 'Mateus 1:1')."
 
-        # NOVO: Define o tom da resposta com base no response_type
         length_instruction = ""
         if response_type == 'curta':
             length_instruction = "Forneça uma resposta concisa, com até 3 frases."
