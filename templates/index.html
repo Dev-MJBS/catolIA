@@ -34,7 +34,7 @@
 
         /* --- ESTILOS PARA O MODAL DE CATEQUESE --- */
         #catechesisModal .modal-content { max-width: 800px; text-align: left; }
-        #catechesisModal .modal-header { background-color: #4a148c; /* Roxo escuro */ color: white; margin: -30px -30px 20px -30px; padding: 20px; border-radius: 15px 15px 0 0; text-align: center; flex-shrink: 0; }
+        #catechesisModal .modal-header { background-color: #4a148c; /* Roxo escuro */ color: white; margin: -30px -30px 20px -30px; padding: 20px; border-radius: 15px 15px 0 0; text-align: center; }
         #catechesisModal .modal-header h3 { margin: 0; color: white; }
         #catechesisModal .form-group { margin-bottom: 15px; }
         #catechesisModal label { font-weight: bold; display: block; margin-bottom: 5px; }
@@ -44,7 +44,7 @@
         #catechesisModal .age-group input[type="radio"] { display: none; }
         #catechesisModal .age-group input[type="radio"]:checked + label { background-color: #4a148c; color: white; border-color: #4a148c; }
         #catechesisModal #generatePlanBtn { background-color: #4a148c; width: 100%; padding: 12px; font-size: 1.1em; }
-        #catechesisModal #catechesisPlanResult { width: 100%; min-height: 150px; margin-top: 20px; background-color: var(--input-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 4px; font-size: 1em; line-height: 1.6; white-space: normal; overflow-wrap: break-word; word-break: break-word; flex-grow: 1; overflow-y: auto; }
+        #catechesisModal #catechesisPlanResult { width: 100%; min-height: 200px; margin-top: 20px; background-color: var(--input-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 4px; font-size: 1em; line-height: 1.6; max-height: 40vh; overflow-y: auto; white-space: normal; overflow-wrap: break-word; word-break: break-word; }
         #catechesisPlanResult * { white-space: normal !important; }
         #catechesisPlanResult h1, #catechesisPlanResult h2, #catechesisPlanResult h3, #catechesisPlanResult h4, #catechesisPlanResult h5, #catechesisPlanResult h6 { margin-top: 1.2em; margin-bottom: 0.6em; line-height: 1.2; color: var(--color-primary-dark); }
         #catechesisPlanResult p { margin-bottom: 0.8em; }
@@ -52,8 +52,8 @@
         #catechesisPlanResult li { margin-bottom: 0.4em; }
         #catechesisPlanResult strong { font-weight: bold; }
         #catechesisPlanResult em { font-style: italic; }
-        #catechesisModal #copyPlanBtn { margin-top: 15px; background-color: var(--color-primary); flex-shrink: 0; }
-        
+        #catechesisModal #copyPlanBtn { margin-top: 15px; background-color: var(--color-primary); }
+
         :root {
             /* Cores Gerais */
             --color-primary: #4CAF50;
@@ -226,18 +226,19 @@
         .sidebar-menu ul li a i { margin-right: 10px; width: 20px; text-align: center; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1002; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
         .overlay.open { opacity: 1; visibility: visible; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay-bg); display: flex; justify-content: center; align-items: center; z-index: 1004; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; padding: 2vh 2vw; box-sizing: border-box; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay-bg); display: flex; justify-content: center; align-items: center; z-index: 1004; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; padding: 0; }
         .modal.open { opacity: 1; visibility: visible; }
-        .modal-content { background-color: var(--modal-bg); padding: 30px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); text-align: center; max-width: 400px; width: 90%; color: var(--modal-text); position: relative; margin: auto; display: flex; flex-direction: column; max-height: 90vh; }
-        .modal-close-button { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--modal-text); opacity: 0.7; }
-        #catechesisModal .modal-close-button { color: white; opacity: 0.8; }
-        #confessionModal .modal-close-button { color: var(--text-color); }
+        .modal-content { background-color: var(--modal-bg); padding: 0; border-radius: 0; box-shadow: none; text-align: left; max-width: 100%; width: 100%; color: var(--modal-text); position: relative; height: 100%; display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--header-bg); color: var(--header-text); flex-shrink: 0; }
+        #catechesisModal .modal-header { background-color: #4a148c; }
+        .modal-header h3 { margin: 0; font-size: 1.2em; }
+        .modal-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-container); }
+        .modal-close-button { position: static; background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--header-text); opacity: 0.8; }
         .modal-close-button:hover { opacity: 1; }
-        .modal-content h3 { margin-top: 0; color: var(--color-primary-dark); font-size: 1.5em; margin-bottom: 20px; }
-        .modal-content p { font-size: 1.1em; margin-bottom: 15px; word-break: break-all; }
-        .modal-content .copy-pix-button { background-color: var(--color-primary); color: white; padding: 10px 20px; border: none; border-radius: 25px; cursor: pointer; font-size: 1em; font-weight: bold; transition: background-color 0.3s ease; margin-top: 20px; }
+        .modal-content .copy-pix-button { background-color: var(--color-primary); color: white; padding: 10px 20px; border: none; border-radius: 25px; cursor: pointer; font-size: 1em; font-weight: bold; transition: background-color 0.3s ease; margin-top: 0; }
         .modal-content .copy-pix-button:hover { background-color: var(--color-primary-dark); }
-        @media (max-width: 768px) { .chat-container, header.chat-header, .chat-input-area, footer.chat-footer { max-width: 100%; border-radius: 0; } header.chat-header { padding: 8px 15px; font-size: 1.1em; } .menu-icon { font-size: 1.2em; margin-right: 10px; } .main-central-message { font-size: 1.3em; } .chat-input-area { padding: 10px 15px; } .options-toggle-button { width: 30px; height: 30px; font-size: 1.2em; left: 5px; bottom: 5px; } .chat-input-area textarea { font-size: 0.9em; } #sendMessageButton { width: 40px; height: 40px; min-width: 40px; font-size: 1em; } .options-menu { padding: 10px; gap: 10px; min-width: 200px; } .chat-messages { padding: 10px; } footer.chat-footer { padding: 8px 15px; font-size: 0.7em; } .sidebar-menu { width: 250px; } .modal-content { max-width: 90%; padding: 20px; } }
+        @media (max-width: 768px) { .chat-container, header.chat-header, .chat-input-area, footer.chat-footer { max-width: 100%; border-radius: 0; } header.chat-header { padding: 8px 15px; font-size: 1.1em; } .menu-icon { font-size: 1.2em; margin-right: 10px; } .main-central-message { font-size: 1.3em; } .chat-input-area { padding: 10px 15px; } .options-toggle-button { width: 30px; height: 30px; font-size: 1.2em; left: 5px; bottom: 5px; } .chat-input-area textarea { font-size: 0.9em; } #sendMessageButton { width: 40px; height: 40px; min-width: 40px; font-size: 1em; } .options-menu { padding: 10px; gap: 10px; min-width: 200px; } .chat-messages { padding: 10px; } footer.chat-footer { padding: 8px 15px; font-size: 0.7em; } .sidebar-menu { width: 250px; } }
     </style>
 </head>
 <body>
@@ -334,32 +335,35 @@
 
     <div class="modal" id="confessionModal">
         <div class="modal-content">
-            <button class="modal-close-button" id="closeConfessionModalBtn" aria-label="Fechar">&times;</button>
-            <h3>Preparação para a Santa Confissão</h3>
-            <div class="privacy-warning">
-                <strong>Privacidade:</strong> Nenhuma informação aqui é salva. Tudo é apagado ao fechar esta janela.
+            <div class="modal-header">
+                <h3>Preparação para a Santa Confissão</h3>
+                <button class="modal-close-button" id="closeConfessionModalBtn" aria-label="Fechar">&times;</button>
             </div>
-            <p>Reflita sobre cada ponto. Se sua consciência o acusar, clique para adicionar um tópico à sua lista.</p>
-            
-            <div id="examinationContent" style="max-height: 30vh; overflow-y: auto; padding-right: 10px;">
-                <!-- Conteúdo será gerado pelo JavaScript -->
+            <div class="modal-body">
+                <div class="privacy-warning">
+                    <strong>Privacidade:</strong> Nenhuma informação aqui é salva. Tudo é apagado ao fechar esta janela.
+                </div>
+                <p>Reflita sobre cada ponto. Se sua consciência o acusar, clique para adicionar um tópico à sua lista.</p>
+                
+                <div id="examinationContent">
+                    <!-- Conteúdo será gerado pelo JavaScript -->
+                </div>
+
+                <h4>Sua Lista para Confissão:</h4>
+                <textarea id="confessionList" rows="5" readonly></textarea>
+
+                <div class="privacy-consent">
+                    <input type="checkbox" id="consentCheck">
+                    <label for="consentCheck">Entendo que minha lista será enviada anonimamente à IA para receber um conselho.</label>
+                </div>
+                <button class="copy-pix-button" id="getAdviceBtn" disabled><i class="fas fa-comment-dots"></i> Pedir Conselho à IA</button>
+                
+                <div id="iaAdviceContainer"></div>
             </div>
-
-            <h4>Sua Lista para Confissão:</h4>
-            <textarea id="confessionList" rows="5" readonly></textarea>
-
-            <div class="modal-actions">
+            <div class="modal-footer">
                 <button class="copy-pix-button" id="copyListBtn"><i class="fas fa-copy"></i> Copiar Lista</button>
                 <button class="copy-pix-button" id="clearListBtn" style="background-color: var(--color-accent);"><i class="fas fa-trash"></i> Limpar Lista</button>
             </div>
-
-            <div class="privacy-consent">
-                <input type="checkbox" id="consentCheck">
-                <label for="consentCheck">Entendo que minha lista será enviada anonimamente à IA para receber um conselho.</label>
-            </div>
-            <button class="copy-pix-button" id="getAdviceBtn" disabled><i class="fas fa-comment-dots"></i> Pedir Conselho à IA</button>
-            
-            <div id="iaAdviceContainer"></div>
         </div>
     </div>
 
@@ -367,30 +371,33 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Preparar Encontro de Catequese</h3>
+                <button class="modal-close-button" id="closeCatechesisModalBtn" aria-label="Fechar">&times;</button>
             </div>
-            <button class="modal-close-button" id="closeCatechesisModalBtn" aria-label="Fechar">&times;</button>
-            
-            <div class="form-group">
-                <label for="catechesisTheme">Tema do Encontro:</label>
-                <input type="text" id="catechesisTheme" placeholder="Ex: A Criação, O Batismo...">
-            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="catechesisTheme">Tema do Encontro:</label>
+                    <input type="text" id="catechesisTheme" placeholder="Ex: A Criação, O Batismo...">
+                </div>
 
-            <div class="form-group">
-                <label>Faixa Etária:</label>
-                <div class="age-group" id="ageGroup">
-                    <input type="radio" id="age_f1" name="age_group" value="Fundamental I (6-10 anos)" checked><label for="age_f1">Fundamental I (6-10 anos)</label>
-                    <input type="radio" id="age_f2" name="age_group" value="Fundamental II (11-14 anos)"><label for="age_f2">Fundamental II (11-14 anos)</label>
-                    <input type="radio" id="age_crisma" name="age_group" value="Crisma/Jovens (+14 anos)"><label for="age_crisma">Crisma/Jovens (+14 anos)</label>
-                    <input type="radio" id="age_adultos" name="age_group" value="Adultos/Catecumenato"><label for="age_adultos">Adultos</label>
+                <div class="form-group">
+                    <label>Faixa Etária:</label>
+                    <div class="age-group" id="ageGroup">
+                        <input type="radio" id="age_f1" name="age_group" value="Fundamental I (6-10 anos)" checked><label for="age_f1">Fundamental I (6-10 anos)</label>
+                        <input type="radio" id="age_f2" name="age_group" value="Fundamental II (11-14 anos)"><label for="age_f2">Fundamental II (11-14 anos)</label>
+                        <input type="radio" id="age_crisma" name="age_group" value="Crisma/Jovens (+14 anos)"><label for="age_crisma">Crisma/Jovens (+14 anos)</label>
+                        <input type="radio" id="age_adultos" name="age_group" value="Adultos/Catecumenato"><label for="age_adultos">Adultos</label>
+                    </div>
+                </div>
+
+                <button class="copy-pix-button" id="generatePlanBtn"><i class="fas fa-wand-magic-sparkles"></i> Gerar Plano de Encontro</button>
+
+                <div id="catechesisPlanResult">
+                    <!-- O plano gerado pela IA aparecerá aqui -->
                 </div>
             </div>
-
-            <button class="copy-pix-button" id="generatePlanBtn"><i class="fas fa-wand-magic-sparkles"></i> Gerar Plano de Encontro</button>
-
-            <div id="catechesisPlanResult">
-                <!-- O plano gerado pela IA aparecerá aqui -->
+            <div class="modal-footer">
+                <button class="copy-pix-button" id="copyPlanBtn" style="display: none;"><i class="fas fa-copy"></i> Copiar Plano</button>
             </div>
-            <button class="copy-pix-button" id="copyPlanBtn" style="display: none;"><i class="fas fa-copy"></i> Copiar Plano</button>
         </div>
     </div>
 
@@ -522,7 +529,7 @@
             if (!body.classList.contains('child-mode') && !body.classList.contains('priest-mode')) {
                 const isDarkMode = !body.classList.contains('dark-mode');
                 localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-                applyTheme(isDarkMode ? 'dark' : 'light');
+                applyTheme(isDarkMode ? 'dark-mode' : '');
             }
         }
 
