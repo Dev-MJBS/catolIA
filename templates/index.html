@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         :root {
             /* Cores Gerais */
@@ -106,11 +107,10 @@
 
             /* Alturas de elementos fixos */
             --header-height: 60px;
-            --input-area-padding-vertical: 15px; /* Novo: Padding vertical da área de input */
-            --input-area-min-height: 55px; /* Altura mínima da área de input sem padding */
-            --input-button-size: 45px; /* Tamanho dos botões de enviar */
+            --input-area-padding-vertical: 15px; 
+            --input-area-min-height: 55px;
+            --input-button-size: 45px;
             --footer-height: 40px;
-            /* Recalcula input-area-total-height para nova estrutura */
             --input-area-total-height: calc(var(--input-area-min-height) + (var(--input-area-padding-vertical) * 2));
             --total-fixed-bottom-height: calc(var(--input-area-total-height) + var(--footer-height));
             
@@ -187,62 +187,62 @@
             --modal-text: var(--priest-text-color);
         }
 
+        /* Layout principal simplificado e corrigido */
+        html, body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--bg-body);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
             margin: 0;
             color: var(--text-color);
-            overflow-x: hidden;
+            overflow: hidden; /* Evita a rolagem do body */
             transition: background-color 0.5s ease, color 0.5s ease;
+            display: flex;
+            justify-content: center;
+        }
+
+        main.chat-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
         .chat-container {
             background-color: var(--bg-container);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.1);
-            width: 95%;
+            width: 100%;
             max-width: 800px;
-            height: 95vh;
+            height: 100%; 
+            margin: 0 auto; 
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: background-color 0.5s ease, box-shadow 0.5s ease;
+            transition: background-color 0.5s ease;
             position: relative;
             z-index: 1;
         }
 
-        /* Ajuste do chat-container para ocupar toda a tela, mas respeitando elementos fixos */
-        body > .chat-container {
-            height: calc(100vh - var(--header-height) - var(--footer-height));
-            max-height: calc(100vh - var(--header-height) - var(--footer-height));
-            margin-top: var(--header-height);
-            align-self: center;
-            border-radius: 0;
-        }
-
-
-        .chat-header {
+        header.chat-header {
             background-color: var(--header-bg);
             padding: 10px 20px;
             color: var(--header-text);
             font-weight: bold;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-            flex-shrink: 0;
             transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: fixed;
             top: 0;
-            left: 0;
+            left: 50%; 
+            transform: translateX(-50%);
             width: 100%;
+            max-width: 800px;
             z-index: 1001;
             box-sizing: border-box;
-            border-radius: 0;
             height: var(--header-height);
         }
 
@@ -254,9 +254,7 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
         }
-        .header-left img {
-            display: none; 
-        }
+        
         .menu-icon {
             font-size: 1.5em;
             cursor: pointer;
@@ -286,7 +284,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
 
-        /* Área de Conteúdo Principal Rolável */
+        /* Área de Conteúdo Principal Rolável com paddings corretos */
         .chat-scrollable-content {
             flex-grow: 1;
             overflow-y: auto;
@@ -299,14 +297,16 @@
             justify-content: flex-start; 
             align-items: stretch;
             text-align: left;
-            /* NOVO: Padding inferior ajustado para a área de input fixa */
-            padding-bottom: var(--input-area-total-height); 
+            /* Adiciona padding para o cabeçalho e para a área de input/footer */
+            padding-top: var(--header-height); 
+            padding-bottom: var(--total-fixed-bottom-height);
+            box-sizing: border-box;
         }
+
         .chat-scrollable-content.initial-state {
             justify-content: center;
             align-items: center;
             text-align: center;
-            height: 100%; 
         }
         .chat-scrollable-content.has-content .main-central-message {
             display: none;
@@ -327,17 +327,16 @@
             box-sizing: border-box;
         }
         
-        /* NOVO: Seção de Prompts (Perfis) no Topo da Área Rolável */
         .profile-selection-top {
             text-align: center;
-            padding: 10px 20px 20px 20px;
+            padding: 20px;
             font-size: 0.95em;
             color: var(--text-color);
             transition: background-color 0.5s ease, color 0.5s ease;
             flex-shrink: 0;
             background-color: var(--profile-bg);
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            margin: 0 -20px 20px -20px; /* Estica para preencher a largura */
         }
         .profile-selection-top p {
             margin-bottom: 10px;
@@ -351,12 +350,11 @@
             justify-content: center;
             gap: 8px;
         }
-        /* Estilo dos botões de perfil no topo (retangulares) */
         .profile-buttons-top .prompt-button {
             background-color: var(--profile-btn-bg);
             color: var(--profile-btn-color);
             border: none;
-            border-radius: 18px; /* Cantos arredondados */
+            border-radius: 18px; 
             padding: 6px 12px;
             font-size: 0.8em;
             cursor: pointer;
@@ -367,7 +365,7 @@
             align-items: center;
             gap: 5px;
         }
-        .profile-buttons-top .prompt-button.selected { /* Cor do selecionado */
+        .profile-buttons-top .prompt-button.selected { 
             background-color: var(--color-primary);
             color: white;
             font-weight: bold;
@@ -381,24 +379,16 @@
             font-size: 0.9em;
         }
 
-
         .chat-messages {
             background-color: var(--bg-container);
             transition: background-color 0.5s ease;
             padding: 15px;
             border-radius: 12px;
-            flex-grow: 1;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
-            margin-top: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            flex-shrink: 1; /* Permite que encolha */
             min-height: 0; 
-            flex-basis: auto;
             width: 100%;
             box-sizing: border-box;
-            padding-bottom: 10px; 
-            font-size: 0.9em; 
+            font-size: 1em; 
         }
 
         .message {
@@ -406,6 +396,7 @@
             display: flex;
             align-items: flex-start;
             text-align: left;
+            max-width: 100%;
         }
         .message.user {
             justify-content: flex-end;
@@ -439,13 +430,6 @@
             margin-right: 10px;
             background-color: var(--color-primary-dark);
             color: white;
-            position: relative;
-        }
-        .message.bot .message-avatar img,
-        .message.bot .message-avatar i {
-            width: 80%;
-            height: 80%;
-            object-fit: contain;
         }
 
         .message-content {
@@ -467,7 +451,7 @@
             color: var(--text-color);
         }
 
-        .typing-indicator {
+        .typing-indicator .message-content {
             background-color: transparent;
             padding: 0;
             border-radius: 0;
@@ -475,10 +459,7 @@
             width: auto;
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
-        }
-        .typing-indicator .spinner {
-            display: none; 
+            margin: 12px 18px;
         }
         .typing-indicator span {
             display: inline-block;
@@ -502,12 +483,6 @@
             40% { transform: translateY(-8px); }
         }
 
-        @keyframes spin { 
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* NOVO: Estilos para a área de input com prompts integrados */
         .chat-input-area {
             flex-shrink: 0;
             padding: var(--input-area-padding-vertical) 20px;
@@ -515,7 +490,7 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            align-items: stretch; /* Estica os filhos na largura */
+            align-items: stretch;
             position: fixed;
             bottom: var(--footer-height); 
             left: 50%;
@@ -525,7 +500,6 @@
             box-sizing: border-box;
             z-index: 999;
             transition: background-color 0.5s ease, border-color 0.5s ease;
-            border-radius: 0;
             box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
             height: var(--input-area-total-height); 
         }
@@ -534,10 +508,8 @@
             display: flex;
             align-items: flex-end;
             width: 100%;
-            padding-bottom: 0;
-            box-sizing: border-box;
             flex-grow: 1; 
-            position: relative; /* Para o options-menu se posicionar */
+            position: relative;
         }
 
         .textarea-wrapper { 
@@ -546,7 +518,7 @@
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
             border-radius: 25px;
-            padding: 8px 15px; /* Padding interno da caixa de texto */
+            padding: 8px 15px;
             display: flex;
             align-items: center;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -554,12 +526,11 @@
             position: relative; 
         }
 
-        /* Botão de Mais Opções (+) dentro da textarea */
         .options-toggle-button {
             background-color: transparent;
             color: var(--text-color);
             border: none;
-            border-radius: 4px; /* Retangular com cantos arredondados */
+            border-radius: 4px;
             width: 25px;
             height: 25px;
             display: flex;
@@ -567,14 +538,13 @@
             align-items: center;
             font-size: 1.2em;
             cursor: pointer;
-            box-shadow: none;
             transition: all 0.2s ease;
             flex-shrink: 0;
-            position: absolute; /* Posicionado absolutamente dentro do textarea-wrapper */
-            bottom: 8px; /* Alinha no canto inferior esquerdo */
+            position: absolute;
+            bottom: 8px;
             left: 8px;
-            font-weight: bold; /* Negrito */
-            z-index: 1; /* Fica acima do texto do textarea */
+            font-weight: bold;
+            z-index: 1;
         }
         .options-toggle-button:hover {
             background-color: rgba(0,0,0,0.05);
@@ -599,13 +569,13 @@
             overflow-y: auto;
             line-height: 1.5;
             color: var(--text-color);
-            padding-left: 40px; /* Espaço para o botão + */
+            padding-left: 40px;
         }
-        .chat-input-area button { /* Botão de Envio */
+        #sendMessageButton {
             background-color: var(--color-primary);
             color: white;
             border: none;
-            border-radius: 50%; /* Mantém o botão de envio redondo */
+            border-radius: 50%;
             width: 45px;
             height: 45px;
             min-width: 45px;
@@ -618,18 +588,17 @@
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
             flex-shrink: 0;
         }
-        .chat-input-area button:hover {
+        #sendMessageButton:hover {
             background-color: var(--color-primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
         }
 
-        /* Menu Flutuante de Opções (Prompts e Resposta) */
         .options-menu {
             display: none;
             position: absolute;
-            bottom: calc(100% + 10px); /* Posição acima da barra de input */
-            left: 0; /* Alinha com a esquerda da barra de input */
+            bottom: calc(100% + 10px);
+            left: 0;
             background-color: var(--bg-container);
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
@@ -643,7 +612,7 @@
             opacity: 0;
             visibility: hidden;
             min-width: 250px;
-            max-width: calc(100% - 40px); /* Ajuste para não sair da tela em mobile */
+            max-width: calc(100% - 40px);
             box-sizing: border-box;
         }
         .options-menu.open {
@@ -675,56 +644,32 @@
             justify-content: center;
             gap: 8px;
         }
-        /* NOVO: Garante que os botões dentro do menu flutuante sejam retangulares */
-        .options-menu-buttons .prompt-button {
-            background-color: var(--profile-btn-bg); /* Fundo padrão dos prompts */
-            color: var(--profile-btn-color); /* Cor do texto dos prompts */
-            border: none; /* Remove a borda padrão */
-            border-radius: 18px; /* Cantos arredondados (estilo pílula) */
+        
+        #responseTypeOptionsButtons .prompt-button {
+            background-color: var(--profile-btn-bg);
+            color: var(--profile-btn-color);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
             padding: 8px 15px;
             font-size: 0.85em;
             cursor: pointer;
             transition: all 0.3s ease;
             white-space: nowrap;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Sombra suave */
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: normal; /* Retorna ao peso normal, a menos que selecionado */
-        }
-        /* Estilos para o botão selecionado dentro do options-menu */
-        .options-menu-buttons .prompt-button.selected {
-            background-color: var(--color-primary);
-            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             font-weight: bold;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-        }
-        /* Estilos para o hover dentro do options-menu */
-        .options-menu-buttons .prompt-button:hover {
-            background-color: var(--color-primary-dark);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* Estilos ESPECÍFICOS para os botões de Tipo de Resposta (curta, média, longa) */
-        #responseTypeOptionsButtons .prompt-button {
-            border-radius: 4px; /* Mais quadrado */
-            border: 2px solid var(--border-color); /* Borda visível para o "quadrado" */
-            font-weight: bold; /* Texto em negrito */
         }
         #responseTypeOptionsButtons .prompt-button.selected {
-            border-color: var(--color-primary); /* Borda colorida quando selecionado */
+            border-color: var(--color-primary);
             background-color: var(--color-primary);
             color: white;
         }
         #responseTypeOptionsButtons .prompt-button:hover {
             border-color: var(--color-primary-dark);
             background-color: var(--color-primary-dark);
+            color: white;
         }
 
-
-        .chat-footer {
+        footer.chat-footer {
             flex-shrink: 0;
             padding: 10px 20px;
             background-color: var(--footer-bg);
@@ -734,8 +679,10 @@
             color: var(--footer-text);
             position: fixed;
             bottom: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
+            max-width: 800px;
             box-sizing: border-box;
             z-index: 1000;
             padding-bottom: calc(10px + env(safe-area-inset-bottom));
@@ -756,17 +703,18 @@
         .chat-footer .theme-toggle-button {
             position: static;
             margin-left: auto;
-            bottom: auto;
-            right: auto;
             width: 30px;
             height: 30px;
             font-size: 1em;
             box-shadow: none;
             border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .chat-footer .theme-toggle-button:hover {
-            transform: none;
-            box-shadow: none;
             background-color: rgba(0,0,0,0.1);
         }
 
@@ -783,7 +731,6 @@
             transition: left 0.3s ease-in-out;
             display: flex;
             flex-direction: column;
-            padding-top: calc(var(--header-height) + 20px);
             box-sizing: border-box;
             color: var(--text-color);
         }
@@ -799,12 +746,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             box-sizing: border-box;
             height: var(--header-height);
+            flex-shrink: 0;
         }
         .sidebar-menu-header .close-btn {
             font-size: 1.8em;
@@ -932,28 +877,18 @@
             background-color: var(--color-primary-dark);
         }
 
-        .articles-section {
-            display: none; 
-        }
-
         @media (max-width: 768px) {
-            .chat-container {
-                width: 100%;
-                height: 100vh;
-                border-radius: 0;
-                box-shadow: none;
-            }
-            body > .chat-container {
-                margin-top: var(--header-height);
-                height: calc(100vh - var(--header-height) - var(--input-area-total-height) - var(--footer-height));
+            .chat-container,
+            header.chat-header,
+            .chat-input-area,
+            footer.chat-footer {
+                max-width: 100%;
                 border-radius: 0;
             }
-            .chat-header {
+
+            header.chat-header {
                 padding: 8px 15px;
                 font-size: 1.1em;
-            }
-            .header-left img {
-                height: 25px;
             }
             .menu-icon {
                 font-size: 1.2em;
@@ -961,28 +896,22 @@
             }
             .main-central-message {
                 font-size: 1.3em;
-                margin-bottom: 15px;
-                padding: 0 5px;
             }
-            /* Ajustes para o input area em mobile */
             .chat-input-area {
                 padding: 10px 15px;
-                max-width: 100%;
-                border-radius: 0;
-                height: var(--input-area-total-height); /* Altura fixa em mobile */
             }
             .options-toggle-button {
                 width: 30px;
                 height: 30px;
                 font-size: 1.2em;
-                left: 5px; /* Mais para a esquerda em mobile */
+                left: 5px; 
                 bottom: 5px;
             }
             .chat-input-area textarea {
                 font-size: 0.9em;
-                padding-left: 35px; /* Espaço para o + em mobile */
+                padding-left: 35px; 
             }
-            .chat-input-area button {
+            #sendMessageButton {
                 width: 40px;
                 height: 40px;
                 min-width: 40px;
@@ -993,33 +922,13 @@
                 gap: 10px;
                 min-width: 200px;
             }
-            .options-menu-section p {
-                font-size: 0.9em;
-                margin-bottom: 8px;
-            }
-            .options-menu-buttons .prompt-button {
-                padding: 6px 12px;
-                font-size: 0.8em;
-            }
 
             .chat-messages {
-                padding: 15px;
-                min-height: 80px;
+                padding: 10px;
             }
-            .chat-footer {
+            footer.chat-footer {
                 padding: 8px 15px;
                 font-size: 0.7em;
-                width: 100%;
-            }
-            .chat-footer .icon-text img {
-                height: 12px;
-            }
-            .theme-toggle-button {
-                bottom: calc(var(--footer-height) + var(--input-area-total-height) + 10px);
-                right: 10px;
-                width: 35px;
-                height: 35px;
-                font-size: 1em;
             }
             .sidebar-menu {
                 width: 250px;
@@ -1032,7 +941,7 @@
     </style>
 </head>
 <body>
-    <div class="chat-header">
+    <header class="chat-header">
         <div class="header-left">
             <i class="fas fa-bars menu-icon" id="menuIcon"></i>
             <span>CatólIA</span>
@@ -1040,77 +949,68 @@
         <div class="header-right">
             <a href="#" id="donateLink">Doe</a>
         </div>
-    </div>
+    </header>
 
-    <div class="chat-container">
-        <div class="profile-selection-top">
-            <p>Eu sou um(a):</p>
-            <div class="profile-buttons-top" id="profileButtonsTop">
-                <button class="prompt-button" data-profile="leigo"><i class="fas fa-user"></i> Leigo</button>
-                <button class="prompt-button" data-profile="catequista"><i class="fas fa-book"></i> Catequista</button>
-                <button class="prompt-button" data-profile="seminarista"><i class="fas fa-graduation-cap"></i> Seminarista</button>
-                <button class="prompt-button" data-profile="crianca"><i class="fas fa-child"></i> Criança</button>
-                <button class="prompt-button" data-profile="sacerdote"><i class="fas fa-cross"></i> Sacerdote</button>
-            </div>
-        </div>
-
+    <main class="chat-container">
         <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
+            
+            <div class="profile-selection-top">
+                <p>Eu sou um(a):</p>
+                <div class="profile-buttons-top" id="profileButtonsTop">
+                    <button class="prompt-button" data-profile="leigo"><i class="fas fa-user"></i> Leigo</button>
+                    <button class="prompt-button" data-profile="catequista"><i class="fas fa-book"></i> Catequista</button>
+                    <button class="prompt-button" data-profile="seminarista"><i class="fas fa-graduation-cap"></i> Seminarista</button>
+                    <button class="prompt-button" data-profile="crianca"><i class="fas fa-child"></i> Criança</button>
+                    <button class="prompt-button" data-profile="sacerdote"><i class="fas fa-cross"></i> Sacerdote</button>
+                </div>
+            </div>
+
             <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
             
             <div class="chat-messages" id="chatMessages">
-                
-            </div>
-        </div>
-
-        <div class="chat-input-area">
-            <div class="main-input-wrapper">
-                <div class="textarea-wrapper">
-                    <button class="options-toggle-button" id="optionsToggleButton">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
                 </div>
-                <button id="sendMessageButton">
-                    <i class="fas fa-paper-plane"></i>
+        </div>
+    </main>
+
+    <div class="chat-input-area">
+        <div class="main-input-wrapper">
+            <div class="textarea-wrapper">
+                <button class="options-toggle-button" id="optionsToggleButton" aria-label="Mais opções">
+                    <i class="fas fa-plus"></i>
                 </button>
+                <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
             </div>
-
-            <div class="options-menu" id="optionsMenu">
-                <div class="options-menu-section">
-                    <p>Tamanho da resposta:</p>
-                    <div class="options-menu-buttons" id="responseTypeOptionsButtons">
-                        <button class="prompt-button" data-type="curta">Curta</button>
-                        <button class="prompt-button" data-type="media">Média</button>
-                        <button class="prompt-button" data-type="longa">Longa</button>
-                    </div>
-                </div>
-                <div class="options-menu-section">
-                    <p>Sugestões rápidas:</p>
-                    <div class="options-menu-buttons" id="quickPromptButtons">
-                        <button class="prompt-button" data-quick-prompt="Qual a liturgia diária?"><i class="fas fa-book-open"></i> Liturgia Diária</button>
-                        <button class="prompt-button" data-quick-prompt="Quem foi o santo do dia de hoje?"><i class="fas fa-user-circle"></i> Santo do Dia</button>
-                        <button class="prompt-button" data-quick-prompt="Me explique o que é o sacramento da Eucaristia."><i class="fas fa-bread-slice"></i> Eucaristia</button>
-                        <button class="prompt-button" data-quick-prompt="Qual a importância do Catecismo da Igreja Católica?"><i class="fas fa-quran"></i> Catecismo</button>
-                    </div>
-                </div>
-            </div>
+            <button id="sendMessageButton" aria-label="Enviar Mensagem">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
 
-        <div class="chat-footer">
-            <span class="icon-text">
-                Desenvolvido com Google Gemini
-            </span>
-            <span>|</span>
-            <a href="https://www.instagram.com/job.brito" target="_blank">@job.brito</a>
-            <div class="theme-toggle-button" id="themeToggleButton">
-                <i class="fas fa-moon"></i>
+        <div class="options-menu" id="optionsMenu">
+            <div class="options-menu-section">
+                <p>Tamanho da resposta:</p>
+                <div class="options-menu-buttons" id="responseTypeOptionsButtons">
+                    <button class="prompt-button" data-type="curta">Curta</button>
+                    <button class="prompt-button" data-type="media">Média</button>
+                    <button class="prompt-button" data-type="longa">Longa</button>
+                </div>
             </div>
-        </div>
+            </div>
     </div>
+
+    <footer class="chat-footer">
+        <span class="icon-text">
+            Desenvolvido com Google Gemini
+        </span>
+        <span>|</span>
+        <a href="https://www.instagram.com/job.brito" target="_blank">@job.brito</a>
+        <div class="theme-toggle-button" id="themeToggleButton" aria-label="Alternar tema">
+            <i class="fas fa-moon"></i>
+        </div>
+    </footer>
 
     <div class="modal" id="donateModal">
         <div class="modal-content">
-            <button class="modal-close-button" id="closeModalBtn">&times;</button>
+            <button class="modal-close-button" id="closeModalBtn" aria-label="Fechar modal">&times;</button>
             <h3>Apoie a CatólIA!</h3>
             <p>Se você tem sido abençoado(a) por este projeto, sua doação faz a diferença para continuarmos evangelizando através da tecnologia.</p>
             <p>Faça seu Pix (e-mail):</p>
@@ -1121,7 +1021,7 @@
         </div>
     </div>
 
-    <div class="sidebar-menu" id="sidebarMenu">
+    <nav class="sidebar-menu" id="sidebarMenu">
         <div class="sidebar-menu-header">
             <span>Menu CatólIA</span>
             <i class="fas fa-times close-btn" id="closeMenuBtn"></i>
@@ -1135,396 +1035,149 @@
             <li><a href="https://www.diocesedejatai.org/" target="_blank"><i class="fas fa-compass"></i>Diocese de Jataí</a></li>
             <li><a href="https://www.instagram.com/paroquiasaosebastiaojatai/" target="_blank"><i class="fas fa-heart"></i>Paróquia São Sebastião</a></li>
         </ul>
-    </div>
+    </nav>
 
     <div class="overlay" id="menuOverlay"></div>
 
     <script>
+        // Variáveis de estado global
         let selectedProfile = 'leigo';
         let selectedResponseType = 'media';
         let typingIndicatorElement = null;
 
-        const defaultThemeColors = {
-            '--bg-body': '#eceff1',
-            '--bg-container': '#ffffff',
-            '--text-color': '#212121',
-            '--border-color': '#e0e0e0',
-            '--header-bg': '#4CAF50',
-            '--header-text': '#ffffff',
-            '--header-link': '#ffffff',
-            '--bubble-user': '#DCF8C6',
-            '--bubble-bot': '#f1f1f1',
-            '--profile-bg': '#e0f2f7',
-            '--profile-btn-bg': '#bbdefb',
-            '--profile-btn-color': '#424242',
-            '--input-bg': '#f5f5f5',
-            '--input-border': '#bdbdbd',
-            '--footer-bg': '#e0e0e0',
-            '--footer-text': '#616161',
-            '--modal-overlay-bg': 'rgba(0, 0, 0, 0.7)',
-            '--modal-bg': '#ffffff',
-            '--modal-text': '#212121'
-        };
+        // --- FUNÇÕES DE LÓGICA E CONTROLE ---
 
-        const darkThemeColors = {
-            '--bg-body': '#263238',
-            '--bg-container': '#37474F',
-            '--text-color': '#eceff1',
-            '--border-color': '#455a64',
-            '--header-bg': '#388E3C',
-            '--header-text': '#ffffff',
-            '--header-link': '#cfd8dc',
-            '--bubble-user': '#4CAF50',
-            '--bubble-bot': '#546E7A',
-            '--profile-bg': '#37474F',
-            '--profile-btn-bg': '#4CAF50',
-            '--profile-btn-color': '#ffffff',
-            '--input-bg': '#424242',
-            '--input-border': '#607d8b',
-            '--footer-bg': '#263238',
-            '--footer-text': '#9e9e9e',
-            '--modal-overlay-bg': 'rgba(0, 0, 0, 0.85)',
-            '--modal-bg': '#37474F',
-            '--modal-text': '#eceff1'
-        };
-
-        const childThemeColors = {
-            '--bg-body': '#E3F2FD',
-            '--bg-container': '#FFFFFF',
-            '--text-color': '#424242',
-            '--border-color': '#90CAF9',
-            '--header-bg': '#64B5F6',
-            '--header-text': '#FFFFFF',
-            '--header-link': '#FFFFFF',
-            '--bubble-user': '#FFCDD2',
-            '--bubble-bot': '#E1F5FE',
-            '--profile-bg': '#BBDEFB',
-            '--profile-btn-bg': '#90CAF9',
-            '--profile-btn-color': '#FFFFFF',
-            '--input-bg': '#E1F5FE',
-            '--input-border': '#90CAF9',
-            '--footer-bg': '#BBDEFB',
-            '--footer-text': '#424242',
-            '--modal-overlay-bg': 'rgba(0, 0, 0, 0.6)',
-            '--modal-bg': '#FFFFFF',
-            '--modal-text': '#424242'
-        };
-        
-        const priestThemeColors = {
-            '--bg-body': '#1a1a1a',
-            '--bg-container': '#2c2c2c',
-            '--text-color': '#e0e0e0',
-            '--border-color': '#444444',
-            '--header-bg': '#000000',
-            '--header-text': '#ffffff',
-            '--header-link': '#cccccc',
-            '--bubble-user': '#606060',
-            '--bubble-bot': '#333333',
-            '--profile-bg': '#222222',
-            '--profile-btn-bg': '#424242',
-            '--profile-btn-color': '#ffffff',
-            '--input-bg': '#222222',
-            '--input-border': '#555555',
-            '--footer-bg': '#000000',
-            '--footer-text': '#aaaaaa',
-            '--modal-overlay-bg': 'rgba(0, 0, 0, 0.9)',
-            '--modal-bg': '#2c2c2c',
-            '--modal-text': '#e0e0e0'
-        };
-
-        function applyTheme(themeColors) {
-            const root = document.documentElement;
-            for (const [property, value] of Object.entries(themeColors)) {
-                root.style.setProperty(property, value);
+        // Aplica um tema de cores ao body
+        function applyTheme(themeClass) {
+            const body = document.body;
+            body.className = ''; // Limpa todas as classes de tema
+            if (themeClass) {
+                body.classList.add(themeClass);
             }
-            const themeToggleButton = document.getElementById('themeToggleButton');
-            if (root.classList.contains('dark-mode') || root.classList.contains('priest-mode')) {
-                themeToggleButton.innerHTML = '<i class="fas fa-sun"></i>';
+
+            const themeToggleButton = document.getElementById('themeToggleButton').querySelector('i');
+            if (themeClass === 'dark-mode' || themeClass === 'priest-mode') {
+                themeToggleButton.className = 'fas fa-sun';
             } else {
-                themeToggleButton.innerHTML = '<i class="fas fa-moon"></i>';
-            }
-            const modalContent = document.querySelector('.modal-content');
-            if (modalContent) {
-                modalContent.style.backgroundColor = themeColors['--modal-bg'];
-                modalContent.style.color = themeColors['--modal-text'];
-            }
-            const modalCloseButton = document.querySelector('.modal-close-button');
-            if (modalCloseButton) {
-                modalCloseButton.style.color = themeColors['--modal-text'];
-            }
-            const modalOverlay = document.querySelector('#donateModal');
-            if (modalOverlay) {
-                modalOverlay.style.backgroundColor = themeColors['--modal-overlay-bg'];
+                themeToggleButton.className = 'fas fa-moon';
             }
         }
 
+        // Alterna entre o modo claro e escuro
         function toggleDarkMode() {
             const body = document.body;
-            body.classList.toggle('dark-mode');
-            body.classList.remove('child-mode', 'priest-mode'); 
-            
-            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
-
-            if (body.classList.contains('dark-mode')) {
-                applyTheme(darkThemeColors);
-            } else {
-                applyTheme(defaultThemeColors);
+            // Só alterna se não estiver em um modo de perfil especial
+            if (!body.classList.contains('child-mode') && !body.classList.contains('priest-mode')) {
+                const isDarkMode = !body.classList.contains('dark-mode');
+                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+                applyTheme(isDarkMode ? 'dark-mode' : '');
             }
         }
 
+        // Define o perfil do usuário
         function selectProfile(profile) {
             selectedProfile = profile;
-            // Atualiza o texto do botão principal do perfil
-            document.getElementById('profileDisplayBtn').textContent = profile.charAt(0).toUpperCase() + profile.slice(1);
             
             // Adiciona/remove a classe 'selected' nos botões de perfil
             document.querySelectorAll('#profileButtonsTop .prompt-button').forEach(btn => btn.classList.remove('selected'));
             document.querySelector(`#profileButtonsTop .prompt-button[data-profile="${profile}"]`).classList.add('selected');
 
-            // Garante que o menu de opções (se aberto) feche
-            document.getElementById('optionsMenu').classList.remove('open');
-            document.getElementById('optionsToggleButton').classList.remove('open');
-
-            document.body.classList.remove('child-mode', 'priest-mode', 'dark-mode'); 
-
+            // Aplica temas especiais para 'criança' e 'sacerdote'
             if (profile === 'crianca') {
-                document.body.classList.add('child-mode');
-                applyTheme(childThemeColors);
+                applyTheme('child-mode');
             } else if (profile === 'sacerdote') {
-                document.body.classList.add('priest-mode');
-                applyTheme(priestThemeColors);
-            }
-            else {
+                applyTheme('priest-mode');
+            } else {
+                // Para outros perfis, restaura o tema salvo (claro/escuro)
                 const savedTheme = localStorage.getItem('theme');
-                if (savedTheme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    applyTheme(darkThemeColors);
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    applyTheme(defaultThemeColors);
-                }
+                applyTheme(savedTheme === 'dark' ? 'dark-mode' : '');
             }
         }
 
+        // Define o tipo de resposta (curta, média, longa)
         function selectResponseType(type) {
             selectedResponseType = type;
-            // Atualiza o texto do botão principal do tipo de resposta
-            document.getElementById('responseTypeDisplayBtn').textContent = type.charAt(0).toUpperCase() + type.slice(1);
-
-            // Adiciona/remove a classe 'selected' nos botões do menu de tipo de resposta
+            
+            // Adiciona/remove a classe 'selected' nos botões de tipo de resposta
             document.querySelectorAll('#responseTypeOptionsButtons .prompt-button').forEach(btn => btn.classList.remove('selected'));
             document.querySelector(`#responseTypeOptionsButtons .prompt-button[data-type="${type}"]`).classList.add('selected');
 
-            // Garante que o menu de opções feche
+            // Fecha o menu de opções
             document.getElementById('optionsMenu').classList.remove('open');
             document.getElementById('optionsToggleButton').classList.remove('open');
         }
 
-        function sendQuickPrompt(promptText) {
-            document.getElementById('userMessageInput').value = promptText;
-            sendMessage(); // Envia a mensagem automaticamente
-            document.getElementById('optionsMenu').classList.remove('open'); // Fecha o menu
-            document.getElementById('optionsToggleButton').classList.remove('open');
-        }
-
+        // Redimensiona a área de texto automaticamente
         function autoResizeTextarea() {
             const textarea = document.getElementById('userMessageInput');
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
         }
 
+        // Mostra o indicador "digitando..."
         function showTypingIndicator() {
             const chatMessages = document.getElementById('chatMessages');
+            if(typingIndicatorElement) return; // Não adiciona se já existe
+
             typingIndicatorElement = document.createElement('div');
             typingIndicatorElement.classList.add('message', 'bot', 'typing-indicator');
             typingIndicatorElement.innerHTML = `
-                <div class="message-avatar">
-                    <i class="fas fa-church"></i>
-                </div>
+                <div class="message-avatar"><i class="fas fa-church"></i></div>
                 <div class="message-content">
                     <span></span><span></span><span></span>
                 </div>
             `;
             chatMessages.appendChild(typingIndicatorElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            scrollToBottom();
         }
 
+        // Esconde o indicador "digitando..."
         function hideTypingIndicator() {
             if (typingIndicatorElement) {
                 typingIndicatorElement.remove();
                 typingIndicatorElement = null;
             }
         }
-
-        function openDonateModal() {
-            const donateModal = document.getElementById('donateModal');
-            const menuOverlay = document.getElementById('menuOverlay');
-            donateModal.classList.add('open');
-            menuOverlay.classList.add('open');
-            const sidebarMenu = document.getElementById('sidebarMenu');
-            sidebarMenu.classList.remove('open');
+        
+        // CORREÇÃO 2: Função para rolar o container principal até o final
+        function scrollToBottom() {
+            const scrollableContent = document.getElementById('chatScrollableContent');
+            scrollableContent.scrollTop = scrollableContent.scrollHeight;
         }
 
-        function closeDonateModal() {
-            const donateModal = document.getElementById('donateModal');
-            const menuOverlay = document.getElementById('menuOverlay');
-            donateModal.classList.remove('open');
-            menuOverlay.classList.remove('open');
-        }
-
-        function copyPixKey() {
-            const pixKey = document.getElementById('pixKey').innerText;
-            navigator.clipboard.writeText(pixKey).then(() => {
-                alert('Chave Pix copiada: ' + pixKey);
-            }).catch(err => {
-                console.error('Erro ao copiar Pix: ', err);
-                alert('Não foi possível copiar a chave Pix. Por favor, copie manualmente: ' + pixKey);
-            });
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const userMessageInput = document.getElementById('userMessageInput');
-            const sendMessageButton = document.getElementById('sendMessageButton');
-            const profileButtonsTop = document.querySelectorAll('#profileButtonsTop .prompt-button'); // Botões de perfil no topo
-            const responseTypeOptionsButtons = document.querySelectorAll('#responseTypeOptionsButtons .prompt-button');
-            const quickPromptButtons = document.querySelectorAll('#quickPromptButtons .prompt-button');
-            const themeToggleButton = document.getElementById('themeToggleButton');
-            const chatMessages = document.getElementById('chatMessages'); 
-            const chatScrollableContent = document.getElementById('chatScrollableContent');
+        // Adiciona uma mensagem ao chat
+        function appendMessage(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
             
-            const optionsToggleButton = document.getElementById('optionsToggleButton');
-            const optionsMenu = document.getElementById('optionsMenu');
-
-
-            // Adiciona a mensagem inicial da IA
-            const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Para personalizar minha resposta, selecione seu perfil abaixo para uma resposta mais adequada.`;
-            appendMessage(initialBotMessageContent, 'bot', true); 
-
-            chatScrollableContent.classList.add('initial-state');
-
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                applyTheme(darkThemeColors);
-            } else {
-                applyTheme(defaultThemeColors);
+            // Remove a classe de estado inicial para alinhar mensagens à esquerda
+            const chatScrollableContent = document.getElementById('chatScrollableContent');
+            if (chatScrollableContent.classList.contains('initial-state')) {
+                chatScrollableContent.classList.remove('initial-state');
+                chatScrollableContent.classList.add('has-content');
             }
 
-            userMessageInput.addEventListener('keypress', function (event) {
-                if (event.key === 'Enter' && !event.shiftKey) {
-                    event.preventDefault();
-                    sendMessage();
-                }
-            });
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
 
-            userMessageInput.addEventListener('input', autoResizeTextarea);
+            const avatarIcon = sender === 'user' ? 'fa-user' : 'fa-church';
+            messageDiv.innerHTML = `
+                <div class="message-avatar"><i class="fas ${avatarIcon}"></i></div>
+                <div class="message-content"></div>
+            `;
+            
+            // Usa 'marked.parse' para converter Markdown em HTML
+            messageDiv.querySelector('.message-content').innerHTML = marked.parse(message);
 
-            sendMessageButton.addEventListener('click', sendMessage);
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
 
-            // Lógica para o botão de "Mais Opções" (+)
-            optionsToggleButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                optionsMenu.classList.toggle('open');
-                optionsToggleButton.classList.toggle('open');
-            });
-
-            // Fechar o menu de opções ao clicar fora dele
-            document.addEventListener('click', (event) => {
-                if (!optionsMenu.contains(event.target) && event.target !== optionsToggleButton) {
-                    optionsMenu.classList.remove('open');
-                    optionsToggleButton.classList.remove('open');
-                }
-            });
-
-            // Adiciona listeners aos botões DE PERFIL NO TOPO
-            profileButtonsTop.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    selectProfile(button.dataset.profile);
-                });
-            });
-
-            // Adiciona listeners aos botões DENTRO do menu de opções (Tipo de Resposta e Sugestões)
-            responseTypeOptionsButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    selectResponseType(button.dataset.type);
-                });
-            });
-
-            quickPromptButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    sendQuickPrompt(button.dataset.quickPrompt);
-                });
-            });
-
-            themeToggleButton.addEventListener('click', toggleDarkMode);
-
-            autoResizeTextarea();
-
-            const menuIcon = document.getElementById('menuIcon');
-            const sidebarMenu = document.getElementById('sidebarMenu');
-            const closeMenuBtn = document.getElementById('closeMenuBtn');
-            const menuOverlay = document.getElementById('menuOverlay');
-
-            menuIcon.addEventListener('click', () => {
-                sidebarMenu.classList.add('open');
-                menuOverlay.classList.add('open');
-            });
-
-            closeMenuBtn.addEventListener('click', () => {
-                sidebarMenu.classList.remove('open');
-                menuOverlay.classList.remove('open');
-            });
-
-            menuOverlay.addEventListener('click', () => {
-                sidebarMenu.classList.remove('open');
-                menuOverlay.classList.remove('open');
-            });
-
-            sidebarMenu.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    if (!e.ctrlKey && !e.metaKey) { 
-                        sidebarMenu.classList.remove('open');
-                        menuOverlay.classList.remove('open');
-                    }
-                });
-            });
-
-            const donateLink = document.getElementById('donateLink');
-            const closeModalBtn = document.getElementById('closeModalBtn');
-            const copyPixBtn = document.getElementById('copyPixBtn');
-            const thanksBtn = document.getElementById('thanksBtn');
-
-            if (donateLink) donateLink.addEventListener('click', (e) => { e.preventDefault(); openDonateModal(); });
-            if (closeModalBtn) closeModalBtn.addEventListener('click', closeDonateModal);
-            if (copyPixBtn) copyPixBtn.addEventListener('click', copyPixKey);
-            if (thanksBtn) thanksBtn.addEventListener('click', closeDonateModal);
-
-            // Define o estado inicial dos botões de perfil e tipo de resposta
-            selectProfile('leigo'); // Seleciona 'leigo' ao iniciar
-            selectResponseType('media'); // Seleciona 'media' ao iniciar
-        });
-
-
+        // Envia a mensagem para o backend
         async function sendMessage() {
             const userMessageInput = document.getElementById('userMessageInput');
-            const chatMessages = document.getElementById('chatMessages');
-            const chatScrollableContent = document.getElementById('chatScrollableContent');
-
             const userMessage = userMessageInput.value.trim();
 
             if (!userMessage) return;
-
-            if (chatScrollableContent.classList.contains('initial-state')) {
-                chatScrollableContent.classList.remove('initial-state');
-                chatScrollableContent.classList.add('has-content'); 
-                chatMessages.style.justifyContent = 'flex-start';
-                chatMessages.style.alignItems = 'stretch';
-                chatMessages.style.textAlign = 'left';
-            }
 
             appendMessage(userMessage, 'user');
             userMessageInput.value = '';
@@ -1535,19 +1188,21 @@
             try {
                 const response = await fetch('/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: userMessage,
                         profile: selectedProfile,
                         response_type: selectedResponseType
                     })
                 });
+                
+                hideTypingIndicator();
+                
+                if (!response.ok) {
+                    throw new Error(`Erro de servidor: ${response.statusText}`);
+                }
 
                 const data = await response.json();
-
-                hideTypingIndicator();
 
                 if (data.error) {
                     appendMessage(`Erro: ${data.error}`, 'bot');
@@ -1556,43 +1211,114 @@
                 }
             } catch (error) {
                 console.error('Erro ao comunicar com o servidor:', error);
-                let errorMessage = 'Desculpe, não foi possível conectar ao servidor. Por favor, verifique sua conexão com a internet e tente novamente.';
-                appendMessage(errorMessage, 'bot');
-            } finally {
-                chatMessages.scrollTop = chatMessages.scrollHeight; 
+                hideTypingIndicator();
+                appendMessage('Desculpe, não foi possível conectar ao servidor. Por favor, verifique sua conexão e tente novamente.', 'bot');
             }
         }
 
-        function appendMessage(message, sender, isInitial = false) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', sender);
+        // --- EVENT LISTENERS ---
 
-            const avatarDiv = document.createElement('div');
-            avatarDiv.classList.add('message-avatar');
-            if (sender === 'user') {
-                avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
-            } else {
-                avatarDiv.innerHTML = '<i class="fas fa-church"></i>';
-            }
-            messageDiv.appendChild(avatarDiv);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elementos do DOM
+            const userMessageInput = document.getElementById('userMessageInput');
+            const sendMessageButton = document.getElementById('sendMessageButton');
+            const profileButtonsTop = document.querySelectorAll('#profileButtonsTop .prompt-button');
+            const responseTypeOptionsButtons = document.querySelectorAll('#responseTypeOptionsButtons .prompt-button');
+            const themeToggleButton = document.getElementById('themeToggleButton');
+            const optionsToggleButton = document.getElementById('optionsToggleButton');
+            const optionsMenu = document.getElementById('optionsMenu');
+            const menuIcon = document.getElementById('menuIcon');
+            const sidebarMenu = document.getElementById('sidebarMenu');
+            const closeMenuBtn = document.getElementById('closeMenuBtn');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const donateLink = document.getElementById('donateLink');
+            const donateModal = document.getElementById('donateModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const copyPixBtn = document.getElementById('copyPixBtn');
+            const thanksBtn = document.getElementById('thanksBtn');
 
+            // Carrega o tema salvo ou define o padrão
+            const savedTheme = localStorage.getItem('theme');
+            applyTheme(savedTheme === 'dark' ? 'dark-mode' : '');
+            
+            // Define o estado inicial dos botões
+            selectProfile('leigo');
+            selectResponseType('media');
 
-            const contentDiv = document.createElement('div');
-            contentDiv.classList.add('message-content');
-            contentDiv.innerHTML = marked.parse(message);
+            // Enviar mensagem com Enter (sem Shift)
+            userMessageInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
 
-            messageDiv.appendChild(contentDiv);
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            // Ajuste dinâmico da textarea
+            userMessageInput.addEventListener('input', autoResizeTextarea);
+            sendMessageButton.addEventListener('click', sendMessage);
 
-            if (isInitial) {
-                messageDiv.style.justifyContent = 'center';
-                messageDiv.style.textAlign = 'center';
-                messageDiv.style.alignSelf = 'center';
-                messageDiv.querySelector('.message-content').style.maxWidth = '90%';
-            }
-        }
+            // Menu de opções (+)
+            optionsToggleButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                optionsMenu.classList.toggle('open');
+                optionsToggleButton.classList.toggle('open');
+            });
+
+            // Fecha o menu de opções ao clicar fora
+            document.addEventListener('click', (e) => {
+                if (!optionsMenu.contains(e.target) && e.target !== optionsToggleButton) {
+                    optionsMenu.classList.remove('open');
+                    optionsToggleButton.classList.remove('open');
+                }
+            });
+            
+            // Listeners para botões de perfil
+            profileButtonsTop.forEach(button => {
+                button.addEventListener('click', () => selectProfile(button.dataset.profile));
+            });
+
+            // Listeners para botões de tipo de resposta
+            responseTypeOptionsButtons.forEach(button => {
+                button.addEventListener('click', () => selectResponseType(button.dataset.type));
+            });
+            
+            // Listener para o botão de tema
+            themeToggleButton.addEventListener('click', toggleDarkMode);
+
+            // Lógica do menu lateral (Sidebar)
+            menuIcon.addEventListener('click', () => {
+                sidebarMenu.classList.add('open');
+                menuOverlay.classList.add('open');
+            });
+
+            const closeSidebar = () => {
+                sidebarMenu.classList.remove('open');
+                menuOverlay.classList.remove('open');
+            };
+            closeMenuBtn.addEventListener('click', closeSidebar);
+            menuOverlay.addEventListener('click', closeSidebar);
+
+            // Lógica do modal de doação
+            const openDonateModal = (e) => {
+                e.preventDefault();
+                donateModal.classList.add('open');
+            };
+            const closeDonateModal = () => {
+                donateModal.classList.remove('open');
+            };
+            donateLink.addEventListener('click', openDonateModal);
+            closeModalBtn.addEventListener('click', closeDonateModal);
+            thanksBtn.addEventListener('click', closeDonateModal);
+            copyPixBtn.addEventListener('click', () => {
+                const pixKey = document.getElementById('pixKey').innerText;
+                navigator.clipboard.writeText(pixKey).then(() => {
+                    alert('Chave Pix copiada: ' + pixKey);
+                }).catch(err => {
+                    console.error('Erro ao copiar Pix: ', err);
+                });
+            });
+        });
+
     </script>
 </body>
 </html>
