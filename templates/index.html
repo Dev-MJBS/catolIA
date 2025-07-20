@@ -107,10 +107,10 @@
             /* Alturas de elementos fixos */
             --header-height: 60px;
             --input-area-padding-vertical: 15px; /* Novo: Padding vertical da área de input */
-            --input-area-min-height: 55px; /* NOVO: Altura mínima da área de input sem padding */
+            --input-area-min-height: 55px; /* Altura mínima da área de input sem padding */
             --input-button-size: 45px; /* Tamanho dos botões de enviar */
             --footer-height: 40px;
-            /* Recalcula input-area-height */
+            /* Recalcula input-area-total-height para nova estrutura */
             --input-area-total-height: calc(var(--input-area-min-height) + (var(--input-area-padding-vertical) * 2));
             --total-fixed-bottom-height: calc(var(--input-area-total-height) + var(--footer-height));
             
@@ -215,6 +215,7 @@
             z-index: 1;
         }
 
+        /* Ajuste do chat-container para ocupar toda a tela, mas respeitando elementos fixos */
         body > .chat-container {
             height: calc(100vh - var(--header-height) - var(--footer-height));
             max-height: calc(100vh - var(--header-height) - var(--footer-height));
@@ -326,6 +327,61 @@
             box-sizing: border-box;
         }
         
+        /* NOVO: Seção de Prompts (Perfis) no Topo da Área Rolável */
+        .profile-selection-top {
+            text-align: center;
+            padding: 10px 20px 20px 20px;
+            font-size: 0.95em;
+            color: var(--text-color);
+            transition: background-color 0.5s ease, color 0.5s ease;
+            flex-shrink: 0;
+            background-color: var(--profile-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        .profile-selection-top p {
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1em;
+            text-align: center;
+        }
+        .profile-buttons-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+        /* Estilo dos botões de perfil no topo (retangulares) */
+        .profile-buttons-top .prompt-button {
+            background-color: var(--profile-btn-bg);
+            color: var(--profile-btn-color);
+            border: none;
+            border-radius: 18px; /* Cantos arredondados */
+            padding: 6px 12px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .profile-buttons-top .prompt-button.selected { /* Cor do selecionado */
+            background-color: var(--color-primary);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+        }
+        .profile-buttons-top .prompt-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .profile-buttons-top .prompt-button i {
+            font-size: 0.9em;
+        }
+
+
         .chat-messages {
             background-color: var(--bg-container);
             transition: background-color 0.5s ease;
@@ -454,14 +510,14 @@
         /* NOVO: Estilos para a área de input com prompts integrados */
         .chat-input-area {
             flex-shrink: 0;
-            padding: var(--input-area-padding-vertical) 20px; /* Padding vertical ajustável */
+            padding: var(--input-area-padding-vertical) 20px;
             background-color: var(--bg-container);
             border-top: 1px solid var(--border-color);
             display: flex;
-            flex-direction: column; /* Organiza itens verticalmente */
+            flex-direction: column;
             align-items: stretch; /* Estica os filhos na largura */
             position: fixed;
-            bottom: var(--footer-height);
+            bottom: var(--footer-height); 
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
@@ -471,57 +527,64 @@
             transition: background-color 0.5s ease, border-color 0.5s ease;
             border-radius: 0;
             box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
-            /* NÃO define altura fixa aqui para permitir que cresça com o textarea */
+            height: var(--input-area-total-height); 
         }
         
-        .main-input-wrapper { /* Novo wrapper para o + e textarea/send */
+        .main-input-wrapper {
             display: flex;
             align-items: flex-end;
             width: 100%;
-            padding-bottom: 10px; /* Espaço entre o input e os prompts */
+            padding-bottom: 0;
             box-sizing: border-box;
+            flex-grow: 1; 
+            position: relative; /* Para o options-menu se posicionar */
         }
 
-        .options-toggle-button {
-            background-color: transparent; /* Fundo transparente */
-            color: var(--text-color); /* Cor do texto do tema */
-            border: none;
-            border-radius: 50%; /* Mantém redondo */
-            width: 35px;
-            height: 35px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5em;
-            cursor: pointer;
-            box-shadow: none; /* Remove sombra */
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            margin-right: 10px;
-            font-weight: bold; /* Deixa o + em negrito */
-        }
-        .options-toggle-button:hover {
-            background-color: rgba(0,0,0,0.1); /* Efeito de hover discreto */
-            color: var(--color-primary);
-            transform: rotate(90deg);
-            box-shadow: none;
-        }
-        .options-toggle-button.open {
-            transform: rotate(45deg);
-        }
-
-        .textarea-wrapper {
+        .textarea-wrapper { 
             flex-grow: 1;
             margin-right: 10px;
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
             border-radius: 25px;
-            padding: 8px 15px;
+            padding: 8px 15px; /* Padding interno da caixa de texto */
             display: flex;
             align-items: center;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
             transition: background-color 0.5s ease, border-color 0.5s ease;
+            position: relative; 
         }
+
+        /* Botão de Mais Opções (+) dentro da textarea */
+        .options-toggle-button {
+            background-color: transparent;
+            color: var(--text-color);
+            border: none;
+            border-radius: 4px; /* Retangular com cantos arredondados */
+            width: 25px;
+            height: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            cursor: pointer;
+            box-shadow: none;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            position: absolute; /* Posicionado absolutamente dentro do textarea-wrapper */
+            bottom: 8px; /* Alinha no canto inferior esquerdo */
+            left: 8px;
+            font-weight: bold; /* Negrito */
+            z-index: 1; /* Fica acima do texto do textarea */
+        }
+        .options-toggle-button:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--color-primary);
+            transform: scale(1.1);
+        }
+        .options-toggle-button.open {
+            transform: rotate(45deg);
+        }
+
         .chat-input-area textarea {
             flex-grow: 1;
             border: none;
@@ -536,12 +599,13 @@
             overflow-y: auto;
             line-height: 1.5;
             color: var(--text-color);
+            padding-left: 40px; /* Espaço para o botão + */
         }
         .chat-input-area button { /* Botão de Envio */
             background-color: var(--color-primary);
             color: white;
             border: none;
-            border-radius: 50%;
+            border-radius: 50%; /* Mantém o botão de envio redondo */
             width: 45px;
             height: 45px;
             min-width: 45px;
@@ -563,9 +627,9 @@
         /* Menu Flutuante de Opções (Prompts e Resposta) */
         .options-menu {
             display: none;
-            position: absolute; /* NOVO: Posicionado em relação à chat-input-area */
-            bottom: calc(var(--input-area-min-height) + var(--input-area-padding-vertical) + 5px); /* Acima do textarea */
-            left: 20px; /* Alinha com a esquerda da barra de input */
+            position: absolute;
+            bottom: calc(100% + 10px); /* Posição acima da barra de input */
+            left: 0; /* Alinha com a esquerda da barra de input */
             background-color: var(--bg-container);
             border-radius: 12px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
@@ -611,10 +675,54 @@
             justify-content: center;
             gap: 8px;
         }
+        /* NOVO: Garante que os botões dentro do menu flutuante sejam retangulares */
         .options-menu-buttons .prompt-button {
+            background-color: var(--profile-btn-bg); /* Fundo padrão dos prompts */
+            color: var(--profile-btn-color); /* Cor do texto dos prompts */
+            border: none; /* Remove a borda padrão */
+            border-radius: 18px; /* Cantos arredondados (estilo pílula) */
             padding: 8px 15px;
             font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Sombra suave */
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal; /* Retorna ao peso normal, a menos que selecionado */
         }
+        /* Estilos para o botão selecionado dentro do options-menu */
+        .options-menu-buttons .prompt-button.selected {
+            background-color: var(--color-primary);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+        }
+        /* Estilos para o hover dentro do options-menu */
+        .options-menu-buttons .prompt-button:hover {
+            background-color: var(--color-primary-dark);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Estilos ESPECÍFICOS para os botões de Tipo de Resposta (curta, média, longa) */
+        #responseTypeOptionsButtons .prompt-button {
+            border-radius: 4px; /* Mais quadrado */
+            border: 2px solid var(--border-color); /* Borda visível para o "quadrado" */
+            font-weight: bold; /* Texto em negrito */
+        }
+        #responseTypeOptionsButtons .prompt-button.selected {
+            border-color: var(--color-primary); /* Borda colorida quando selecionado */
+            background-color: var(--color-primary);
+            color: white;
+        }
+        #responseTypeOptionsButtons .prompt-button:hover {
+            border-color: var(--color-primary-dark);
+            background-color: var(--color-primary-dark);
+        }
+
 
         .chat-footer {
             flex-shrink: 0;
@@ -861,16 +969,18 @@
                 padding: 10px 15px;
                 max-width: 100%;
                 border-radius: 0;
-                /* Altura fixa em mobile */
-                height: var(--input-area-total-height);
+                height: var(--input-area-total-height); /* Altura fixa em mobile */
             }
             .options-toggle-button {
                 width: 30px;
                 height: 30px;
                 font-size: 1.2em;
+                left: 5px; /* Mais para a esquerda em mobile */
+                bottom: 5px;
             }
             .chat-input-area textarea {
                 font-size: 0.9em;
+                padding-left: 35px; /* Espaço para o + em mobile */
             }
             .chat-input-area button {
                 width: 40px;
@@ -878,6 +988,20 @@
                 min-width: 40px;
                 font-size: 1em;
             }
+            .options-menu {
+                padding: 10px;
+                gap: 10px;
+                min-width: 200px;
+            }
+            .options-menu-section p {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+            .options-menu-buttons .prompt-button {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+
             .chat-messages {
                 padding: 15px;
                 min-height: 80px;
@@ -891,7 +1015,7 @@
                 height: 12px;
             }
             .theme-toggle-button {
-                bottom: calc(var(--footer-height) + var(--input-area-height) + 10px);
+                bottom: calc(var(--footer-height) + var(--input-area-total-height) + 10px);
                 right: 10px;
                 width: 35px;
                 height: 35px;
@@ -919,6 +1043,17 @@
     </div>
 
     <div class="chat-container">
+        <div class="profile-selection-top">
+            <p>Eu sou um(a):</p>
+            <div class="profile-buttons-top" id="profileButtonsTop">
+                <button class="prompt-button" data-profile="leigo"><i class="fas fa-user"></i> Leigo</button>
+                <button class="prompt-button" data-profile="catequista"><i class="fas fa-book"></i> Catequista</button>
+                <button class="prompt-button" data-profile="seminarista"><i class="fas fa-graduation-cap"></i> Seminarista</button>
+                <button class="prompt-button" data-profile="crianca"><i class="fas fa-child"></i> Criança</button>
+                <button class="prompt-button" data-profile="sacerdote"><i class="fas fa-cross"></i> Sacerdote</button>
+            </div>
+        </div>
+
         <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
             <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
             
@@ -929,10 +1064,10 @@
 
         <div class="chat-input-area">
             <div class="main-input-wrapper">
-                <button class="options-toggle-button" id="optionsToggleButton">
-                    <i class="fas fa-plus"></i>
-                </button>
                 <div class="textarea-wrapper">
+                    <button class="options-toggle-button" id="optionsToggleButton">
+                        <i class="fas fa-plus"></i>
+                    </button>
                     <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
                 </div>
                 <button id="sendMessageButton">
@@ -941,16 +1076,6 @@
             </div>
 
             <div class="options-menu" id="optionsMenu">
-                <div class="options-menu-section">
-                    <p>Eu sou um(a):</p>
-                    <div class="options-menu-buttons" id="profileOptionsButtons">
-                        <button class="prompt-button" data-profile="leigo">Leigo</button>
-                        <button class="prompt-button" data-profile="catequista">Catequista</button>
-                        <button class="prompt-button" data-profile="seminarista">Seminarista</button>
-                        <button class="prompt-button" data-profile="crianca">Criança</button>
-                        <button class="prompt-button" data-profile="sacerdote">Sacerdote</button>
-                    </div>
-                </div>
                 <div class="options-menu-section">
                     <p>Tamanho da resposta:</p>
                     <div class="options-menu-buttons" id="responseTypeOptionsButtons">
@@ -1152,11 +1277,11 @@
             // Atualiza o texto do botão principal do perfil
             document.getElementById('profileDisplayBtn').textContent = profile.charAt(0).toUpperCase() + profile.slice(1);
             
-            // Adiciona/remove a classe 'selected' nos botões do menu de perfil
-            document.querySelectorAll('#profileOptionsButtons .prompt-button').forEach(btn => btn.classList.remove('selected'));
-            document.querySelector(`#profileOptionsButtons .prompt-button[data-profile="${profile}"]`).classList.add('selected');
+            // Adiciona/remove a classe 'selected' nos botões de perfil
+            document.querySelectorAll('#profileButtonsTop .prompt-button').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`#profileButtonsTop .prompt-button[data-profile="${profile}"]`).classList.add('selected');
 
-            // Garante que o menu de opções feche
+            // Garante que o menu de opções (se aberto) feche
             document.getElementById('optionsMenu').classList.remove('open');
             document.getElementById('optionsToggleButton').classList.remove('open');
 
@@ -1261,20 +1386,19 @@
         document.addEventListener('DOMContentLoaded', () => {
             const userMessageInput = document.getElementById('userMessageInput');
             const sendMessageButton = document.getElementById('sendMessageButton');
+            const profileButtonsTop = document.querySelectorAll('#profileButtonsTop .prompt-button'); // Botões de perfil no topo
+            const responseTypeOptionsButtons = document.querySelectorAll('#responseTypeOptionsButtons .prompt-button');
+            const quickPromptButtons = document.querySelectorAll('#quickPromptButtons .prompt-button');
             const themeToggleButton = document.getElementById('themeToggleButton');
             const chatMessages = document.getElementById('chatMessages'); 
             const chatScrollableContent = document.getElementById('chatScrollableContent');
             
-            // NOVO: Referências aos novos elementos de prompt
             const optionsToggleButton = document.getElementById('optionsToggleButton');
             const optionsMenu = document.getElementById('optionsMenu');
-            const profileOptionsButtons = document.querySelectorAll('#profileOptionsButtons .prompt-button');
-            const responseTypeOptionsButtons = document.querySelectorAll('#responseTypeOptionsButtons .prompt-button');
-            const quickPromptButtons = document.querySelectorAll('#quickPromptButtons .prompt-button');
 
 
             // Adiciona a mensagem inicial da IA
-            const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Para personalizar minha resposta, selecione seu perfil ou o tipo de resposta nas opções abaixo.`;
+            const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Para personalizar minha resposta, selecione seu perfil abaixo para uma resposta mais adequada.`;
             appendMessage(initialBotMessageContent, 'bot', true); 
 
             chatScrollableContent.classList.add('initial-state');
@@ -1313,14 +1437,15 @@
                 }
             });
 
-            // Adiciona listeners aos botões DENTRO do menu de opções
-            profileOptionsButtons.forEach(button => {
+            // Adiciona listeners aos botões DE PERFIL NO TOPO
+            profileButtonsTop.forEach(button => {
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
                     selectProfile(button.dataset.profile);
                 });
             });
 
+            // Adiciona listeners aos botões DENTRO do menu de opções (Tipo de Resposta e Sugestões)
             responseTypeOptionsButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -1378,7 +1503,7 @@
             if (copyPixBtn) copyPixBtn.addEventListener('click', copyPixKey);
             if (thanksBtn) thanksBtn.addEventListener('click', closeDonateModal);
 
-            // Define o estado inicial dos botões de display dos prompts no input area
+            // Define o estado inicial dos botões de perfil e tipo de resposta
             selectProfile('leigo'); // Seleciona 'leigo' ao iniciar
             selectResponseType('media'); // Seleciona 'media' ao iniciar
         });
@@ -1392,11 +1517,6 @@
             const userMessage = userMessageInput.value.trim();
 
             if (!userMessage) return;
-
-            // Fecha o menu de opções se estiver aberto ao enviar mensagem
-            document.getElementById('optionsMenu').classList.remove('open');
-            document.getElementById('optionsToggleButton').classList.remove('open');
-
 
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
