@@ -191,7 +191,7 @@
         .message.bot { justify-content: flex-start; }
         .message-avatar { width: 35px; height: 35px; min-width: 35px; border-radius: 50%; background-color: var(--profile-btn-bg); color: var(--profile-btn-color); display: flex; justify-content: center; align-items: center; font-size: 1.2em; margin-top: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); flex-shrink: 0; position: relative; }
         .message.user .message-avatar { order: 2; margin-left: 10px; background-color: var(--color-primary); color: white; }
-        .message.bot .message-avatar { order: 0; margin-right: 10px; }
+        .message.bot .message-avatar { order: 0; margin-right: 10px; background-color: var(--color-primary-dark); color: white; }
         .message-content { max-width: 75%; padding: 12px 18px; border-radius: 22px; position: relative; word-wrap: break-word; line-height: 1.6; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
         .message.user .message-content { background-color: var(--bubble-user); color: var(--text-color); }
         .message.bot .message-content { background-color: var(--bubble-bot); color: var(--text-color); }
@@ -232,7 +232,7 @@
         .modal.open { opacity: 1; visibility: visible; }
         .modal-content { background-color: var(--modal-bg); padding: 30px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); text-align: center; max-width: 400px; width: 90%; color: var(--modal-text); position: relative; margin: auto; }
         .modal-close-button { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--modal-text); opacity: 0.7; }
-        #catechesisModal .modal-close-button, #confessionModal .modal-close-button { color: white; opacity: 0.8; }
+        #catechesisModal .modal-close-button { color: white; opacity: 0.8; }
         .modal-close-button:hover { opacity: 1; }
         .modal-content h3 { margin-top: 0; color: var(--color-primary-dark); font-size: 1.5em; margin-bottom: 20px; }
         .modal-content p { font-size: 1.1em; margin-bottom: 15px; word-break: break-all; }
@@ -245,7 +245,6 @@
     <header class="chat-header">
         <div class="header-left">
             <i class="fas fa-bars menu-icon" id="menuIcon"></i>
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo CatólIA" class="logo">
             <span>CatólIA</span>
         </div>
         <div class="header-right">
@@ -315,8 +314,8 @@
             <i class="fas fa-times close-btn" id="closeMenuBtn"></i>
         </div>
         <ul>
-            <li><a href="#" id="confessionBtn">Preparar Confissão</a></li>
-            <li><a href="#" id="catechesisBtn">Preparar Catequese</a></li>
+            <li><a href="#" id="confessionBtn"><i class="fas fa-hands-praying"></i>Preparar Confissão</a></li>
+            <li><a href="#" id="catechesisBtn"><i class="fas fa-chalkboard-user"></i>Preparar Catequese</a></li>
             <li><a href="https://www.cnbb.org.br/liturgia-diaria/" target="_blank"><i class="fas fa-book-open"></i>Liturgia Diária (CNBB)</a></li>
             <li><a href="https://santo.cancaonova.com/" target="_blank"><i class="fas fa-user-circle"></i>Santo do Dia (Canção Nova)</a></li>
             <li><a href="https://www.vatican.va/content/vatican/pt.html" target="_blank"><i class="fas fa-church"></i>Santa Sé (Vaticano)</a></li>
@@ -399,8 +398,6 @@
     <div class="overlay" id="menuOverlay"></div>
 
     <script>
-        const logoUrl = "{{ url_for('static', filename='images/logo.png') }}";
-
         let selectedProfile = 'leigo';
         let selectedResponseType = 'media';
 
@@ -440,7 +437,7 @@
             if (sender === 'user') {
                 avatarHtml = `<div class="message-avatar"><i class="fas fa-user"></i></div>`;
             } else {
-                avatarHtml = `<div class="message-avatar"><img src="${logoUrl}" alt="CatólIA Avatar"></div>`;
+                avatarHtml = `<div class="message-avatar"><i class="fas fa-church"></i></div>`;
             }
             
             let finalMessage = marked.parse(message);
@@ -486,7 +483,7 @@
 
             let typingIndicator = document.createElement('div');
             typingIndicator.classList.add('message', 'bot', 'typing-indicator');
-            typingIndicator.innerHTML = `<div class="message-avatar"><img src="${logoUrl}" alt="CatólIA Avatar"></div><div class="message-content"><span></span><span></span><span></span></div>`;
+            typingIndicator.innerHTML = `<div class="message-avatar"><i class="fas fa-church"></i></div><div class="message-content"><span></span><span></span><span></span></div>`;
             document.getElementById('chatMessages').appendChild(typingIndicator);
             scrollToBottom();
             
@@ -526,7 +523,7 @@
             if (!body.classList.contains('child-mode') && !body.classList.contains('priest-mode')) {
                 const isDarkMode = !body.classList.contains('dark-mode');
                 localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-                applyTheme(isDarkMode ? 'dark-mode' : '');
+                applyTheme(isDarkMode ? 'dark' : 'light');
             }
         }
 
