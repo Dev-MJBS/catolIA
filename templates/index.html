@@ -107,9 +107,10 @@
             /* Alturas de elementos fixos */
             --header-height: 60px;
             --input-area-height: 85px; /* Altura da caixa de input + padding */
-            --profile-selection-height: 50px; /* Altura da seção de prompts (menor) */
-            --total-fixed-bottom-height: calc(var(--input-area-height) + var(--footer-height) + var(--profile-selection-height));
-            
+            --profile-select-container-height: 60px; /* Nova altura para o container de prompts */
+            --footer-height: 40px; /* Altura do rodapé */
+            --total-fixed-bottom-height: calc(var(--input-area-height) + var(--profile-select-container-height) + var(--footer-height));
+
             --toggle-button-size: 40px;
             --menu-width: 280px;
             --modal-overlay-bg: rgba(0, 0, 0, 0.7);
@@ -337,7 +338,7 @@
             border-top: 1px solid var(--border-color);
             box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            height: var(--profile-selection-height); /* Altura definida */
+            height: var(--profile-select-container-height); /* Altura definida */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -361,7 +362,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             white-space: nowrap; /* Evita que o texto quebre */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Sombra mais suave */
             display: inline-flex; /* Para alinhar ícone e texto */
             align-items: center;
             gap: 5px; /* Espaço entre texto e ícone */
@@ -884,21 +885,18 @@
         </div>
         <div class="header-right">
             <a href="#" id="donateLink">Doe</a>
-        }
-    </style>
-</head>
-<body>
-    <div class="chat-header">
-        <div class="header-left">
-            <i class="fas fa-bars menu-icon" id="menuIcon"></i>
-            <span>CatólIA</span>
-        </div>
-        <div class="header-right">
-            <a href="#" id="donateLink">Doe</a>
         </div>
     </div>
 
     <div class="chat-container">
+        <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
+            <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
+            
+            <div class="chat-messages" id="chatMessages">
+                
+            </div>
+        </div>
+
         <div class="profile-selection-container">
             <p>Eu sou um(a):</p>
             <div class="dropdown-container">
@@ -922,14 +920,6 @@
                     <a href="#" data-type="media">Média</a>
                     <a href="#" data-type="longa">Longa</a>
                 </div>
-            </div>
-        </div>
-
-        <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
-            <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
-            
-            <div class="chat-messages" id="chatMessages">
-                
             </div>
         </div>
 
@@ -1145,6 +1135,10 @@
                     applyTheme(defaultThemeColors);
                 }
             }
+            // NOVO: Atualiza o estado visual do botão selecionado
+            const profileButtons = document.querySelectorAll('.profile-selection-container .prompt-button[data-profile]');
+            profileButtons.forEach(btn => btn.classList.remove('selected-profile'));
+            document.querySelector(`.profile-selection-container .prompt-button[data-profile="${profile}"]`).classList.add('selected-profile');
         }
 
         function selectResponseType(type) {
@@ -1153,6 +1147,11 @@
             responseTypeDropdownBtn.textContent = 'Resposta: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' ';
             responseTypeDropdownBtn.innerHTML += '<i class="fas fa-chevron-down"></i>';
             document.getElementById('responseTypeDropdownContent').classList.remove('open');
+
+            // NOVO: Atualiza o estado visual do botão selecionado
+            const responseTypeButtons = document.querySelectorAll('.profile-selection-container .prompt-button[data-type]');
+            responseTypeButtons.forEach(btn => btn.classList.remove('selected-response-type'));
+            document.querySelector(`.profile-selection-container .prompt-button[data-type="${type}"]`).classList.add('selected-response-type');
         }
 
 
