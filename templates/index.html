@@ -324,58 +324,58 @@
             box-sizing: border-box;
         }
         
-        /* NOVO: Seção de Prompts - AGORA FIXA NO RODAPÉ, ABAIXO DO CHAT-SCROLLABLE-CONTENT */
+        /* Seção de Prompts - AGORA FIXA NO RODAPÉ */
         .profile-selection-container {
             position: fixed;
             bottom: calc(var(--footer-height) + var(--input-area-height)); /* Acima do input e footer */
             left: 50%;
             transform: translateX(-50%);
-            width: 100%;
             max-width: 800px;
+            width: 100%;
             z-index: 998;
             box-sizing: border-box;
             background-color: var(--profile-bg);
             border-top: 1px solid var(--border-color);
             box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            height: var(--profile-selection-height); /* Altura fixa */
+            height: var(--profile-select-container-height); /* Altura fixa */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 10px 20px; /* Padding interno */
         }
         .profile-selection-container p {
-            margin: 0 0 5px 0; /* Margem ajustada */
+            margin: 0 0 5px 0;
             font-weight: bold;
-            font-size: 0.9em; /* Fonte menor */
+            font-size: 0.9em;
             color: var(--text-color);
         }
-        /* Botões de Dropdown */
         .dropdown-container {
             position: relative;
             display: inline-block;
-            margin: 0 5px; /* Espaço entre os dropdowns */
+            margin: 0 5px;
         }
         .dropdown-button {
             background-color: var(--profile-btn-bg);
             color: var(--profile-btn-color);
             border: none;
-            padding: 8px 15px; /* Padding menor */
-            border-radius: 20px;
+            padding: 5px 10px; /* Botão menor */
+            border-radius: 15px; /* Mais arredondado */
             cursor: pointer;
-            font-size: 0.8em; /* Fonte menor */
+            font-size: 0.75em; /* Fonte menor */
             font-weight: 500;
             transition: all 0.3s ease;
             white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 3px; /* Espaço entre texto e ícone */
         }
-        .dropdown-button.selected-profile { /* Estilo para o botão de perfil selecionado */
-            background-color: var(--color-primary);
+        .dropdown-button.selected-profile { 
+            background-color: var(--color-primary); /* Cor primária para o selecionado */
             color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 5px rgba(255,255,255,0.5);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
         .dropdown-button:hover {
             background-color: var(--color-primary-dark);
@@ -383,30 +383,33 @@
             transform: translateY(-1px);
         }
         .dropdown-button i {
-            font-size: 0.8em; /* Tamanho do ícone da seta */
+            font-size: 0.7em; /* Tamanho do ícone da seta */
         }
 
         .dropdown-content {
             display: none;
             position: absolute;
             background-color: var(--profile-bg);
-            min-width: 160px;
+            min-width: 120px; /* Largura mínima do dropdown */
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
+            z-index: 1005; /* Acima de tudo */
             border-radius: 8px;
             padding: 5px 0;
             bottom: 100%; /* Abre para cima */
             left: 50%;
             transform: translateX(-50%);
-            margin-bottom: 5px; /* Espaço entre botão e dropdown */
+            margin-bottom: 5px;
+            max-height: 200px; /* Altura máxima para lista rolavel */
+            overflow-y: auto; /* Scroll para muitos itens */
         }
         .dropdown-content a {
             color: var(--text-color);
             padding: 8px 16px;
             text-decoration: none;
             display: block;
-            font-size: 0.9em; /* Fonte menor na lista */
+            font-size: 0.85em; /* Fonte menor na lista */
             transition: background-color 0.2s ease;
+            white-space: nowrap; /* Não quebra texto */
         }
         .dropdown-content a:hover {
             background-color: var(--color-primary);
@@ -431,9 +434,8 @@
             flex-basis: auto;
             width: 100%;
             box-sizing: border-box;
-            /* Padding inferior é agora tratado pelo chat-scrollable-content */
             padding-bottom: 10px; 
-            font-size: 0.9em;
+            font-size: 0.9em; 
         }
 
         .message {
@@ -626,7 +628,7 @@
             z-index: 1000;
             padding-bottom: calc(10px + env(safe-area-inset-bottom));
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Centraliza o conteúdo horizontalmente */
             align-items: center;
             gap: 10px;
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
@@ -850,14 +852,21 @@
                 margin-bottom: 15px;
                 padding: 0 5px;
             }
-            .profile-selection {
+            .profile-selection-container {
                 padding: 10px 15px;
-                font-size: 0.9em;
+                height: var(--profile-select-container-height);
             }
-            .profile-buttons {
-                gap: 5px;
+            .profile-selection-container p {
+                font-size: 0.8em;
             }
-            .profile-buttons button {
+            .dropdown-button {
+                padding: 6px 10px;
+                font-size: 0.7em;
+            }
+            .dropdown-content {
+                min-width: 100px;
+            }
+            .dropdown-content a {
                 padding: 6px 12px;
                 font-size: 0.8em;
             }
@@ -916,7 +925,7 @@
     </div>
 
     <div class="chat-container">
-        <div class="profile-selection">
+        <div class="profile-selection-container">
             <p>Eu sou um(a):</p>
             <div class="dropdown-container">
                 <button class="dropdown-button" id="profileDropdownBtn">
@@ -1004,7 +1013,7 @@
 
     <script>
         let selectedProfile = 'leigo';
-        let selectedResponseType = 'media'; // NOVO: Padrão para tipo de resposta
+        let selectedResponseType = 'media';
         let typingIndicatorElement = null;
 
         const defaultThemeColors = {
@@ -1135,15 +1144,12 @@
             }
         }
 
-        // NOVO: Função para selecionar perfil (agora para dropdown)
         function selectProfile(profile) {
             selectedProfile = profile;
             const profileDropdownBtn = document.getElementById('profileDropdownBtn');
-            // Capitaliza a primeira letra do perfil para exibir no botão
             profileDropdownBtn.textContent = profile.charAt(0).toUpperCase() + profile.slice(1) + ' ';
             profileDropdownBtn.innerHTML += '<i class="fas fa-chevron-down"></i>';
 
-            // Garante que o dropdown feche
             document.getElementById('profileDropdownContent').classList.remove('open');
 
             document.body.classList.remove('child-mode', 'priest-mode', 'dark-mode'); 
@@ -1167,11 +1173,9 @@
             }
         }
 
-        // NOVO: Função para selecionar tipo de resposta
         function selectResponseType(type) {
             selectedResponseType = type;
             const responseTypeDropdownBtn = document.getElementById('responseTypeDropdownBtn');
-            // Capitaliza a primeira letra para exibir no botão
             responseTypeDropdownBtn.textContent = 'Resposta: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' ';
             responseTypeDropdownBtn.innerHTML += '<i class="fas fa-chevron-down"></i>';
             document.getElementById('responseTypeDropdownContent').classList.remove('open');
@@ -1197,7 +1201,7 @@
                 </div>
             `;
             chatMessages.appendChild(typingIndicatorElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Garante rolagem aqui
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function hideTypingIndicator() {
@@ -1237,21 +1241,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             const userMessageInput = document.getElementById('userMessageInput');
             const sendMessageButton = document.getElementById('sendMessageButton');
+            const profileDropdownBtn = document.getElementById('profileDropdownBtn'); 
+            const profileDropdownContent = document.getElementById('profileDropdownContent');
+            const responseTypeDropdownBtn = document.getElementById('responseTypeDropdownBtn');
+            const responseTypeDropdownContent = document.getElementById('responseTypeDropdownContent');
             const themeToggleButton = document.getElementById('themeToggleButton');
             const chatMessages = document.getElementById('chatMessages'); 
             const chatScrollableContent = document.getElementById('chatScrollableContent');
-            const profileDropdownBtn = document.getElementById('profileDropdownBtn'); // Novo
-            const profileDropdownContent = document.getElementById('profileDropdownContent'); // Novo
-            const responseTypeDropdownBtn = document.getElementById('responseTypeDropdownBtn'); // Novo
-            const responseTypeDropdownContent = document.getElementById('responseTypeDropdownContent'); // Novo
 
-            // Adiciona a mensagem inicial da IA
-            const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.`;
+            // Adiciona a mensagem inicial da IA diretamente na área de mensagens.
+            const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil abaixo para uma resposta mais adequada.`;
             appendMessage(initialBotMessageContent, 'bot', true); 
 
             chatScrollableContent.classList.add('initial-state');
 
-            // Carrega o tema salvo ao iniciar
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
@@ -1271,20 +1274,18 @@
 
             sendMessageButton.addEventListener('click', sendMessage);
 
-            // NOVO: Lógica para abrir/fechar dropdowns
             profileDropdownBtn.addEventListener('click', (event) => {
-                event.stopPropagation(); // Evita que o clique feche imediatamente
+                event.stopPropagation();
                 profileDropdownContent.classList.toggle('open');
-                responseTypeDropdownContent.classList.remove('open'); // Fecha o outro dropdown
+                responseTypeDropdownContent.classList.remove('open');
             });
 
             responseTypeDropdownBtn.addEventListener('click', (event) => {
                 event.stopPropagation();
                 responseTypeDropdownContent.classList.toggle('open');
-                profileDropdownContent.classList.remove('open'); // Fecha o outro dropdown
+                profileDropdownContent.classList.remove('open');
             });
 
-            // Fechar dropdowns ao clicar fora
             document.addEventListener('click', (event) => {
                 if (!profileDropdownContent.contains(event.target) && event.target !== profileDropdownBtn) {
                     profileDropdownContent.classList.remove('open');
@@ -1294,7 +1295,6 @@
                 }
             });
 
-            // NOVO: Event listeners para os itens dos dropdowns
             profileDropdownContent.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -1308,7 +1308,6 @@
                     selectResponseType(link.dataset.type);
                 });
             });
-
 
             themeToggleButton.addEventListener('click', toggleDarkMode);
 
@@ -1336,8 +1335,7 @@
 
             sidebarMenu.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', (e) => {
-                    // Evita que links de navegação fechem o menu se forem abertos em nova aba
-                    if (!e.ctrlKey && !e.metaKey) { // Se não for Ctrl+Click ou Cmd+Click
+                    if (!e.ctrlKey && !e.metaKey) { 
                         sidebarMenu.classList.remove('open');
                         menuOverlay.classList.remove('open');
                     }
@@ -1380,7 +1378,6 @@
             showTypingIndicator();
 
             try {
-                // Envia o tipo de resposta selecionado para o backend
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: {
@@ -1389,7 +1386,7 @@
                     body: JSON.stringify({
                         message: userMessage,
                         profile: selectedProfile,
-                        response_type: selectedResponseType // NOVO: Envia o tipo de resposta
+                        response_type: selectedResponseType
                     })
                 });
 
@@ -1404,9 +1401,12 @@
                 }
             } catch (error) {
                 console.error('Erro ao comunicar com o servidor:', error);
-                appendMessage('Desculpe, não foi possível conectar ao servidor. Por favor, tente novamente.', 'bot');
+                // NOVO: Mensagem de erro mais específica para o usuário
+                let errorMessage = 'Desculpe, não foi possível conectar ao servidor. Por favor, verifique sua conexão com a internet e tente novamente.';
+                // Você pode adicionar mais detalhes de depuração aqui se quiser, mas para o usuário final,
+                // uma mensagem clara é melhor.
+                appendMessage(errorMessage, 'bot');
             } finally {
-                // Garante que o scroll vá para o final após a resposta da IA
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }
@@ -1437,6 +1437,8 @@
             if (isInitial) {
                 messageDiv.style.justifyContent = 'center';
                 messageDiv.style.textAlign = 'center';
+                messageDiv.style.alignSelf = 'center'; /* Centraliza a bolha da mensagem */
+                messageDiv.querySelector('.message-content').style.maxWidth = '90%'; /* Ajusta largura da bolha inicial */
             }
         }
     </script>
