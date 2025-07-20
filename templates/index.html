@@ -106,11 +106,14 @@
 
             /* Alturas de elementos fixos */
             --header-height: 60px;
-            --input-area-height: 85px; /* Altura da caixa de input + padding */
-            --profile-select-container-height: 60px; /* Nova altura para o container de prompts */
-            --footer-height: 40px; /* Altura do rodapé */
-            --total-fixed-bottom-height: calc(var(--input-area-height) + var(--profile-select-container-height) + var(--footer-height));
-
+            --input-area-padding-vertical: 15px; /* Novo: Padding vertical da área de input */
+            --input-area-min-height: 55px; /* NOVO: Altura mínima da área de input sem padding */
+            --input-button-size: 45px; /* Tamanho dos botões de enviar */
+            --footer-height: 40px;
+            /* Recalcula input-area-height */
+            --input-area-total-height: calc(var(--input-area-min-height) + (var(--input-area-padding-vertical) * 2));
+            --total-fixed-bottom-height: calc(var(--input-area-total-height) + var(--footer-height));
+            
             --toggle-button-size: 40px;
             --menu-width: 280px;
             --modal-overlay-bg: rgba(0, 0, 0, 0.7);
@@ -212,7 +215,6 @@
             z-index: 1;
         }
 
-        /* Ajuste do chat-container para ocupar toda a tela, mas respeitando elementos fixos */
         body > .chat-container {
             height: calc(100vh - var(--header-height) - var(--footer-height));
             max-height: calc(100vh - var(--header-height) - var(--footer-height));
@@ -296,8 +298,8 @@
             justify-content: flex-start; 
             align-items: stretch;
             text-align: left;
-            /* NOVO: Padding inferior ajustado para a área de input fixa e prompts fixos */
-            padding-bottom: var(--total-fixed-bottom-height); 
+            /* NOVO: Padding inferior ajustado para a área de input fixa */
+            padding-bottom: var(--input-area-total-height); 
         }
         .chat-scrollable-content.initial-state {
             justify-content: center;
@@ -324,64 +326,6 @@
             box-sizing: border-box;
         }
         
-        /* NOVO: Seção de Prompts - AGORA FIXA NO RODAPÉ */
-        .profile-selection-container {
-            position: fixed;
-            bottom: calc(var(--footer-height) + var(--input-area-height)); /* Acima do input e footer */
-            left: 50%;
-            transform: translateX(-50%);
-            max-width: 800px;
-            width: 100%;
-            z-index: 998;
-            box-sizing: border-box;
-            background-color: var(--profile-bg);
-            border-top: 1px solid var(--border-color);
-            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
-            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            height: var(--profile-select-container-height); /* Altura definida */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 20px; /* Padding interno */
-        }
-        .profile-selection-container p {
-            margin: 0 0 5px 0;
-            font-weight: bold;
-            font-size: 0.9em;
-            color: var(--text-color);
-        }
-        /* NOVO: Estilo para os botões de prompt menores e visíveis */
-        .prompt-button {
-            background-color: var(--profile-btn-bg);
-            color: var(--profile-btn-color);
-            border: none;
-            border-radius: 18px; /* Mais arredondado que o botão de enviar */
-            padding: 8px 15px; /* Tamanho ajustado */
-            font-size: 0.85em; /* Fonte menor */
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap; /* Evita que o texto quebre */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Sombra mais suave */
-            display: inline-flex; /* Para alinhar ícone e texto */
-            align-items: center;
-            gap: 5px; /* Espaço entre texto e ícone */
-        }
-        .prompt-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .prompt-button.selected {
-            background-color: var(--color-primary); /* Cor primária para o selecionado */
-            color: white;
-            font-weight: bold; /* Negrito quando selecionado */
-            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-        }
-        .prompt-button i {
-            font-size: 0.9em; /* Tamanho do ícone dentro do botão */
-        }
-
-
         .chat-messages {
             background-color: var(--bg-container);
             transition: background-color 0.5s ease;
@@ -397,7 +341,6 @@
             flex-basis: auto;
             width: 100%;
             box-sizing: border-box;
-            /* Padding inferior é agora tratado pelo chat-scrollable-content */
             padding-bottom: 10px; 
             font-size: 0.9em; 
         }
@@ -508,15 +451,17 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* NOVO: Estilos para a área de input com prompts integrados */
         .chat-input-area {
             flex-shrink: 0;
-            padding: 15px 20px;
+            padding: var(--input-area-padding-vertical) 20px; /* Padding vertical ajustável */
             background-color: var(--bg-container);
             border-top: 1px solid var(--border-color);
             display: flex;
-            align-items: flex-end;
+            flex-direction: column; /* Organiza itens verticalmente */
+            align-items: stretch; /* Estica os filhos na largura */
             position: fixed;
-            bottom: var(--footer-height); /* Posicionado acima do footer */
+            bottom: var(--footer-height);
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
@@ -526,8 +471,46 @@
             transition: background-color 0.5s ease, border-color 0.5s ease;
             border-radius: 0;
             box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+            /* NÃO define altura fixa aqui para permitir que cresça com o textarea */
         }
-        .chat-input-area .textarea-wrapper {
+        
+        .main-input-wrapper { /* Novo wrapper para o + e textarea/send */
+            display: flex;
+            align-items: flex-end;
+            width: 100%;
+            padding-bottom: 10px; /* Espaço entre o input e os prompts */
+            box-sizing: border-box;
+        }
+
+        .options-toggle-button {
+            background-color: transparent; /* Fundo transparente */
+            color: var(--text-color); /* Cor do texto do tema */
+            border: none;
+            border-radius: 50%; /* Mantém redondo */
+            width: 35px;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: none; /* Remove sombra */
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-right: 10px;
+            font-weight: bold; /* Deixa o + em negrito */
+        }
+        .options-toggle-button:hover {
+            background-color: rgba(0,0,0,0.1); /* Efeito de hover discreto */
+            color: var(--color-primary);
+            transform: rotate(90deg);
+            box-shadow: none;
+        }
+        .options-toggle-button.open {
+            transform: rotate(45deg);
+        }
+
+        .textarea-wrapper {
             flex-grow: 1;
             margin-right: 10px;
             background-color: var(--input-bg);
@@ -554,7 +537,7 @@
             line-height: 1.5;
             color: var(--text-color);
         }
-        .chat-input-area button {
+        .chat-input-area button { /* Botão de Envio */
             background-color: var(--color-primary);
             color: white;
             border: none;
@@ -569,11 +552,68 @@
             font-size: 1.2em;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
         }
         .chat-input-area button:hover {
             background-color: var(--color-primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Menu Flutuante de Opções (Prompts e Resposta) */
+        .options-menu {
+            display: none;
+            position: absolute; /* NOVO: Posicionado em relação à chat-input-area */
+            bottom: calc(var(--input-area-min-height) + var(--input-area-padding-vertical) + 5px); /* Acima do textarea */
+            left: 20px; /* Alinha com a esquerda da barra de input */
+            background-color: var(--bg-container);
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            padding: 15px;
+            z-index: 1006;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.3s ease-in-out;
+            transform-origin: bottom left;
+            transform: scale(0.8) translateY(10px);
+            opacity: 0;
+            visibility: hidden;
+            min-width: 250px;
+            max-width: calc(100% - 40px); /* Ajuste para não sair da tela em mobile */
+            box-sizing: border-box;
+        }
+        .options-menu.open {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+        }
+        .options-menu-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .options-menu-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .options-menu-section p {
+            margin: 0 0 10px 0;
+            font-weight: bold;
+            font-size: 0.95em;
+            color: var(--text-color);
+        }
+        .options-menu-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+        .options-menu-buttons .prompt-button {
+            padding: 8px 15px;
+            font-size: 0.85em;
         }
 
         .chat-footer {
@@ -797,7 +837,7 @@
             }
             body > .chat-container {
                 margin-top: var(--header-height);
-                height: calc(100vh - var(--header-height) - var(--input-area-height) - var(--footer-height));
+                height: calc(100vh - var(--header-height) - var(--input-area-total-height) - var(--footer-height));
                 border-radius: 0;
             }
             .chat-header {
@@ -816,28 +856,18 @@
                 margin-bottom: 15px;
                 padding: 0 5px;
             }
-            .profile-selection-container {
-                padding: 8px 10px;
-                height: var(--profile-select-container-height);
-            }
-            .profile-selection-container p {
-                font-size: 0.8em;
-            }
-            .dropdown-button {
-                padding: 5px 10px;
-                font-size: 0.7em;
-            }
-            .dropdown-content {
-                min-width: 100px;
-            }
-            .dropdown-content a {
-                padding: 6px 12px;
-                font-size: 0.8em;
-            }
+            /* Ajustes para o input area em mobile */
             .chat-input-area {
                 padding: 10px 15px;
                 max-width: 100%;
                 border-radius: 0;
+                /* Altura fixa em mobile */
+                height: var(--input-area-total-height);
+            }
+            .options-toggle-button {
+                width: 30px;
+                height: 30px;
+                font-size: 1.2em;
             }
             .chat-input-area textarea {
                 font-size: 0.9em;
@@ -897,39 +927,48 @@
             </div>
         </div>
 
-        <div class="profile-selection-container">
-            <p>Eu sou um(a):</p>
-            <div class="dropdown-container">
-                <button class="dropdown-button selected-profile" id="profileDropdownBtn" data-profile="leigo">
-                    Leigo <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="dropdown-content" id="profileDropdownContent">
-                    <a href="#" data-profile="leigo">Leigo</a>
-                    <a href="#" data-profile="catequista">Catequista</a>
-                    <a href="#" data-profile="seminarista">Seminarista</a>
-                    <a href="#" data-profile="crianca">Criança</a>
-                    <a href="#" data-profile="sacerdote">Sacerdote</a>
-                </div>
-            </div>
-            <div class="dropdown-container">
-                <button class="dropdown-button selected-response-type" id="responseTypeDropdownBtn" data-type="media">
-                    Resposta: Média <i class="fas fa-chevron-down"></i>
-                </button>
-                <div class="dropdown-content" id="responseTypeDropdownContent">
-                    <a href="#" data-type="curta">Curta</a>
-                    <a href="#" data-type="media">Média</a>
-                    <a href="#" data-type="longa">Longa</a>
-                </div>
-            </div>
-        </div>
-
         <div class="chat-input-area">
-            <div class="textarea-wrapper">
-                <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
+            <div class="main-input-wrapper">
+                <button class="options-toggle-button" id="optionsToggleButton">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <div class="textarea-wrapper">
+                    <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
+                </div>
+                <button id="sendMessageButton">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
-            <button id="sendMessageButton">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+
+            <div class="options-menu" id="optionsMenu">
+                <div class="options-menu-section">
+                    <p>Eu sou um(a):</p>
+                    <div class="options-menu-buttons" id="profileOptionsButtons">
+                        <button class="prompt-button" data-profile="leigo">Leigo</button>
+                        <button class="prompt-button" data-profile="catequista">Catequista</button>
+                        <button class="prompt-button" data-profile="seminarista">Seminarista</button>
+                        <button class="prompt-button" data-profile="crianca">Criança</button>
+                        <button class="prompt-button" data-profile="sacerdote">Sacerdote</button>
+                    </div>
+                </div>
+                <div class="options-menu-section">
+                    <p>Tamanho da resposta:</p>
+                    <div class="options-menu-buttons" id="responseTypeOptionsButtons">
+                        <button class="prompt-button" data-type="curta">Curta</button>
+                        <button class="prompt-button" data-type="media">Média</button>
+                        <button class="prompt-button" data-type="longa">Longa</button>
+                    </div>
+                </div>
+                <div class="options-menu-section">
+                    <p>Sugestões rápidas:</p>
+                    <div class="options-menu-buttons" id="quickPromptButtons">
+                        <button class="prompt-button" data-quick-prompt="Qual a liturgia diária?"><i class="fas fa-book-open"></i> Liturgia Diária</button>
+                        <button class="prompt-button" data-quick-prompt="Quem foi o santo do dia de hoje?"><i class="fas fa-user-circle"></i> Santo do Dia</button>
+                        <button class="prompt-button" data-quick-prompt="Me explique o que é o sacramento da Eucaristia."><i class="fas fa-bread-slice"></i> Eucaristia</button>
+                        <button class="prompt-button" data-quick-prompt="Qual a importância do Catecismo da Igreja Católica?"><i class="fas fa-quran"></i> Catecismo</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="chat-footer">
@@ -1110,11 +1149,16 @@
 
         function selectProfile(profile) {
             selectedProfile = profile;
-            const profileDropdownBtn = document.getElementById('profileDropdownBtn');
-            profileDropdownBtn.textContent = profile.charAt(0).toUpperCase() + profile.slice(1) + ' ';
-            profileDropdownBtn.innerHTML += '<i class="fas fa-chevron-down"></i>';
+            // Atualiza o texto do botão principal do perfil
+            document.getElementById('profileDisplayBtn').textContent = profile.charAt(0).toUpperCase() + profile.slice(1);
+            
+            // Adiciona/remove a classe 'selected' nos botões do menu de perfil
+            document.querySelectorAll('#profileOptionsButtons .prompt-button').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`#profileOptionsButtons .prompt-button[data-profile="${profile}"]`).classList.add('selected');
 
-            document.getElementById('profileDropdownContent').classList.remove('open');
+            // Garante que o menu de opções feche
+            document.getElementById('optionsMenu').classList.remove('open');
+            document.getElementById('optionsToggleButton').classList.remove('open');
 
             document.body.classList.remove('child-mode', 'priest-mode', 'dark-mode'); 
 
@@ -1135,25 +1179,28 @@
                     applyTheme(defaultThemeColors);
                 }
             }
-            // NOVO: Atualiza o estado visual do botão selecionado
-            const profileButtons = document.querySelectorAll('.profile-selection-container .prompt-button[data-profile]');
-            profileButtons.forEach(btn => btn.classList.remove('selected-profile'));
-            document.querySelector(`.profile-selection-container .prompt-button[data-profile="${profile}"]`).classList.add('selected-profile');
         }
 
         function selectResponseType(type) {
             selectedResponseType = type;
-            const responseTypeDropdownBtn = document.getElementById('responseTypeDropdownBtn');
-            responseTypeDropdownBtn.textContent = 'Resposta: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' ';
-            responseTypeDropdownBtn.innerHTML += '<i class="fas fa-chevron-down"></i>';
-            document.getElementById('responseTypeDropdownContent').classList.remove('open');
+            // Atualiza o texto do botão principal do tipo de resposta
+            document.getElementById('responseTypeDisplayBtn').textContent = type.charAt(0).toUpperCase() + type.slice(1);
 
-            // NOVO: Atualiza o estado visual do botão selecionado
-            const responseTypeButtons = document.querySelectorAll('.profile-selection-container .prompt-button[data-type]');
-            responseTypeButtons.forEach(btn => btn.classList.remove('selected-response-type'));
-            document.querySelector(`.profile-selection-container .prompt-button[data-type="${type}"]`).classList.add('selected-response-type');
+            // Adiciona/remove a classe 'selected' nos botões do menu de tipo de resposta
+            document.querySelectorAll('#responseTypeOptionsButtons .prompt-button').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`#responseTypeOptionsButtons .prompt-button[data-type="${type}"]`).classList.add('selected');
+
+            // Garante que o menu de opções feche
+            document.getElementById('optionsMenu').classList.remove('open');
+            document.getElementById('optionsToggleButton').classList.remove('open');
         }
 
+        function sendQuickPrompt(promptText) {
+            document.getElementById('userMessageInput').value = promptText;
+            sendMessage(); // Envia a mensagem automaticamente
+            document.getElementById('optionsMenu').classList.remove('open'); // Fecha o menu
+            document.getElementById('optionsToggleButton').classList.remove('open');
+        }
 
         function autoResizeTextarea() {
             const textarea = document.getElementById('userMessageInput');
@@ -1214,15 +1261,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             const userMessageInput = document.getElementById('userMessageInput');
             const sendMessageButton = document.getElementById('sendMessageButton');
-            const profileDropdownBtn = document.getElementById('profileDropdownBtn'); 
-            const profileDropdownContent = document.getElementById('profileDropdownContent');
-            const responseTypeDropdownBtn = document.getElementById('responseTypeDropdownBtn');
-            const responseTypeDropdownContent = document.getElementById('responseTypeDropdownContent');
             const themeToggleButton = document.getElementById('themeToggleButton');
             const chatMessages = document.getElementById('chatMessages'); 
             const chatScrollableContent = document.getElementById('chatScrollableContent');
+            
+            // NOVO: Referências aos novos elementos de prompt
+            const optionsToggleButton = document.getElementById('optionsToggleButton');
+            const optionsMenu = document.getElementById('optionsMenu');
+            const profileOptionsButtons = document.querySelectorAll('#profileOptionsButtons .prompt-button');
+            const responseTypeOptionsButtons = document.querySelectorAll('#responseTypeOptionsButtons .prompt-button');
+            const quickPromptButtons = document.querySelectorAll('#quickPromptButtons .prompt-button');
 
-            const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Selecione seu perfil abaixo para uma resposta mais adequada.`;
+
+            // Adiciona a mensagem inicial da IA
+            const initialBotMessageContent = `Olá! Eu sou sua CatólIA Guia de Fé. Como posso te ajudar hoje? Para personalizar minha resposta, selecione seu perfil ou o tipo de resposta nas opções abaixo.`;
             appendMessage(initialBotMessageContent, 'bot', true); 
 
             chatScrollableContent.classList.add('initial-state');
@@ -1246,38 +1298,40 @@
 
             sendMessageButton.addEventListener('click', sendMessage);
 
-            profileDropdownBtn.addEventListener('click', (event) => {
+            // Lógica para o botão de "Mais Opções" (+)
+            optionsToggleButton.addEventListener('click', (event) => {
                 event.stopPropagation();
-                profileDropdownContent.classList.toggle('open');
-                responseTypeDropdownContent.classList.remove('open');
+                optionsMenu.classList.toggle('open');
+                optionsToggleButton.classList.toggle('open');
             });
 
-            responseTypeDropdownBtn.addEventListener('click', (event) => {
-                event.stopPropagation();
-                responseTypeDropdownContent.classList.toggle('open');
-                profileDropdownContent.classList.remove('open');
-            });
-
+            // Fechar o menu de opções ao clicar fora dele
             document.addEventListener('click', (event) => {
-                if (!profileDropdownContent.contains(event.target) && event.target !== profileDropdownBtn) {
-                    profileDropdownContent.classList.remove('open');
-                }
-                if (!responseTypeDropdownContent.contains(event.target) && event.target !== responseTypeDropdownBtn) {
-                    responseTypeDropdownContent.classList.remove('open');
+                if (!optionsMenu.contains(event.target) && event.target !== optionsToggleButton) {
+                    optionsMenu.classList.remove('open');
+                    optionsToggleButton.classList.remove('open');
                 }
             });
 
-            profileDropdownContent.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
+            // Adiciona listeners aos botões DENTRO do menu de opções
+            profileOptionsButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
                     e.preventDefault();
-                    selectProfile(link.dataset.profile);
+                    selectProfile(button.dataset.profile);
                 });
             });
 
-            responseTypeDropdownContent.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
+            responseTypeOptionsButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
                     e.preventDefault();
-                    selectResponseType(link.dataset.type);
+                    selectResponseType(button.dataset.type);
+                });
+            });
+
+            quickPromptButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    sendQuickPrompt(button.dataset.quickPrompt);
                 });
             });
 
@@ -1323,6 +1377,10 @@
             if (closeModalBtn) closeModalBtn.addEventListener('click', closeDonateModal);
             if (copyPixBtn) copyPixBtn.addEventListener('click', copyPixKey);
             if (thanksBtn) thanksBtn.addEventListener('click', closeDonateModal);
+
+            // Define o estado inicial dos botões de display dos prompts no input area
+            selectProfile('leigo'); // Seleciona 'leigo' ao iniciar
+            selectResponseType('media'); // Seleciona 'media' ao iniciar
         });
 
 
@@ -1334,6 +1392,11 @@
             const userMessage = userMessageInput.value.trim();
 
             if (!userMessage) return;
+
+            // Fecha o menu de opções se estiver aberto ao enviar mensagem
+            document.getElementById('optionsMenu').classList.remove('open');
+            document.getElementById('optionsToggleButton').classList.remove('open');
+
 
             if (chatScrollableContent.classList.contains('initial-state')) {
                 chatScrollableContent.classList.remove('initial-state');
