@@ -4,11 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>CatólIA - Seu Guia de Fé</title>
+    <!-- 1. LOGO NO ÍCONE DA GUIA (FAVICON) -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
+        /* --- ESTILOS ADICIONADOS PARA A LOGO --- */
+        .header-left img.logo {
+            height: 38px;
+            width: 38px;
+            background-color: white;
+            border-radius: 50%;
+            padding: 3px;
+            box-sizing: border-box;
+            margin-right: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* 3. Estilo para a logo ser o avatar da IA */
+        .message.bot .message-avatar {
+            background-color: #ffffff;
+            padding: 2px;
+            box-sizing: border-box;
+        }
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+        /* --- FIM DOS ESTILOS DA LOGO --- */
+
         :root {
             /* Cores Gerais */
             --color-primary: #4CAF50;
@@ -284,7 +312,7 @@
         .message.bot { justify-content: flex-start; }
         .message-avatar { width: 35px; height: 35px; min-width: 35px; border-radius: 50%; background-color: var(--profile-btn-bg); color: var(--profile-btn-color); display: flex; justify-content: center; align-items: center; font-size: 1.2em; margin-top: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); flex-shrink: 0; }
         .message.user .message-avatar { order: 2; margin-left: 10px; background-color: var(--color-primary); color: white; }
-        .message.bot .message-avatar { order: 0; margin-right: 10px; background-color: var(--color-primary-dark); color: white; }
+        .message.bot .message-avatar { order: 0; margin-right: 10px; } /* Cor de fundo removida para ser controlada pelo estilo da logo */
         .message-content { max-width: 75%; padding: 12px 18px; border-radius: 22px; position: relative; word-wrap: break-word; line-height: 1.6; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
         .message.user .message-content { background-color: var(--bubble-user); color: var(--text-color); }
         .message.bot .message-content { background-color: var(--bubble-bot); color: var(--text-color); }
@@ -336,6 +364,8 @@
     <header class="chat-header">
         <div class="header-left">
             <i class="fas fa-bars menu-icon" id="menuIcon"></i>
+            <!-- 2. LOGO NO CABEÇALHO -->
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo CatólIA" class="logo">
             <span>CatólIA</span>
         </div>
         <div class="header-right">
@@ -388,10 +418,9 @@
         </div>
     </div>
 
-    <!-- ================================== RODAPÉ ATUALIZADO ================================== -->
     <footer class="chat-footer">
         <span>
-            Criado com <a href="https://openrouter.ai" target="_blank" style="text-decoration: underline; color: var(--footer-text);">API Open Router</a> | DeepSeek
+            Criado com <a href="https://openrouter.ai" target="_blank" style="text-decoration: underline; color: var(--footer-text);">API Open Router</a> | Deepseek
         </span>
         <span>|</span>
         <a href="https://www.instagram.com/job.brito" target="_blank">@job.brito</a>
@@ -426,6 +455,9 @@
     <div class="overlay" id="menuOverlay"></div>
 
     <script>
+        // 3. Passa a URL da logo do Flask para o JavaScript
+        const logoUrl = "{{ url_for('static', filename='images/logo.png') }}";
+
         // Variáveis de estado global
         let selectedProfile = 'leigo';
         let selectedResponseType = 'media';
@@ -463,11 +495,16 @@
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
 
-            const avatarIcon = sender === 'user' ? 'fa-user' : 'fa-church';
-            messageDiv.innerHTML = `<div class="message-avatar"><i class="fas ${avatarIcon}"></i></div><div class="message-content"></div>`;
+            // 3. Lógica para usar a logo para a IA e o ícone para o usuário
+            let avatarHtml;
+            if (sender === 'user') {
+                avatarHtml = `<div class="message-avatar"><i class="fas fa-user"></i></div>`;
+            } else {
+                avatarHtml = `<div class="message-avatar"><img src="${logoUrl}" alt="CatólIA Avatar"></div>`;
+            }
             
+            messageDiv.innerHTML = `${avatarHtml}<div class="message-content"></div>`;
             messageDiv.querySelector('.message-content').innerHTML = marked.parse(message);
-
             chatMessages.appendChild(messageDiv);
             scrollToBottom();
         }
@@ -478,7 +515,6 @@
             const userMessage = userMessageInput.value.trim();
             if (!userMessage) return;
 
-            // Desabilita o botão para evitar envios múltiplos
             sendMessageButton.disabled = true;
             sendMessageButton.style.opacity = 0.5;
 
@@ -488,7 +524,8 @@
 
             let typingIndicator = document.createElement('div');
             typingIndicator.classList.add('message', 'bot', 'typing-indicator');
-            typingIndicator.innerHTML = `<div class="message-avatar"><i class="fas fa-church"></i></div><div class="message-content"><span></span><span></span><span></span></div>`;
+            // 3. Usa a logo também no indicador de "digitando"
+            typingIndicator.innerHTML = `<div class="message-avatar"><img src="${logoUrl}" alt="CatólIA Avatar"></div><div class="message-content"><span></span><span></span><span></span></div>`;
             document.getElementById('chatMessages').appendChild(typingIndicator);
             scrollToBottom();
             
@@ -521,7 +558,6 @@
                 typingIndicator.remove();
                 appendMessage(`Desculpe, ocorreu um erro de comunicação com o servidor. (${error.message})`, 'bot');
             } finally {
-                // Habilita o botão novamente
                 sendMessageButton.disabled = false;
                 sendMessageButton.style.opacity = 1;
             }
