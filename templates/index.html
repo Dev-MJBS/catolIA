@@ -388,8 +388,11 @@
         </div>
     </div>
 
+    <!-- ================================== RODAPÉ ATUALIZADO ================================== -->
     <footer class="chat-footer">
-        <span>Desenvolvido com Google Gemini</span>
+        <span>
+            Criado com <a href="https://openrouter.ai" target="_blank" style="text-decoration: underline; color: var(--footer-text);">API Open Router</a> | DeepSeek
+        </span>
         <span>|</span>
         <a href="https://www.instagram.com/job.brito" target="_blank">@job.brito</a>
         <div class="theme-toggle-button" id="themeToggleButton" aria-label="Alternar tema">
@@ -471,8 +474,13 @@
         
         async function sendMessage() {
             const userMessageInput = document.getElementById('userMessageInput');
+            const sendMessageButton = document.getElementById('sendMessageButton');
             const userMessage = userMessageInput.value.trim();
             if (!userMessage) return;
+
+            // Desabilita o botão para evitar envios múltiplos
+            sendMessageButton.disabled = true;
+            sendMessageButton.style.opacity = 0.5;
 
             appendMessage(userMessage, 'user');
             userMessageInput.value = '';
@@ -512,6 +520,10 @@
                 console.error('Erro ao comunicar com o servidor:', error);
                 typingIndicator.remove();
                 appendMessage(`Desculpe, ocorreu um erro de comunicação com o servidor. (${error.message})`, 'bot');
+            } finally {
+                // Habilita o botão novamente
+                sendMessageButton.disabled = false;
+                sendMessageButton.style.opacity = 1;
             }
         }
 
@@ -573,7 +585,6 @@
 
             document.getElementById('themeToggleButton').addEventListener('click', toggleDarkMode);
 
-            // Menu de opções (+)
             const optionsToggleButton = document.getElementById('optionsToggleButton');
             const optionsMenu = document.getElementById('optionsMenu');
             optionsToggleButton.addEventListener('click', (e) => {
@@ -613,7 +624,6 @@
             });
         }
 
-        // --- INICIALIZAÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
             updateScrollPadding();
             window.addEventListener('resize', updateScrollPadding);
