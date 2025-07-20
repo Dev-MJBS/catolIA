@@ -312,7 +312,7 @@
         .message.bot { justify-content: flex-start; }
         .message-avatar { width: 35px; height: 35px; min-width: 35px; border-radius: 50%; background-color: var(--profile-btn-bg); color: var(--profile-btn-color); display: flex; justify-content: center; align-items: center; font-size: 1.2em; margin-top: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); flex-shrink: 0; }
         .message.user .message-avatar { order: 2; margin-left: 10px; background-color: var(--color-primary); color: white; }
-        .message.bot .message-avatar { order: 0; margin-right: 10px; } /* Cor de fundo removida para ser controlada pelo estilo da logo */
+        .message.bot .message-avatar { order: 0; margin-right: 10px; }
         .message-content { max-width: 75%; padding: 12px 18px; border-radius: 22px; position: relative; word-wrap: break-word; line-height: 1.6; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
         .message.user .message-content { background-color: var(--bubble-user); color: var(--text-color); }
         .message.bot .message-content { background-color: var(--bubble-bot); color: var(--text-color); }
@@ -364,7 +364,6 @@
     <header class="chat-header">
         <div class="header-left">
             <i class="fas fa-bars menu-icon" id="menuIcon"></i>
-            <!-- 2. LOGO NO CABEÇALHO -->
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo CatólIA" class="logo">
             <span>CatólIA</span>
         </div>
@@ -455,14 +454,13 @@
     <div class="overlay" id="menuOverlay"></div>
 
     <script>
-        // 3. Passa a URL da logo do Flask para o JavaScript
+        // IMPORTANTE: Esta variável é preenchida pelo Flask/Jinja2 quando a página é carregada.
+        // Ela contém o caminho correto para a imagem da logo.
         const logoUrl = "{{ url_for('static', filename='images/logo.png') }}";
 
-        // Variáveis de estado global
         let selectedProfile = 'leigo';
         let selectedResponseType = 'media';
 
-        // --- FUNÇÕES DE LÓGICA E CONTROLE ---
         function updateScrollPadding() {
             const scrollableContent = document.getElementById('chatScrollableContent');
             const inputArea = document.getElementById('chatInputArea');
@@ -495,7 +493,6 @@
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
 
-            // 3. Lógica para usar a logo para a IA e o ícone para o usuário
             let avatarHtml;
             if (sender === 'user') {
                 avatarHtml = `<div class="message-avatar"><i class="fas fa-user"></i></div>`;
@@ -524,7 +521,6 @@
 
             let typingIndicator = document.createElement('div');
             typingIndicator.classList.add('message', 'bot', 'typing-indicator');
-            // 3. Usa a logo também no indicador de "digitando"
             typingIndicator.innerHTML = `<div class="message-avatar"><img src="${logoUrl}" alt="CatólIA Avatar"></div><div class="message-content"><span></span><span></span><span></span></div>`;
             document.getElementById('chatMessages').appendChild(typingIndicator);
             scrollToBottom();
@@ -543,7 +539,7 @@
                 typingIndicator.remove();
 
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'Erro desconhecido ao ler a resposta do servidor.' }));
+                    const errorData = await response.json().catch(() => ({ error: 'Erro desconhecido.' }));
                     throw new Error(errorData.error || `Erro de servidor: ${response.statusText}`);
                 }
                 const data = await response.json();
@@ -556,7 +552,7 @@
             } catch (error) {
                 console.error('Erro ao comunicar com o servidor:', error);
                 typingIndicator.remove();
-                appendMessage(`Desculpe, ocorreu um erro de comunicação com o servidor. (${error.message})`, 'bot');
+                appendMessage(`Desculpe, ocorreu um erro de comunicação. (${error.message})`, 'bot');
             } finally {
                 sendMessageButton.disabled = false;
                 sendMessageButton.style.opacity = 1;
