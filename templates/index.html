@@ -6,54 +6,13 @@
     <title>CatólIA - Seu Guia de Fé</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
-        /* --- ESTILOS DA LOGO --- */
-        .header-left img.logo { height: 38px; width: 38px; background-color: white; border-radius: 50%; padding: 3px; box-sizing: border-box; margin-right: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        
-        /* --- ESTILOS PARA O MODAL DE CONFISSÃO --- */
-        #confessionModal .modal-content { max-width: 700px; text-align: left; }
-        #confessionModal h3 { text-align: center; }
-        #confessionModal h4 { color: var(--color-primary-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-top: 20px; }
-        #confessionModal .privacy-warning { background-color: rgba(255, 229, 100, 0.3); border-left: 4px solid #ffc107; padding: 10px; margin-bottom: 20px; font-size: 0.9em; border-radius: 4px; }
-        #confessionModal .examination-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
-        #confessionModal .examination-item div { flex-grow: 1; padding-right: 15px; }
-        #confessionModal .examination-item p { margin: 0; word-break: break-word; }
-        #confessionModal .examination-source { font-size: 0.75em; color: var(--footer-text); font-style: italic; margin-top: 4px; }
-        #confessionModal .add-topic-btn { background-color: var(--profile-btn-bg); color: var(--profile-btn-color); border: none; border-radius: 5px; padding: 5px 10px; font-size: 0.8em; cursor: pointer; flex-shrink: 0; transition: background-color 0.2s; }
-        #confessionModal .add-topic-btn:hover { background-color: var(--color-primary); color: white; }
-        #confessionModal #confessionList { width: 100%; min-height: 100px; margin-top: 10px; font-family: 'Roboto', sans-serif; box-sizing: border-box; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--input-border); border-radius: 4px; }
-        #confessionModal .modal-actions { display: flex; justify-content: space-between; margin-top: 20px; flex-wrap: wrap; gap: 10px; }
-        #confessionModal .privacy-consent { margin-top: 20px; font-size: 0.8em; display: flex; align-items: center; gap: 8px; }
-        #getAdviceBtn:disabled { background-color: #ccc; cursor: not-allowed; }
-        #iaAdviceContainer { margin-top: 15px; padding: 10px; background-color: var(--bubble-bot); border-radius: 8px; font-size: 0.9em; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--color-primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin: 10px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* --- ESTILOS PARA O MODAL DE CATEQUESE --- */
-        #catechesisModal .modal-content { max-width: 800px; text-align: left; }
-        #catechesisModal .modal-header { background-color: #4a148c; /* Roxo escuro */ color: white; margin: -30px -30px 20px -30px; padding: 20px; border-radius: 15px 15px 0 0; text-align: center; }
-        #catechesisModal .modal-header h3 { margin: 0; color: white; }
-        #catechesisModal .form-group { margin-bottom: 15px; }
-        #catechesisModal label { font-weight: bold; display: block; margin-bottom: 5px; }
-        #catechesisModal input[type="text"] { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); box-sizing: border-box; }
-        #catechesisModal .age-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        #catechesisModal .age-group label { display: flex; align-items: center; gap: 5px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; transition: all 0.2s; }
-        #catechesisModal .age-group input[type="radio"] { display: none; }
-        #catechesisModal .age-group input[type="radio"]:checked + label { background-color: #4a148c; color: white; border-color: #4a148c; }
-        #catechesisModal #generatePlanBtn { background-color: #4a148c; width: 100%; padding: 12px; font-size: 1.1em; }
-        #catechesisModal #catechesisPlanResult { width: 100%; min-height: 200px; margin-top: 20px; background-color: var(--input-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 4px; font-size: 1em; line-height: 1.6; max-height: 40vh; overflow-y: auto; white-space: normal; overflow-wrap: break-word; word-break: break-word; }
-        #catechesisPlanResult * { white-space: normal !important; }
-        #catechesisPlanResult h1, #catechesisPlanResult h2, #catechesisPlanResult h3, #catechesisPlanResult h4, #catechesisPlanResult h5, #catechesisPlanResult h6 { margin-top: 1.2em; margin-bottom: 0.6em; line-height: 1.2; color: var(--color-primary-dark); }
-        #catechesisPlanResult p { margin-bottom: 0.8em; }
-        #catechesisPlanResult ul, #catechesisPlanResult ol { padding-left: 25px; margin-bottom: 0.8em; }
-        #catechesisPlanResult li { margin-bottom: 0.4em; }
-        #catechesisPlanResult strong { font-weight: bold; }
-        #catechesisPlanResult em { font-style: italic; }
-        #catechesisModal #copyPlanBtn { margin-top: 15px; background-color: var(--color-primary); }
-
+        /* --- ESTILOS GERAIS E CORREÇÕES --- */
         :root {
             /* Cores Gerais */
             --color-primary: #4CAF50;
@@ -177,7 +136,6 @@
         .chat-scrollable-content.has-content .main-central-message { display: none; }
         .main-central-message { font-family: 'Montserrat', sans-serif; font-size: 1.8em; font-weight: 700; color: var(--color-primary-dark); margin-bottom: 30px; transition: color 0.5s ease; padding: 0 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); align-self: center; width: 100%; max-width: 600px; box-sizing: border-box; }
         .profile-selection-top { text-align: center; padding: 20px; font-size: 0.95em; color: var(--text-color); transition: background-color 0.5s ease, color 0.5s ease; flex-shrink: 0; background-color: var(--profile-bg); border-bottom: 1px solid var(--border-color); margin: 0 -20px 20px -20px; }
-        .profile-selection-top p { margin-bottom: 10px; font-weight: bold; font-size: 1em; text-align: center; }
         .profile-buttons-top { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
         .profile-buttons-top .prompt-button { background-color: var(--profile-btn-bg); color: var(--profile-btn-color); border: none; border-radius: 18px; padding: 6px 12px; font-size: 0.8em; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 5px; }
         .profile-buttons-top .prompt-button.selected { background-color: var(--color-primary); color: white; font-weight: bold; box-shadow: 0 3px 8px rgba(0,0,0,0.25); }
@@ -191,6 +149,7 @@
         .message.user .message-avatar { order: 2; margin-left: 10px; background-color: var(--color-primary); color: white; }
         .message.bot .message-avatar { order: 0; margin-right: 10px; background-color: var(--color-primary-dark); color: white; }
         .message-content { max-width: 75%; padding: 12px 18px; border-radius: 22px; position: relative; word-wrap: break-word; line-height: 1.6; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
+        .message-content p:first-child { margin-top: 0; } .message-content p:last-child { margin-bottom: 0; }
         .message.user .message-content { background-color: var(--bubble-user); color: var(--text-color); }
         .message.bot .message-content { background-color: var(--bubble-bot); color: var(--text-color); }
         .typing-indicator .message-content { background-color: transparent; padding: 0; border-radius: 0; box-shadow: none; width: auto; display: flex; align-items: center; margin: 12px 18px; }
@@ -199,6 +158,7 @@
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .options-toggle-button { background-color: transparent; color: var(--text-color); border: none; width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; font-size: 1.2em; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; position: absolute; bottom: 8px; left: 8px; font-weight: bold; z-index: 1; }
         .options-toggle-button:hover { background-color: rgba(0,0,0,0.05); color: var(--color-primary); transform: scale(1.1); }
         .options-toggle-button.open { transform: rotate(45deg); }
@@ -226,18 +186,43 @@
         .sidebar-menu ul li a i { margin-right: 10px; width: 20px; text-align: center; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1002; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
         .overlay.open { opacity: 1; visibility: visible; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-container); display: flex; flex-direction: column; z-index: 1004; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
-        .modal.open { opacity: 1; visibility: visible; }
-        .modal-content { display: flex; flex-direction: column; height: 100%; }
+        
+        /* --- ESTILOS DO MODAL CORRIGIDOS --- */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay-bg); display: none; align-items: center; justify-content: center; z-index: 1004; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
+        .modal.open { display: flex; opacity: 1; visibility: visible; }
+        .modal-content { background-color: var(--modal-bg); color: var(--modal-text); display: flex; flex-direction: column; max-height: 90vh; max-width: 90%; width: 800px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.3); overflow: hidden; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--header-bg); color: var(--header-text); flex-shrink: 0; }
-        #catechesisModal .modal-header { background-color: #4a148c; }
         .modal-header h3 { margin: 0; font-size: 1.2em; }
-        .modal-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
-        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-container); display: flex; justify-content: space-around; gap: 10px; }
-        .modal-close-button { position: static; background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--header-text); opacity: 0.8; }
+        .modal-close-button { background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--header-text); opacity: 0.8; }
         .modal-close-button:hover { opacity: 1; }
-        .modal-content .copy-pix-button { background-color: var(--color-primary); color: white; padding: 10px 20px; border: none; border-radius: 25px; cursor: pointer; font-size: 1em; font-weight: bold; transition: background-color 0.3s ease; margin-top: 0; }
-        .modal-content .copy-pix-button:hover { background-color: var(--color-primary-dark); }
+        .modal-body { padding: 20px; flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-container); display: flex; justify-content: space-around; gap: 10px; }
+        .copy-pix-button { background-color: var(--color-primary); color: white; padding: 10px 20px; border: none; border-radius: 25px; cursor: pointer; font-size: 1em; font-weight: bold; transition: background-color 0.3s ease; }
+        .copy-pix-button:hover { background-color: var(--color-primary-dark); }
+        
+        /* ESTILOS ESPECÍFICOS PARA OS MODAIS (Confissão e Catequese) */
+        #confessionModal .privacy-warning { background-color: rgba(255, 229, 100, 0.3); border-left: 4px solid #ffc107; padding: 10px; margin-bottom: 20px; font-size: 0.9em; border-radius: 4px; }
+        #confessionModal .examination-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
+        #confessionModal .examination-item div { flex-grow: 1; padding-right: 15px; }
+        #confessionModal .examination-source { font-size: 0.75em; color: var(--footer-text); font-style: italic; margin-top: 4px; }
+        #confessionModal .add-topic-btn { background-color: var(--profile-btn-bg); color: var(--profile-btn-color); border: none; border-radius: 5px; padding: 5px 10px; font-size: 0.8em; cursor: pointer; flex-shrink: 0; }
+        
+        #catechesisModal .modal-header { background-color: #4a148c; color: white; }
+        #catechesisModal .form-group { margin-bottom: 15px; }
+        #catechesisModal label { font-weight: bold; display: block; margin-bottom: 5px; }
+        #catechesisModal input[type="text"] { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); box-sizing: border-box; }
+        #catechesisModal .age-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        #catechesisModal .age-group label { display: flex; align-items: center; gap: 5px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; }
+        #catechesisModal .age-group input[type="radio"] { display: none; }
+        #catechesisModal .age-group input[type="radio"]:checked + label { background-color: #4a148c; color: white; border-color: #4a148c; }
+        #catechesisModal #generatePlanBtn { background-color: #4a148c; color: white; width: 100%; padding: 12px; font-size: 1.1em; border-radius: 8px; border: none; cursor: pointer; }
+        #catechesisModal #catechesisPlanResult { background-color: var(--bubble-bot); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; font-size: 1em; line-height: 1.6; min-height: 200px; margin-top: 20px; color: var(--text-color); }
+        #catechesisPlanResult h1, #catechesisPlanResult h2, #catechesisPlanResult h3, #catechesisPlanResult h4 { margin-top: 1.2em; margin-bottom: 0.6em; line-height: 1.2; color: var(--color-primary-dark); }
+        #catechesisPlanResult p { margin-bottom: 0.8em; }
+        #catechesisPlanResult ul, #catechesisPlanResult ol { padding-left: 25px; margin-bottom: 0.8em; }
+        #catechesisPlanResult li { margin-bottom: 0.4em; }
+        #catechesisPlanResult strong { font-weight: bold; }
+
         @media (max-width: 768px) { .chat-container, header.chat-header, .chat-input-area, footer.chat-footer { max-width: 100%; border-radius: 0; } header.chat-header { padding: 8px 15px; font-size: 1.1em; } .menu-icon { font-size: 1.2em; margin-right: 10px; } .main-central-message { font-size: 1.3em; } .chat-input-area { padding: 10px 15px; } .options-toggle-button { width: 30px; height: 30px; font-size: 1.2em; left: 5px; bottom: 5px; } .chat-input-area textarea { font-size: 0.9em; } #sendMessageButton { width: 40px; height: 40px; min-width: 40px; font-size: 1em; } .options-menu { padding: 10px; gap: 10px; min-width: 200px; } .chat-messages { padding: 10px; } footer.chat-footer { padding: 8px 15px; font-size: 0.7em; } .sidebar-menu { width: 250px; } }
     </style>
 </head>
@@ -254,7 +239,6 @@
 
     <main class="chat-container">
         <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
-            
             <div class="profile-selection-top">
                 <p>Eu sou um(a):</p>
                 <div class="profile-buttons-top" id="profileButtonsTop">
@@ -265,9 +249,7 @@
                     <button class="prompt-button" data-profile="sacerdote"><i class="fas fa-cross"></i> Sacerdote</button>
                 </div>
             </div>
-
             <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
-            
             <div class="chat-messages" id="chatMessages"></div>
         </div>
     </main>
@@ -275,16 +257,11 @@
     <div class="chat-input-area" id="chatInputArea">
         <div class="main-input-wrapper">
             <div class="textarea-wrapper">
-                <button class="options-toggle-button" id="optionsToggleButton" aria-label="Mais opções">
-                    <i class="fas fa-plus"></i>
-                </button>
+                <button class="options-toggle-button" id="optionsToggleButton" aria-label="Mais opções"><i class="fas fa-plus"></i></button>
                 <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
             </div>
-            <button id="sendMessageButton" aria-label="Enviar Mensagem">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+            <button id="sendMessageButton" aria-label="Enviar Mensagem"><i class="fas fa-paper-plane"></i></button>
         </div>
-
         <div class="options-menu" id="optionsMenu">
             <div class="options-menu-section">
                 <p>Tamanho da resposta:</p>
@@ -298,14 +275,10 @@
     </div>
 
     <footer class="chat-footer">
-        <span>
-            Criado com <a href="https://openrouter.ai" target="_blank" style="text-decoration: underline; color: var(--footer-text);">API Open Router</a> | Deepseek
-        </span>
+        <span>Criado com <a href="https://openrouter.ai" target="_blank" style="text-decoration: underline; color: var(--footer-text);">API Open Router</a> | Deepseek</span>
         <span>|</span>
         <a href="https://www.instagram.com/job.brito" target="_blank">@job.brito</a>
-        <div class="theme-toggle-button" id="themeToggleButton" aria-label="Alternar tema">
-            <i class="fas fa-moon"></i>
-        </div>
+        <div class="theme-toggle-button" id="themeToggleButton" aria-label="Alternar tema"><i class="fas fa-moon"></i></div>
     </footer>
 
     <nav class="sidebar-menu" id="sidebarMenu">
@@ -321,213 +294,80 @@
             <li><a href="https://www.vatican.va/content/vatican/pt.html" target="_blank"><i class="fas fa-church"></i>Santa Sé (Vaticano)</a></li>
         </ul>
     </nav>
-
-    <div class="modal" id="donateModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Apoie a CatólIA!</h3>
-                <button class="modal-close-button" id="closeModalBtn" aria-label="Fechar modal">&times;</button>
-            </div>
-            <div class="modal-body" style="text-align: center;">
-                <p>Sua doação faz a diferença para continuarmos evangelizando através da tecnologia.</p>
-                <p>Faça seu Pix (e-mail):</p>
-                <p style="font-size:1.3em; font-weight:bold; color:var(--color-primary-dark);" id="pixKey">mateus.job@outlook.com</p>
-            </div>
-            <div class="modal-footer">
-                <button class="copy-pix-button" id="copyPixBtn">Copiar Chave Pix</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="confessionModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Preparação para a Santa Confissão</h3>
-                <button class="modal-close-button" id="closeConfessionModalBtn" aria-label="Fechar">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="privacy-warning">
-                    <strong>Privacidade:</strong> Nenhuma informação aqui é salva. Tudo é apagado ao fechar esta janela.
-                </div>
-                <p>Reflita sobre cada ponto. Se sua consciência o acusar, clique para adicionar um tópico à sua lista.</p>
-                
-                <div id="examinationContent">
-                    <!-- Conteúdo será gerado pelo JavaScript -->
-                </div>
-
-                <h4>Sua Lista para Confissão:</h4>
-                <textarea id="confessionList" rows="5" readonly></textarea>
-
-                <div class="privacy-consent">
-                    <input type="checkbox" id="consentCheck">
-                    <label for="consentCheck">Entendo que minha lista será enviada anonimamente à IA para receber um conselho.</label>
-                </div>
-                <button class="copy-pix-button" id="getAdviceBtn" disabled><i class="fas fa-comment-dots"></i> Pedir Conselho à IA</button>
-                
-                <div id="iaAdviceContainer"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="copy-pix-button" id="copyListBtn"><i class="fas fa-copy"></i> Copiar Lista</button>
-                <button class="copy-pix-button" id="clearListBtn" style="background-color: var(--color-accent);"><i class="fas fa-trash"></i> Limpar Lista</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="catechesisModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Preparar Encontro de Catequese</h3>
-                <button class="modal-close-button" id="closeCatechesisModalBtn" aria-label="Fechar">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="catechesisTheme">Tema do Encontro:</label>
-                    <input type="text" id="catechesisTheme" placeholder="Ex: A Criação, O Batismo...">
-                </div>
-
-                <div class="form-group">
-                    <label>Faixa Etária:</label>
-                    <div class="age-group" id="ageGroup">
-                        <input type="radio" id="age_f1" name="age_group" value="Fundamental I (6-10 anos)" checked><label for="age_f1">Fundamental I (6-10 anos)</label>
-                        <input type="radio" id="age_f2" name="age_group" value="Fundamental II (11-14 anos)"><label for="age_f2">Fundamental II (11-14 anos)</label>
-                        <input type="radio" id="age_crisma" name="age_group" value="Crisma/Jovens (+14 anos)"><label for="age_crisma">Crisma/Jovens (+14 anos)</label>
-                        <input type="radio" id="age_adultos" name="age_group" value="Adultos/Catecumenato"><label for="age_adultos">Adultos</label>
-                    </div>
-                </div>
-
-                <button class="copy-pix-button" id="generatePlanBtn"><i class="fas fa-wand-magic-sparkles"></i> Gerar Plano de Encontro</button>
-
-                <div id="catechesisPlanResult">
-                    <!-- O plano gerado pela IA aparecerá aqui -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="copy-pix-button" id="copyPlanBtn" style="display: none;"><i class="fas fa-copy"></i> Copiar Plano</button>
-            </div>
-        </div>
-    </div>
-
+    
+    <div class="modal" id="donateModal"><div class="modal-content"><div class="modal-header"><h3>Apoie a CatólIA!</h3><button class="modal-close-button" data-target="donateModal">&times;</button></div><div class="modal-body" style="text-align: center;"><p>Sua doação faz a diferença para continuarmos evangelizando através da tecnologia.</p><p>Faça seu Pix (e-mail):</p><p style="font-size:1.3em; font-weight:bold; color:var(--color-primary-dark);" id="pixKey">mateus.job@outlook.com</p></div><div class="modal-footer"><button class="copy-pix-button" id="copyPixBtn">Copiar Chave Pix</button></div></div></div>
+    <div class="modal" id="confessionModal"><div class="modal-content"><div class="modal-header"><h3>Preparação para a Santa Confissão</h3><button class="modal-close-button" data-target="confessionModal">&times;</button></div><div class="modal-body"><div class="privacy-warning"><strong>Privacidade:</strong> Nenhuma informação aqui é salva. Tudo é apagado ao fechar esta janela.</div><p>Reflita sobre cada ponto. Se sua consciência o acusar, clique para adicionar um tópico à sua lista.</p><div id="examinationContent"></div><h4>Sua Lista para Confissão:</h4><textarea id="confessionList" rows="5" readonly></textarea><div class="privacy-consent"><input type="checkbox" id="consentCheck"><label for="consentCheck">Entendo que minha lista será enviada anonimamente à IA para receber um conselho.</label></div><button class="copy-pix-button" id="getAdviceBtn" disabled><i class="fas fa-comment-dots"></i> Pedir Conselho à IA</button><div id="iaAdviceContainer"></div></div><div class="modal-footer"><button class="copy-pix-button" id="copyListBtn"><i class="fas fa-copy"></i> Copiar Lista</button><button class="copy-pix-button" id="clearListBtn" style="background-color: var(--color-accent);"><i class="fas fa-trash"></i> Limpar Lista</button></div></div></div>
+    <div class="modal" id="catechesisModal"><div class="modal-content"><div class="modal-header"><h3>Preparar Encontro de Catequese</h3><button class="modal-close-button" data-target="catechesisModal">&times;</button></div><div class="modal-body"><div class="form-group"><label for="catechesisTheme">Tema do Encontro:</label><input type="text" id="catechesisTheme" placeholder="Ex: A Criação, O Batismo..."></div><div class="form-group"><label>Faixa Etária:</label><div class="age-group" id="ageGroup"><input type="radio" id="age_f1" name="age_group" value="Fundamental I (6-10 anos)" checked><label for="age_f1">Fund. I (6-10)</label><input type="radio" id="age_f2" name="age_group" value="Fundamental II (11-14 anos)"><label for="age_f2">Fund. II (11-14)</label><input type="radio" id="age_crisma" name="age_group" value="Crisma/Jovens (+14 anos)"><label for="age_crisma">Jovens (+14)</label><input type="radio" id="age_adultos" name="age_group" value="Adultos/Catecumenato"><label for="age_adultos">Adultos</label></div></div><button id="generatePlanBtn"><i class="fas fa-wand-magic-sparkles"></i> Gerar Plano de Encontro</button><div id="catechesisPlanResult"></div></div><div class="modal-footer"><button class="copy-pix-button" id="copyPlanBtn" style="display: none;"><i class="fas fa-copy"></i> Copiar Plano</button></div></div></div>
+    
     <div class="overlay" id="menuOverlay"></div>
 
     <script>
+        // --- VARIÁVEIS DE ESTADO ---
         let selectedProfile = 'leigo';
         let selectedResponseType = 'media';
+        const examinationData=[{title:"1º Mandamento: Amar a Deus sobre todas as coisas",questions:[{text:"Coloquei minha fé em dúvida ou a negligenciei? Participei de práticas supersticiosas?",topic:"Faltas contra a fé e a confiança em Deus.",source:"CIC 2088-2089, 2110-2117"},{text:"Deixei de rezar por preguiça ou falta de tempo? Reclamei contra Deus nas dificuldades?",topic:"Negligência na vida de oração.",source:"CIC 2098"}]},{title:"2º Mandamento: Não tomar seu santo nome em vão",questions:[{text:"Usei o nome de Deus, de Nossa Senhora ou dos santos sem respeito, em piadas ou de forma irritada?",topic:"Uso do nome de Deus sem o devido respeito.",source:"CIC 2142-2146"},{text:"Jurei falso ou fiz promessas que não podia cumprir?",topic:"Falsos juramentos ou promessas não cumpridas.",source:"CIC 2150-2152"}]},{title:"3º Mandamento: Guardar domingos e festas de guarda",questions:[{text:"Faltei à Missa aos domingos ou dias santos de guarda por preguiça ou sem um motivo grave?",topic:"Falta à Missa dominical ou em dias de preceito.",source:"CIC 2180-2181"},{text:"Trabalhei desnecessariamente nestes dias, impedindo o descanso e o culto a Deus?",topic:"Trabalho desnecessário aos domingos e dias santos.",source:"CIC 2184-2185"}]},{title:"4º Mandamento: Honrar pai e mãe",questions:[{text:"Desobedeci ou desrespeitei meus pais, superiores ou autoridades legítimas?",topic:"Faltas de respeito e obediência aos pais e autoridades.",source:"CIC 2214-2220"},{text:"Deixei de ajudar meus pais (especialmente idosos ou doentes) em suas necessidades?",topic:"Negligência no cuidado com os pais.",source:"CIC 2218"}]},{title:"5º Mandamento: Não matar",questions:[{text:"Desejei mal a alguém, guardei raiva, ódio ou rancor? Recusei-me a perdoar?",topic:"Faltas contra a caridade (raiva, ódio, falta de perdão).",source:"CIC 2302-2303"},{text:"Prejudiquei a saúde do meu corpo ou da minha alma com excessos (comida, bebida, drogas)?",topic:"Faltas contra a própria vida e saúde.",source:"CIC 2290-2291"},{text:"Fui causa de escândalo, levando outros ao pecado por palavras, atos ou omissões?",topic:"Escândalo ou mau exemplo.",source:"CIC 2284-2286"}]},{title:"6º e 9º Mandamentos: Não pecar contra a castidade e não desejar a mulher do próximo",questions:[{text:"Tive pensamentos ou desejos impuros consentidos? Olhei para pessoas ou imagens com malícia?",topic:"Pensamentos e desejos impuros consentidos.",source:"CIC 2520, Mt 5,28"},{text:"Tive conversas indecentes, contei ou ouvi piadas imorais?",topic:"Conversas e palavras impuras.",source:"Ef 5,4"},{text:"Pratiquei atos impuros, sozinho (masturbação) ou com outras pessoas?",topic:"Atos impuros (sozinho ou com outros).",source:"CIC 2351-2356"}]},{title:"7º e 10º Mandamentos: Não furtar e não cobiçar as coisas alheias",questions:[{text:"Roubei, furtei ou danifiquei algo que não me pertencia? Devolvi o que encontrei ou peguei emprestado?",topic:"Furtos, roubos ou danos a bens alheios.",source:"CIC 2408-2409"},{text:"Fui ganancioso, invejoso dos bens ou do sucesso dos outros?",topic:"Inveja e cobiça dos bens alheios.",source:"CIC 2535-2536"}]},{title:"8º Mandamento: Não levantar falso testemunho",questions:[{text:"Menti para prejudicar alguém ou para me livrar de uma dificuldade?",topic:"Mentiras e falsidades.",source:"CIC 2476"},{text:"Fiz fofocas, caluniei ou julguei mal as intenções de outras pessoas?",topic:"Fofocas, juízos temerários e calúnias.",source:"CIC 2477"}]}];
 
-        function updateScrollPadding() {
-            const scrollableContent = document.getElementById('chatScrollableContent');
-            const inputArea = document.getElementById('chatInputArea');
-            const footer = document.querySelector('.chat-footer');
-            const totalFixedBottomHeight = inputArea.offsetHeight + footer.offsetHeight;
-            scrollableContent.style.paddingBottom = `${totalFixedBottomHeight}px`;
+        // --- FUNÇÃO DE LIMPEZA E FORMATAÇÃO (VERSÃO FINAL) ---
+        function cleanAndParseMarkdown(text) {
+            if (typeof text !== 'string') return '';
+            
+            let processedText = text.trim();
+
+            // 1. Remove os "invólucros" de bloco de código de markdown
+            const codeBlockRegex = /^\s*```(\w*\n)?([\s\S]+?)```\s*$/;
+            if (codeBlockRegex.test(processedText)) {
+                processedText = processedText.replace(codeBlockRegex, '$2');
+            }
+
+            // 2. Remove caracteres de escape comuns que a IA pode adicionar
+            processedText = processedText.replace(/\\#/g, '#').replace(/\\\*/g, '*').replace(/\\_/g, '_');
+            
+            // 3. Converte o texto limpo para HTML usando as opções do marked.js
+            return marked.marked(processedText);
         }
         
-        function autoResizeTextarea() {
-            const textarea = document.getElementById('userMessageInput');
-            textarea.style.height = 'auto';
-            textarea.style.height = `${textarea.scrollHeight}px`;
-            updateScrollPadding();
-        }
-
-        function scrollToBottom() {
-            const scrollableContent = document.getElementById('chatScrollableContent');
-            scrollableContent.scrollTop = scrollableContent.scrollHeight;
-        }
+        // --- FUNÇÕES DE LÓGICA PRINCIPAL ---
+        function updateScrollPadding() { const scrollableContent = document.getElementById('chatScrollableContent'); const inputArea = document.getElementById('chatInputArea'); const footer = document.querySelector('.chat-footer'); const totalFixedBottomHeight = inputArea.offsetHeight + footer.offsetHeight; scrollableContent.style.paddingBottom = `${totalFixedBottomHeight}px`; }
+        function autoResizeTextarea() { const textarea = document.getElementById('userMessageInput'); textarea.style.height = 'auto'; textarea.style.height = `${textarea.scrollHeight}px`; updateScrollPadding(); }
+        function scrollToBottom() { const scrollableContent = document.getElementById('chatScrollableContent'); scrollableContent.scrollTop = scrollableContent.scrollHeight; }
         
         function appendMessage(message, sender, isInitial = false) {
-            const chatMessages = document.getElementById('chatMessages');
-            const chatScrollableContent = document.getElementById('chatScrollableContent');
+            const chatMessages = document.getElementById('chatMessages'); const chatScrollableContent = document.getElementById('chatScrollableContent');
+            if (!isInitial && chatScrollableContent.classList.contains('initial-state')) { chatScrollableContent.classList.remove('initial-state'); chatScrollableContent.classList.add('has-content'); }
+            const messageDiv = document.createElement('div'); messageDiv.classList.add('message', sender);
+            let avatarHtml = sender === 'user' ? `<div class="message-avatar"><i class="fas fa-user"></i></div>` : `<div class="message-avatar"><i class="fas fa-church"></i></div>`;
             
-            if (!isInitial && chatScrollableContent.classList.contains('initial-state')) {
-                chatScrollableContent.classList.remove('initial-state');
-                chatScrollableContent.classList.add('has-content');
-            }
+            let finalMessage = cleanAndParseMarkdown(message);
 
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', sender);
-
-            let avatarHtml;
-            if (sender === 'user') {
-                avatarHtml = `<div class="message-avatar"><i class="fas fa-user"></i></div>`;
-            } else {
-                avatarHtml = `<div class="message-avatar"><i class="fas fa-church"></i></div>`;
-            }
-            
-            let finalMessage = marked.parse(message);
-            if (sender === 'bot' && !isInitial) {
-                finalMessage += '<br><br><span style="font-size: 0.75em; color: var(--footer-text);">CatólIA - Seu Guia de Fé</span>';
-            }
-
-            messageDiv.innerHTML = `${avatarHtml}<div class="message-content">${finalMessage}</div>`;
-            chatMessages.appendChild(messageDiv);
-            scrollToBottom();
+            if (sender === 'bot' && !isInitial) { finalMessage += '<br><br><span style="font-size: 0.75em; color: var(--footer-text);">CatólIA - Seu Guia de Fé</span>'; }
+            messageDiv.innerHTML = `${avatarHtml}<div class="message-content">${finalMessage}</div>`; chatMessages.appendChild(messageDiv); scrollToBottom();
         }
         
-        async function sendIARequest(prompt, profile = 'leigo', responseType = 'media') {
-            const response = await fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: prompt,
-                    profile: profile,
-                    response_type: responseType
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ error: 'Erro desconhecido.' }));
-                throw new Error(errorData.error || `Erro de servidor: ${response.statusText}`);
-            }
+        async function sendIARequest(prompt, profile, responseType) {
+            const response = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: prompt, profile: profile, response_type: responseType }) });
+            if (!response.ok) { const errorData = await response.json().catch(() => ({ error: 'Erro desconhecido.' })); throw new Error(errorData.error || `Erro de servidor: ${response.statusText}`); }
             return await response.json();
         }
 
         async function sendMessage() {
-            const userMessageInput = document.getElementById('userMessageInput');
-            const sendMessageButton = document.getElementById('sendMessageButton');
-            const userMessage = userMessageInput.value.trim();
+            const userMessageInput = document.getElementById('userMessageInput'); const sendMessageButton = document.getElementById('sendMessageButton'); const userMessage = userMessageInput.value.trim();
             if (!userMessage) return;
-
-            sendMessageButton.disabled = true;
-            sendMessageButton.style.opacity = 0.5;
-
-            appendMessage(userMessage, 'user');
-            userMessageInput.value = '';
-            autoResizeTextarea();
-
-            let typingIndicator = document.createElement('div');
-            typingIndicator.classList.add('message', 'bot', 'typing-indicator');
-            typingIndicator.innerHTML = `<div class="message-avatar"><i class="fas fa-church"></i></div><div class="message-content"><span></span><span></span><span></span></div>`;
-            document.getElementById('chatMessages').appendChild(typingIndicator);
-            scrollToBottom();
-            
+            sendMessageButton.disabled = true; sendMessageButton.style.opacity = 0.5;
+            appendMessage(userMessage, 'user'); userMessageInput.value = ''; autoResizeTextarea();
+            let typingIndicator = document.createElement('div'); typingIndicator.classList.add('message', 'bot', 'typing-indicator'); typingIndicator.innerHTML = `<div class="message-avatar"><i class="fas fa-church"></i></div><div class="message-content"><span></span><span></span><span></span></div>`;
+            document.getElementById('chatMessages').appendChild(typingIndicator); scrollToBottom();
             try {
                 const data = await sendIARequest(userMessage, selectedProfile, selectedResponseType);
                 typingIndicator.remove();
-                if (data.error) {
-                    appendMessage(`Erro: ${data.error}`, 'bot');
-                } else {
-                    appendMessage(data.reply, 'bot');
-                }
-            } catch (error) {
-                console.error('Erro ao comunicar com o servidor:', error);
-                typingIndicator.remove();
-                appendMessage(`Desculpe, ocorreu um erro de comunicação. (${error.message})`, 'bot');
-            } finally {
-                sendMessageButton.disabled = false;
-                sendMessageButton.style.opacity = 1;
-            }
+                if (data.error) { appendMessage(`Erro: ${data.error}`, 'bot'); } else { appendMessage(data.reply, 'bot'); }
+            } catch (error) { console.error('Erro ao comunicar com o servidor:', error); typingIndicator.remove(); appendMessage(`Desculpe, ocorreu um erro de comunicação. (${error.message})`, 'bot');
+            } finally { sendMessageButton.disabled = false; sendMessageButton.style.opacity = 1; }
         }
 
         function applyTheme(themeClass) {
-            const body = document.body;
-            body.className = '';
-            if (themeClass) body.classList.add(themeClass);
-
+            const body = document.body; body.className = ''; if (themeClass) body.classList.add(themeClass);
             const themeToggleButton = document.getElementById('themeToggleButton').querySelector('i');
-            if (themeClass === 'dark-mode' || themeClass === 'priest-mode') {
-                themeToggleButton.className = 'fas fa-sun';
-            } else {
-                themeToggleButton.className = 'fas fa-moon';
-            }
+            if (themeClass === 'dark-mode' || themeClass === 'priest-mode') { themeToggleButton.className = 'fas fa-sun'; } else { themeToggleButton.className = 'fas fa-moon'; }
         }
 
         function toggleDarkMode() {
@@ -539,148 +379,59 @@
             }
         }
 
-        const examinationData = [
-            { title: "1º Mandamento: Amar a Deus sobre todas as coisas", questions: [
-                { text: "Coloquei minha fé em dúvida ou a negligenciei? Participei de práticas supersticiosas?", topic: "Faltas contra a fé e a confiança em Deus.", source: "CIC 2088-2089, 2110-2117" },
-                { text: "Deixei de rezar por preguiça ou falta de tempo? Reclamei contra Deus nas dificuldades?", topic: "Negligência na vida de oração.", source: "CIC 2098" }
-            ]},
-            { title: "2º Mandamento: Não tomar seu santo nome em vão", questions: [
-                { text: "Usei o nome de Deus, de Nossa Senhora ou dos santos sem respeito, em piadas ou de forma irritada?", topic: "Uso do nome de Deus sem o devido respeito.", source: "CIC 2142-2146" },
-                { text: "Jurei falso ou fiz promessas que não podia cumprir?", topic: "Falsos juramentos ou promessas não cumpridas.", source: "CIC 2150-2152" }
-            ]},
-            { title: "3º Mandamento: Guardar domingos e festas de guarda", questions: [
-                { text: "Faltei à Missa aos domingos ou dias santos de guarda por preguiça ou sem um motivo grave?", topic: "Falta à Missa dominical ou em dias de preceito.", source: "CIC 2180-2181" },
-                { text: "Trabalhei desnecessariamente nestes dias, impedindo o descanso e o culto a Deus?", topic: "Trabalho desnecessário aos domingos e dias santos.", source: "CIC 2184-2185" }
-            ]},
-            { title: "4º Mandamento: Honrar pai e mãe", questions: [
-                { text: "Desobedeci ou desrespeitei meus pais, superiores ou autoridades legítimas?", topic: "Faltas de respeito e obediência aos pais e autoridades.", source: "CIC 2214-2220" },
-                { text: "Deixei de ajudar meus pais (especialmente idosos ou doentes) em suas necessidades?", topic: "Negligência no cuidado com os pais.", source: "CIC 2218" }
-            ]},
-            { title: "5º Mandamento: Não matar", questions: [
-                { text: "Desejei mal a alguém, guardei raiva, ódio ou rancor? Recusei-me a perdoar?", topic: "Faltas contra a caridade (raiva, ódio, falta de perdão).", source: "CIC 2302-2303" },
-                { text: "Prejudiquei a saúde do meu corpo ou da minha alma com excessos (comida, bebida, drogas)?", topic: "Faltas contra a própria vida e saúde.", source: "CIC 2290-2291" },
-                { text: "Fui causa de escândalo, levando outros ao pecado por palavras, atos ou omissões?", topic: "Escândalo ou mau exemplo.", source: "CIC 2284-2286" }
-            ]},
-            { title: "6º e 9º Mandamentos: Não pecar contra a castidade e não desejar a mulher do próximo", questions: [
-                { text: "Tive pensamentos ou desejos impuros consentidos? Olhei para pessoas ou imagens com malícia?", topic: "Pensamentos e desejos impuros consentidos.", source: "CIC 2520, Mt 5,28" },
-                { text: "Tive conversas indecentes, contei ou ouvi piadas imorais?", topic: "Conversas e palavras impuras.", source: "Ef 5,4" },
-                { text: "Pratiquei atos impuros, sozinho (masturbação) ou com outras pessoas?", topic: "Atos impuros (sozinho ou com outros).", source: "CIC 2351-2356" }
-            ]},
-            { title: "7º e 10º Mandamentos: Não furtar e não cobiçar as coisas alheias", questions: [
-                { text: "Roubei, furtei ou danifiquei algo que não me pertencia? Devolvi o que encontrei ou peguei emprestado?", topic: "Furtos, roubos ou danos a bens alheios.", source: "CIC 2408-2409" },
-                { text: "Fui ganancioso, invejoso dos bens ou do sucesso dos outros?", topic: "Inveja e cobiça dos bens alheios.", source: "CIC 2535-2536" }
-            ]},
-            { title: "8º Mandamento: Não levantar falso testemunho", questions: [
-                { text: "Menti para prejudicar alguém ou para me livrar de uma dificuldade?", topic: "Mentiras e falsidades.", source: "CIC 2476" },
-                { text: "Fiz fofocas, caluniei ou julguei mal as intenções de outras pessoas?", topic: "Fofocas, juízos temerários e calúnias.", source: "CIC 2477" }
-            ]}
-        ];
-
         function populateExamination() {
-            const container = document.getElementById('examinationContent');
-            container.innerHTML = '';
+            const container = document.getElementById('examinationContent'); container.innerHTML = '';
             examinationData.forEach(commandment => {
-                const title = document.createElement('h4');
-                title.textContent = commandment.title;
-                container.appendChild(title);
+                const title = document.createElement('h4'); title.textContent = commandment.title; container.appendChild(title);
                 commandment.questions.forEach(q => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'examination-item';
-                    itemDiv.innerHTML = `
-                        <div>
-                            <p>${q.text}</p>
-                            <div class="examination-source">${q.source}</div>
-                        </div>
-                        <button class="add-topic-btn" data-topic="${q.topic}">Adicionar</button>`;
+                    const itemDiv = document.createElement('div'); itemDiv.className = 'examination-item';
+                    itemDiv.innerHTML = `<div><p>${q.text}</p><div class="examination-source">${q.source}</div></div><button class="add-topic-btn" data-topic="${q.topic}">Adicionar</button>`;
                     container.appendChild(itemDiv);
                 });
             });
         }
 
         async function getAIAdvice() {
-            const confessionList = document.getElementById('confessionList');
-            const adviceContainer = document.getElementById('iaAdviceContainer');
-            const getAdviceBtn = document.getElementById('getAdviceBtn');
-
-            if (!confessionList.value.trim()) {
-                alert('Sua lista está vazia. Adicione um tópico antes de pedir um conselho.');
-                return;
-            }
-
-            getAdviceBtn.disabled = true;
-            adviceContainer.innerHTML = '<div class="spinner"></div>';
-
+            const confessionList = document.getElementById('confessionList'); const adviceContainer = document.getElementById('iaAdviceContainer'); const getAdviceBtn = document.getElementById('getAdviceBtn');
+            if (!confessionList.value.trim()) { alert('Sua lista está vazia. Adicione um tópico antes de pedir um conselho.'); return; }
+            getAdviceBtn.disabled = true; adviceContainer.innerHTML = '<div class="spinner"></div>';
             const prompt = `Um usuário está se preparando para a confissão e listou os seguintes tópicos de pecado: "${confessionList.value}". Por favor, escreva uma palavra de conforto e incentivo, sem julgamentos. Lembre-o da infinita misericórdia de Deus. Para cada tópico, sugira uma virtude ou prática cristã para ajudar a melhorar. Use uma linguagem pastoral e acolhedora.`;
-
             try {
                 const data = await sendIARequest(prompt, 'sacerdote', 'media');
-                if (data.error) {
-                    adviceContainer.innerHTML = `<p>Erro: ${data.error}</p>`;
-                } else {
-                    adviceContainer.innerHTML = marked.parse(data.reply);
+                if (data.error) { adviceContainer.innerHTML = `<p>Erro: ${data.error}</p>`; } else { 
+                    adviceContainer.innerHTML = cleanAndParseMarkdown(data.reply); 
                 }
-            } catch (error) {
-                adviceContainer.innerHTML = `<p>Desculpe, ocorreu um erro ao buscar o conselho. Tente novamente.</p>`;
-            } finally {
-                getAdviceBtn.disabled = false;
-            }
+            } catch (error) { adviceContainer.innerHTML = `<p>Desculpe, ocorreu um erro ao buscar o conselho. Tente novamente.</p>`;
+            } finally { getAdviceBtn.disabled = false; }
         }
 
         async function getCatechesisPlan() {
             const theme = document.getElementById('catechesisTheme').value.trim();
-            const ageGroup = document.querySelector('input[name="age_group"]:checked').value;
+            const ageGroupElement = document.querySelector('input[name="age_group"]:checked');
             const resultContainer = document.getElementById('catechesisPlanResult');
             const generateBtn = document.getElementById('generatePlanBtn');
             const copyBtn = document.getElementById('copyPlanBtn');
-
-            if (!theme) {
-                alert('Por favor, insira um tema para o encontro.');
-                return;
-            }
-
-            generateBtn.disabled = true;
-            resultContainer.innerHTML = '<div class="spinner"></div>';
-            copyBtn.style.display = 'none';
-
-            const prompt = `
-                Aja como um pedagogo e catequista experiente. Crie um plano de encontro de catequese detalhado e estruturado para o tema "${theme}", focado na faixa etária de "${ageGroup}".
-                O plano deve ser completo e prático, seguindo a estrutura abaixo. Use Markdown para formatar a resposta.
-
-                **Título do Encontro:** (Crie um título criativo)
-                **Objetivo Principal:** (O que os catequizandos devem aprender/sentir)
-                **Pontos-Chave (Doutrina):** (2-3 pontos essenciais do Catecismo, explicados de forma simples para a idade)
-                **Referência Bíblica Principal:** (Sugira a passagem mais relevante)
-                
-                **Roteiro do Encontro (Duração Total: 60 minutos):**
-                1.  **Acolhida (5 min):** (Sugira uma música, oração inicial ou pergunta quebra-gelo)
-                2.  **Motivação Inicial (10 min):** (Sugira uma dinâmica, história, vídeo curto ou imagem para despertar o interesse)
-                3.  **Iluminar com a Palavra (20 min):** (Guie a leitura da passagem bíblica e sugira 3-4 perguntas para reflexão em grupo, adaptadas à idade)
-                4.  **Atividade Prática (15 min):** (Sugira uma atividade concreta: para crianças, um desenho/encenação; para jovens, um debate/projeto; para adultos, uma reflexão pessoal)
-                5.  **Oração Final e Compromisso (10 min):** (Sugira uma prece final e um compromisso prático para a semana)
-
-                **Materiais Necessários:** (Liste todos os materiais citados nas atividades)
-            `;
-
+            if (!theme) { alert('Por favor, insira um tema para o encontro.'); return; }
+            if (!ageGroupElement) { alert('Por favor, selecione uma faixa etária.'); return; }
+            const ageGroup = ageGroupElement.value;
+            generateBtn.disabled = true; generateBtn.textContent = 'Gerando...';
+            resultContainer.innerHTML = '<div class="spinner"></div>'; copyBtn.style.display = 'none';
+            const prompt = `Aja como um pedagogo e catequista experiente. Crie um plano de encontro de catequese detalhado e estruturado para o tema "${theme}", focado na faixa etária de "${ageGroup}". O plano deve ser completo e prático, seguindo a estrutura abaixo. Use Markdown para formatar a resposta. **Título do Encontro:** (Crie um título criativo) **Objetivo Principal:** (O que os catequizandos devem aprender/sentir) **Pontos-Chave (Doutrina):** (2-3 pontos essenciais do Catecismo, explicados de forma simples para a idade) **Referência Bíblica Principal:** (Sugira a passagem mais relevante) **Roteiro do Encontro (Duração Total: 60 minutos):** 1. **Acolhida (5 min):** (Sugira uma música, oração inicial ou pergunta quebra-gelo) 2. **Motivação Inicial (10 min):** (Sugira uma dinâmica, história, vídeo curto ou imagem para despertar o interesse) 3. **Iluminar com a Palavra (20 min):** (Guie a leitura da passagem bíblica e sugira 3-4 perguntas para reflexão em grupo, adaptadas à idade) 4. **Atividade Prática (15 min):** (Sugira uma atividade concreta: para crianças, um desenho/encenação; para jovens, um debate/projeto; para adultos, uma reflexão pessoal) 5. **Oração Final e Compromisso (10 min):** (Sugira uma prece final e um compromisso prático para a semana) **Materiais Necessários:** (Liste todos os materiais citados nas atividades)`;
             try {
                 const data = await sendIARequest(prompt, 'catequista', 'longa');
-                if (data.error) {
-                    resultContainer.innerHTML = `<p>Erro: ${data.error}</p>`;
-                } else {
-                    resultContainer.innerHTML = marked.parse(data.reply);
+                if (data.error) { resultContainer.innerHTML = `<p>Erro retornado pela IA: ${data.error}</p>`; } else {
+                    resultContainer.innerHTML = cleanAndParseMarkdown(data.reply);
                     copyBtn.style.display = 'block';
                 }
-            } catch (error) {
-                resultContainer.innerHTML = `<p>Desculpe, ocorreu um erro ao gerar o plano. Tente novamente.</p>`;
-            } finally {
-                generateBtn.disabled = false;
-            }
+            } catch (error) { console.error("Erro CRÍTICO ao gerar o plano:", error); resultContainer.innerHTML = `<p>Desculpe, ocorreu um erro de comunicação ao tentar gerar o plano. Verifique o console para mais detalhes.</p>`;
+            } finally { generateBtn.disabled = false; generateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Gerar Plano de Encontro'; }
         }
 
+        // --- EVENT LISTENERS (CONFIGURAÇÃO DAS INTERAÇÕES) ---
         function setupEventListeners() {
             document.getElementById('sendMessageButton').addEventListener('click', sendMessage);
             document.getElementById('userMessageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
             document.getElementById('userMessageInput').addEventListener('input', autoResizeTextarea);
-            
             document.querySelectorAll('#profileButtonsTop .prompt-button').forEach(button => {
                 button.addEventListener('click', () => {
                     selectedProfile = button.dataset.profile;
@@ -691,84 +442,62 @@
                     else { const savedTheme = localStorage.getItem('theme'); applyTheme(savedTheme === 'dark' ? 'dark-mode' : ''); }
                 });
             });
-
             document.querySelectorAll('#responseTypeOptionsButtons .prompt-button').forEach(button => {
                 button.addEventListener('click', () => {
                     selectedResponseType = button.dataset.type;
                     document.querySelectorAll('#responseTypeOptionsButtons .prompt-button').forEach(btn => btn.classList.remove('selected'));
                     button.classList.add('selected');
-                    document.getElementById('optionsMenu').classList.remove('open');
-                    document.getElementById('optionsToggleButton').classList.remove('open');
+                    document.getElementById('optionsMenu').classList.remove('open'); document.getElementById('optionsToggleButton').classList.remove('open');
                 });
             });
-
             document.getElementById('themeToggleButton').addEventListener('click', toggleDarkMode);
-
-            const optionsToggleButton = document.getElementById('optionsToggleButton');
-            const optionsMenu = document.getElementById('optionsMenu');
+            const optionsToggleButton = document.getElementById('optionsToggleButton'); const optionsMenu = document.getElementById('optionsMenu');
             optionsToggleButton.addEventListener('click', (e) => { e.stopPropagation(); optionsMenu.classList.toggle('open'); optionsToggleButton.classList.toggle('open'); });
             document.addEventListener('click', (e) => { if (!optionsMenu.contains(e.target) && e.target !== optionsToggleButton) { optionsMenu.classList.remove('open'); optionsToggleButton.classList.remove('open'); } });
-
-            const sidebarMenu = document.getElementById('sidebarMenu');
-            const menuOverlay = document.getElementById('menuOverlay');
+            const sidebarMenu = document.getElementById('sidebarMenu'); const menuOverlay = document.getElementById('menuOverlay');
             const closeSidebar = () => { sidebarMenu.classList.remove('open'); menuOverlay.classList.remove('open'); };
             document.getElementById('menuIcon').addEventListener('click', () => { sidebarMenu.classList.add('open'); menuOverlay.classList.add('open'); });
             document.getElementById('closeMenuBtn').addEventListener('click', closeSidebar);
-            
-            const donateModal = document.getElementById('donateModal');
-            document.getElementById('donateLink').addEventListener('click', (e) => { e.preventDefault(); donateModal.classList.add('open'); menuOverlay.classList.add('open'); });
-            document.getElementById('closeModalBtn').addEventListener('click', () => { donateModal.classList.remove('open'); menuOverlay.classList.remove('open'); });
+            const modals = { donateModal: document.getElementById('donateModal'), confessionModal: document.getElementById('confessionModal'), catechesisModal: document.getElementById('catechesisModal') };
+            const openModal = (id) => { if(modals[id]) { modals[id].classList.add('open'); menuOverlay.classList.add('open'); closeSidebar(); } };
+            const closeModal = (id) => { if(modals[id]) modals[id].classList.remove('open'); const anyOpen = Object.values(modals).some(m => m.classList.contains('open')); if (!anyOpen) menuOverlay.classList.remove('open'); };
+            document.getElementById('donateLink').addEventListener('click', (e) => { e.preventDefault(); openModal('donateModal'); });
+            document.getElementById('confessionBtn').addEventListener('click', (e) => { e.preventDefault(); openModal('confessionModal'); });
+            document.getElementById('catechesisBtn').addEventListener('click', (e) => { e.preventDefault(); openModal('catechesisModal'); });
+            document.querySelectorAll('.modal-close-button').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.target)));
+            menuOverlay.addEventListener('click', () => { Object.keys(modals).forEach(closeModal); closeSidebar(); });
             document.getElementById('copyPixBtn').addEventListener('click', () => { navigator.clipboard.writeText(document.getElementById('pixKey').innerText).then(() => alert('Chave Pix copiada!')); });
-
-            const confessionModal = document.getElementById('confessionModal');
             const confessionList = document.getElementById('confessionList');
-            const getAdviceBtn = document.getElementById('getAdviceBtn');
-            const consentCheck = document.getElementById('consentCheck');
-            const iaAdviceContainer = document.getElementById('iaAdviceContainer');
-            const catechesisModal = document.getElementById('catechesisModal');
-
-            document.getElementById('confessionBtn').addEventListener('click', (e) => { e.preventDefault(); confessionModal.classList.add('open'); menuOverlay.classList.add('open'); closeSidebar(); });
-            const closeConfessionModal = () => {
-                confessionList.value = ''; iaAdviceContainer.innerHTML = ''; consentCheck.checked = false; getAdviceBtn.disabled = true; confessionModal.classList.remove('open'); menuOverlay.classList.remove('open');
-            };
-            document.getElementById('closeConfessionModalBtn').addEventListener('click', closeConfessionModal);
-            document.getElementById('clearListBtn').addEventListener('click', () => { confessionList.value = ''; iaAdviceContainer.innerHTML = ''; });
+            document.getElementById('clearListBtn').addEventListener('click', () => { confessionList.value = ''; document.getElementById('iaAdviceContainer').innerHTML = ''; });
             document.getElementById('copyListBtn').addEventListener('click', () => { if(confessionList.value) { navigator.clipboard.writeText(confessionList.value).then(() => alert('Lista copiada!')); } else { alert('Sua lista está vazia.'); } });
             document.getElementById('examinationContent').addEventListener('click', (e) => { if (e.target.classList.contains('add-topic-btn')) { const topic = e.target.dataset.topic; if (!confessionList.value.includes(topic)) { confessionList.value += `• ${topic}\n`; } } });
-            consentCheck.addEventListener('change', () => { getAdviceBtn.disabled = !consentCheck.checked; });
-            getAdviceBtn.addEventListener('click', getAIAdvice);
-
-            const closeCatechesisModal = () => { catechesisModal.classList.remove('open'); menuOverlay.classList.remove('open'); };
-            document.getElementById('catechesisBtn').addEventListener('click', (e) => { e.preventDefault(); catechesisModal.classList.add('open'); menuOverlay.classList.add('open'); closeSidebar(); });
-            document.getElementById('closeCatechesisModalBtn').addEventListener('click', closeCatechesisModal);
+            document.getElementById('consentCheck').addEventListener('change', (e) => { document.getElementById('getAdviceBtn').disabled = !e.target.checked; });
+            document.getElementById('getAdviceBtn').addEventListener('click', getAIAdvice);
             document.getElementById('generatePlanBtn').addEventListener('click', getCatechesisPlan);
-            document.getElementById('copyPlanBtn').addEventListener('click', () => {
-                const planResult = document.getElementById('catechesisPlanResult');
-                navigator.clipboard.writeText(planResult.innerText).then(() => alert('Plano de encontro copiado!'));
-            });
-
-            menuOverlay.addEventListener('click', () => {
-                closeSidebar();
-                donateModal.classList.remove('open');
-                confessionModal.classList.remove('open');
-                catechesisModal.classList.remove('open');
-                menuOverlay.classList.remove('open');
-            });
+            document.getElementById('copyPlanBtn').addEventListener('click', () => { const planResult = document.getElementById('catechesisPlanResult'); navigator.clipboard.writeText(planResult.innerText).then(() => alert('Plano de encontro copiado!')); });
         }
 
+        // --- INICIALIZAÇÃO DA PÁGINA ---
         document.addEventListener('DOMContentLoaded', () => {
-            updateScrollPadding();
-            window.addEventListener('resize', updateScrollPadding);
-            populateExamination();
-            setupEventListeners();
-            
+            // NOVA CONFIGURAÇÃO do marked.js
+            if (window.marked) {
+                marked.setOptions({
+                    breaks: true,  // Converte quebras de linha (enter) em <br>
+                    gfm: true,     // Usa o padrão do GitHub, que é mais robusto
+                    pedantic: false
+                });
+                console.log("marked.js configurado com sucesso.");
+            } else {
+                console.error("ERRO: A biblioteca marked.js não foi carregada.");
+            }
+
+            updateScrollPadding(); window.addEventListener('resize', updateScrollPadding);
+            populateExamination(); setupEventListeners();
             const savedTheme = localStorage.getItem('theme');
             applyTheme(savedTheme === 'dark' ? 'dark-mode' : '');
-            
             document.querySelector('#profileButtonsTop .prompt-button[data-profile="leigo"]').classList.add('selected');
             document.querySelector('#responseTypeOptionsButtons .prompt-button[data-type="media"]').classList.add('selected');
-
-            appendMessage("Olá! Eu sou a CatólIA, sua guia de fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.", 'bot', true);
+            appendMessage("Paz e Bem! Eu sou a CatólIA, sua guia de fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.", 'bot', true);
         });
     </script>
 </body>
