@@ -1,4 +1,4 @@
-# /api/index.py (Versão Funcional Final)
+# /api/index.py (Versão Otimizada com Modelo Rápido)
 
 import os
 import requests 
@@ -7,8 +7,6 @@ import traceback
 from flask import Flask, request, jsonify, render_template, Response, stream_with_context
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
-# Esta versão NÃO USA a biblioteca dotenv, pois o Vercel injeta as variáveis automaticamente
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 template_dir = os.path.join(project_root, 'templates')
@@ -20,7 +18,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/catolia.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Lê a variável diretamente do ambiente fornecido pelo Vercel
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
 class Conversation(db.Model):
@@ -115,9 +112,15 @@ def chat():
                 yield f"event: conversation_id\ndata: {conv.id}\n\n"
                 system_prompt = get_system_prompt(user_profile)
                 headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
-                json_data = { "model": "deepseek/deepseek-chat", "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}], "stream": True }
                 
-                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9.5) as r:
+                # --- MUDANÇA PRINCIPAL AQUI ---
+                json_data = { 
+                    "model": "mistralai/mistral-7b-instruct", # Usando um modelo mais rápido
+                    "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}], 
+                    "stream": True 
+                }
+                
+                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9) as r: # Timeout de 9s
                     r.raise_for_status()
                     for chunk in r.iter_lines():
                         if chunk.startswith(b'data: '):
@@ -136,11 +139,10 @@ def chat():
                     db.session.add(ai_msg_db)
                     db.session.commit()
 
+            except requests.exceptions.Timeout:
+                yield f"event: error\ndata: {json.dumps({'error': 'A API da IA demorou muito para responder (Timeout).'})}\n\n"
             except requests.exceptions.HTTPError as e:
-                # Se der erro 401 (senha errada), envia a mensagem específica
-                error_msg = f"Erro na API: {e.response.status_code}"
-                if e.response.status_code == 401:
-                    error_msg = "Erro de Autenticação (401). A chave de API é inválida."
+                error_msg = f"Erro na API externa: {e.response.status_code}"
                 yield f"event: error\ndata: {json.dumps({'error': error_msg})}\n\n"
             except Exception as e:
                 error_details = traceback.format_exc()
@@ -158,7 +160,7 @@ def chat():
 
 def get_system_prompt(profile):
     bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1')."
-    instructions = { 'crianca': f"...", 'catequista': f"...", 'seminarista': f"...", 'sacerdote': f"...", 'leigo': f"..." } # Preenchimentos omitidos para brevidade
+    instructions = { 'crianca': f"...", 'catequista': f"...", 'seminarista': f"...", 'sacerdote': f"...", 'leigo': f"..." }
     instructions['catequista'] = f"Você é uma IA católica para catequistas. Crie um plano de encontro de catequese detalhado e estruturado. Use Markdown para formatar a resposta com títulos, negrito e listas."
     instructions['leigo'] = f"Você é uma IA católica. Responda de forma clara, objetiva e completa para um leigo interessado em aprofundar sua fé. {bible_citation_rule}"
     return instructions.get(profile, instructions['leigo'])
@@ -167,7 +169,7 @@ def generate_title(user_prompt, ai_response):
     try:
         title_prompt = f"Gere um título muito curto (3 a 5 palavras) para a seguinte conversa:\n\nPERGUNTA: {user_prompt}\nRESPOSTA: {ai_response}\n\nTÍTULO:"
         headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
-        json_data = {"model": "deepseek/deepseek-chat", "messages": [{"role": "user", "content": title_prompt}], "max_tokens": 20}
+        json_data = {"model": "mistralai/mistral-7b-instruct", "messages": [{"role": "user", "content": title_prompt}], "max_tokens": 20}
         response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, timeout=5)
         response.raise_for_status()
         title = response.json()['choices'][0]['message']['content'].strip().strip('"')
