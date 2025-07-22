@@ -99,6 +99,11 @@
                 <div id="welcome-screen">
                     <div class="logo">CatólIA 🕊️</div>
                     <div class="subtitle">Seu Guia de Fé, alimentado por Inteligência Artificial.</div>
+                    
+                    <div style="margin-top: 15px; padding: 8px; background-color: #333; border-radius: 5px; border: 1px solid var(--color-accent);">
+                        <span style="color: var(--color-accent); font-weight: bold;">V2.1 - Teste de Sincronização</span>
+                    </div>
+
                     <div class="suggestion-pills">
                         <div class="suggestion-pill">Explique a Santíssima Trindade</div>
                         <div class="suggestion-pill">Fale sobre o Advento</div>
@@ -145,7 +150,6 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         marked.setOptions({ breaks: true, gfm: true });
-
         const welcomeScreen = document.getElementById('welcome-screen');
         const chatContainer = document.getElementById('chat-container');
         const userMessageInput = document.getElementById('userMessageInput');
@@ -154,16 +158,13 @@
         const newChatBtn = document.getElementById('new-chat-btn');
         const catechistOptions = document.getElementById('catechist-options');
         const profileButtons = document.querySelectorAll('.profile-buttons-top .prompt-button');
-
         let currentConversationId = null;
         let selectedProfile = 'leigo';
-
         const cleanAndParseMarkdown = (text) => {
             if (typeof text !== 'string') return '';
             let processedText = text.trim().replace(/^```(\w*\n)?|```\s*$/g, '');
             return marked.marked(processedText);
         };
-
         const appendMessage = (text, sender) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
@@ -180,13 +181,11 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return messageDiv;
         };
-
         const startChat = () => {
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
             chatContainer.style.flexDirection = 'column';
         };
-        
         const resetToWelcome = () => {
             welcomeScreen.style.display = 'flex';
             chatContainer.style.display = 'none';
@@ -194,7 +193,6 @@
             currentConversationId = null;
             updateHistoryUI();
         };
-
         const loadHistory = async () => {
             try {
                 const response = await fetch('/api/history');
@@ -210,11 +208,8 @@
                     historyList.appendChild(a);
                 });
                 updateHistoryUI();
-            } catch (error) {
-                console.error("Erro no loadHistory:", error);
-            }
+            } catch (error) { console.error("Erro no loadHistory:", error); }
         };
-
         const loadConversation = async (convId) => {
             startChat();
             try {
@@ -230,19 +225,15 @@
                 appendMessage(`Erro ao carregar a conversa: ${error.message}`, 'ai');
             }
         };
-        
         const sendMessage = async () => {
             const messageText = userMessageInput.value.trim();
             if (!messageText) return;
-
             startChat();
             appendMessage(messageText, 'user');
             userMessageInput.value = '';
             sendMessageButton.disabled = true;
-
             const aiMessageDiv = appendMessage('<span class="typing-cursor"></span>', 'ai');
             const textContentDiv = aiMessageDiv.querySelector('.text-content');
-            
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
@@ -254,24 +245,17 @@
                         age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
                     })
                 });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
                 let fullResponse = '';
-
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    
                     buffer += decoder.decode(value, {stream: true});
                     const lines = buffer.split('\n\n');
                     buffer = lines.pop();
-
                     for (const line of lines) {
                         if (line.startsWith('event: conversation_id')) {
                             currentConversationId = parseInt(line.split('data: ')[1], 10);
@@ -280,15 +264,14 @@
                             fullResponse += data.content;
                             textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse + '<span class="typing-cursor"></span>');
                         } else if (line.startsWith('event: error')) {
-                            const errorMsg = line.split('data: ')[1];
-                            throw new Error(errorMsg);
+                            const data = JSON.parse(line.split('data: ')[1]);
+                            throw new Error(data.error);
                         }
                     }
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 }
                 textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse);
                 loadHistory();
-
             } catch (error) {
                 console.error("Erro no sendMessage (fetch):", error);
                 textContentDiv.innerHTML = `Desculpe, ocorreu um erro de comunicação. Por favor, tente novamente. (${error.message})`;
@@ -296,18 +279,14 @@
                 sendMessageButton.disabled = false;
             }
         };
-
         const updateHistoryUI = (activeId = null) => {
             document.querySelectorAll('#history-list a').forEach(a => {
                 a.classList.toggle('active', a.dataset.id == activeId);
             });
         };
-
-        // --- EVENT LISTENERS ---
         newChatBtn.addEventListener('click', (e) => { e.preventDefault(); resetToWelcome(); });
         sendMessageButton.addEventListener('click', sendMessage);
         userMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
-        
         profileButtons.forEach(button => {
             button.addEventListener('click', () => {
                 profileButtons.forEach(btn => btn.classList.remove('selected'));
@@ -316,14 +295,12 @@
                 catechistOptions.style.display = selectedProfile === 'catequista' ? 'block' : 'none';
             });
         });
-
         document.querySelectorAll('.suggestion-pill').forEach(pill => {
             pill.addEventListener('click', () => {
                 userMessageInput.value = pill.textContent;
                 sendMessage();
             });
         });
-        
         document.getElementById('theme-toggle-btn').addEventListener('click', (e) => {
             e.preventDefault();
             document.body.classList.toggle('light-mode');
@@ -331,7 +308,6 @@
             document.getElementById('theme-label').textContent = isLight ? "Mudar para Tema Escuro" : "Mudar para Tema Claro";
             document.querySelector('#theme-toggle-btn i').className = isLight ? "fas fa-moon" : "fas fa-sun";
         });
-        
         document.getElementById('clear-history-btn').addEventListener('click', async (e) => {
             e.preventDefault();
             if (confirm("Tem certeza que deseja apagar todo o histórico de conversas? Esta ação não pode ser desfeita.")) {
@@ -340,20 +316,17 @@
                 loadHistory();
             }
         });
-
         chatContainer.addEventListener('click', (e) => {
             if (e.target.matches('.fa-copy')) {
                 const text = e.target.closest('.message-content').querySelector('.text-content').innerText;
                 navigator.clipboard.writeText(text).then(() => alert("Texto copiado!"));
             }
         });
-
         const sidebar = document.getElementById('history-sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const menuOverlay = document.getElementById('menuOverlay');
         sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('open'); menuOverlay.classList.toggle('open'); });
         menuOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); menuOverlay.classList.remove('open'); });
-
         loadHistory();
     });
     </script>
