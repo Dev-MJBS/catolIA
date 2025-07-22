@@ -8,10 +8,6 @@ app = Flask(__name__)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def inspect_environment(path):
-    """
-    Esta função ignora o chat e simplesmente lista todas as variáveis de ambiente
-    que o servidor do Vercel está vendo.
-    """
     html_output = """
     <html>
         <head><title>Inspetor de Ambiente Vercel</title></head>
@@ -19,19 +15,18 @@ def inspect_environment(path):
             <h1>Variáveis de Ambiente Visíveis para a Aplicação:</h1>
             <pre>
     """
-    
-    # Lista todas as variáveis de ambiente
+
     variables = sorted(os.environ.items())
-    
+
     found_key = False
     for key, value in variables:
-        # Esconde o valor da chave por segurança, mostrando apenas se ela existe
         if key == "OPENROUTER_API_KEY":
             value_to_show = f"***ENCONTRADA*** (comprimento: {len(value)})"
             found_key = True
         else:
-            value_to_show = value
-        
+            # Esconde valores de outras chaves potencialmente sensíveis
+            value_to_show = f"{value[:4]}..." if len(value) > 4 else value
+
         html_output += f"{key} = {value_to_show}\n"
 
     if not found_key:
@@ -42,5 +37,5 @@ def inspect_environment(path):
         </body>
     </html>
     """
-    
+
     return Response(html_output, mimetype='text/html')
