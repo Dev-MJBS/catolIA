@@ -95,7 +95,6 @@
             <header id="main-header">
                 <button id="sidebar-toggle"><i class="fas fa-bars"></i></button>
             </header>
-
             <div id="welcome-screen">
                 <div class="logo">CatólIA 🕊️</div>
                 <div class="subtitle">Seu Guia de Fé, alimentado por Inteligência Artificial.</div>
@@ -111,9 +110,7 @@
                     <div class="pix-key">Chave Pix (e-mail): mateus.job@outlook.com</div>
                 </div>
             </div>
-
             <div id="chat-container"></div>
-
             <div id="input-area-wrapper">
                 <div id="input-area">
                     <div class="profile-buttons-top">
@@ -143,10 +140,8 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- CONFIGURAÇÃO INICIAL ---
         marked.setOptions({ breaks: true, gfm: true });
 
-        // --- SELETORES DE ELEMENTOS ---
         const welcomeScreen = document.getElementById('welcome-screen');
         const chatContainer = document.getElementById('chat-container');
         const userMessageInput = document.getElementById('userMessageInput');
@@ -156,30 +151,24 @@
         const catechistOptions = document.getElementById('catechist-options');
         const profileButtons = document.querySelectorAll('.profile-buttons-top .prompt-button');
 
-        // --- ESTADO DA APLICAÇÃO ---
         let currentConversationId = null;
         let selectedProfile = 'leigo';
-        let eventSource = null;
 
-        // --- FUNÇÕES DE RENDERIZAÇÃO E UI ---
         const cleanAndParseMarkdown = (text) => {
             if (typeof text !== 'string') return '';
             let processedText = text.trim().replace(/^```(\w*\n)?|```\s*$/g, '');
             return marked.marked(processedText);
         };
 
-        const appendMessage = (text, sender, messageId = null) => {
+        const appendMessage = (text, sender) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
-            if (messageId) messageDiv.id = messageId;
             const avatar = sender === 'user' ? '<i class="fas fa-user"></i>' : '🕊️';
             messageDiv.innerHTML = `
                 <div class="message-avatar">${avatar}</div>
                 <div class="message-content">
                     <div class="text-content">${cleanAndParseMarkdown(text)}</div>
                     ${sender === 'ai' ? `<div class="message-actions">
-                        <i class="fas fa-thumbs-up" title="Gostei"></i>
-                        <i class="fas fa-thumbs-down" title="Não Gostei"></i>
                         <i class="fas fa-copy" title="Copiar"></i>
                     </div>` : ''}
                 </div>`;
@@ -201,33 +190,43 @@
             updateHistoryUI();
         };
 
-        // --- LÓGICA DE DADOS (API) ---
         const loadHistory = async () => {
-            const response = await fetch('/api/history');
-            const conversations = await response.json();
-            historyList.innerHTML = '';
-            conversations.forEach(conv => {
-                const a = document.createElement('a');
-                a.href = '#';
-                a.dataset.id = conv.id;
-                a.innerHTML = `<i class="far fa-message"></i> ${conv.title}`;
-                a.addEventListener('click', (e) => { e.preventDefault(); loadConversation(conv.id); });
-                historyList.appendChild(a);
-            });
-            updateHistoryUI();
+            try {
+                const response = await fetch('/api/history');
+                if (!response.ok) throw new Error('Falha ao carregar histórico');
+                const conversations = await response.json();
+                historyList.innerHTML = '';
+                conversations.forEach(conv => {
+                    const a = document.createElement('a');
+                    a.href = '#';
+                    a.dataset.id = conv.id;
+                    a.innerHTML = `<i class="far fa-message"></i> ${conv.title}`;
+                    a.addEventListener('click', (e) => { e.preventDefault(); loadConversation(conv.id); });
+                    historyList.appendChild(a);
+                });
+                updateHistoryUI();
+            } catch (error) {
+                console.error("Erro no loadHistory:", error);
+            }
         };
 
         const loadConversation = async (convId) => {
             startChat();
-            const response = await fetch(`/api/conversation/${convId}`);
-            const data = await response.json();
-            chatContainer.innerHTML = '';
-            data.messages.forEach(msg => appendMessage(msg.content, msg.sender));
-            currentConversationId = convId;
-            updateHistoryUI(convId);
+            try {
+                const response = await fetch(`/api/conversation/${convId}`);
+                if (!response.ok) throw new Error('Falha ao carregar conversa');
+                const data = await response.json();
+                chatContainer.innerHTML = '';
+                data.messages.forEach(msg => appendMessage(msg.content, msg.sender));
+                currentConversationId = convId;
+                updateHistoryUI(convId);
+            } catch (error) {
+                console.error("Erro no loadConversation:", error);
+                appendMessage(`Erro ao carregar a conversa: ${error.message}`, 'ai');
+            }
         };
         
-        const sendMessage = () => {
+        const sendMessage = async () => {
             const messageText = userMessageInput.value.trim();
             if (!messageText) return;
 
@@ -236,80 +235,68 @@
             userMessageInput.value = '';
             sendMessageButton.disabled = true;
 
-            const aiMessageDiv = appendMessage('<span class="typing-cursor"></span>', 'ai', 'streaming-message');
+            const aiMessageDiv = appendMessage('<span class="typing-cursor"></span>', 'ai');
             const textContentDiv = aiMessageDiv.querySelector('.text-content');
             
-            if(eventSource) eventSource.close();
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        message: messageText,
+                        conversation_id: currentConversationId,
+                        profile: selectedProfile,
+                        age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
+                    })
+                });
 
-            eventSource = new EventSource(`/api/chat?${new URLSearchParams({
-                message: messageText,
-                conversation_id: currentConversationId || '',
-                profile: selectedProfile,
-                age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
-            }).toString()}`, { method: 'POST' }); // Workaround for POST
-            
-            // This is a conceptual representation. EventSource doesn't support POST directly.
-            // A more robust solution would use fetch with a ReadableStream, but for simplicity,
-            // let's simulate the logic flow. The Python backend is built for streaming.
-            // We'll use fetch to initiate and an EventSource to listen.
-            
-            fetch('/api/chat', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    message: messageText,
-                    conversation_id: currentConversationId,
-                    profile: selectedProfile,
-                    age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
-                })
-            }).then(response => {
-                 const reader = response.body.getReader();
-                 const decoder = new TextDecoder();
-                 let buffer = '';
-                 let fullResponse = '';
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-                 reader.read().then(function processText({ done, value }) {
-                    if (done) {
-                        sendMessageButton.disabled = false;
-                        loadHistory(); // Refresh history to get new title
-                        return;
-                    }
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let fullResponse = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
                     
                     buffer += decoder.decode(value, {stream: true});
                     const lines = buffer.split('\n\n');
                     buffer = lines.pop();
 
-                    lines.forEach(line => {
+                    for (const line of lines) {
                         if (line.startsWith('event: conversation_id')) {
                             currentConversationId = parseInt(line.split('data: ')[1], 10);
+                            console.log("Nova conversation_id recebida:", currentConversationId);
                         } else if (line.startsWith('data: ')) {
-                            try {
-                                const data = JSON.parse(line.substring(6));
-                                fullResponse += data.content;
-                                textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse + '<span class="typing-cursor"></span>');
-                            } catch(e) {}
+                            const data = JSON.parse(line.substring(6));
+                            fullResponse += data.content;
+                            textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse + '<span class="typing-cursor"></span>');
                         } else if (line.startsWith('event: error')) {
-                            textContentDiv.innerHTML = "Ocorreu um erro no servidor.";
+                            const errorMsg = line.split('data: ')[1];
+                            textContentDiv.innerHTML = `Erro no servidor: ${errorMsg}`;
+                            throw new Error(errorMsg);
                         }
-                    });
-                    
+                    }
                     chatContainer.scrollTop = chatContainer.scrollHeight;
-                    return reader.read().then(processText);
-                 });
-            }).catch(err => {
-                console.error("Fetch error:", err);
-                textContentDiv.innerHTML = "Erro de conexão ao enviar mensagem.";
+                }
+                textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse); // Remove cursor
+                loadHistory();
+
+            } catch (error) {
+                console.error("Erro no sendMessage (fetch):", error);
+                textContentDiv.innerHTML = `Desculpe, ocorreu um erro de comunicação. Por favor, tente novamente. (${error.message})`;
+            } finally {
                 sendMessageButton.disabled = false;
-            });
+            }
         };
 
         const updateHistoryUI = (activeId = null) => {
             document.querySelectorAll('#history-list a').forEach(a => {
-                if (a.dataset.id == activeId) {
-                    a.classList.add('active');
-                } else {
-                    a.classList.remove('active');
-                }
+                a.classList.toggle('active', a.dataset.id == activeId);
             });
         };
 
