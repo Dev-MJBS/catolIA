@@ -17,9 +17,24 @@
             --bg-body: var(--dark-bg-body); --bg-sidebar: var(--dark-bg-sidebar); --bg-main: var(--dark-bg-main); --bg-chat-bubble: var(--dark-bg-chat-bubble); --bg-input: var(--dark-bg-input); --text-primary: var(--dark-text-primary); --text-secondary: var(--dark-text-secondary); --border-color: var(--dark-border-color); --shadow-color: var(--dark-shadow-color);
         }
         body.light-mode { --bg-body: var(--light-bg-body); --bg-sidebar: var(--light-bg-sidebar); --bg-main: var(--light-bg-main); --bg-chat-bubble: var(--light-bg-chat-bubble); --bg-input: var(--light-bg-input); --text-primary: var(--light-text-primary); --text-secondary: var(--light-text-secondary); --border-color: var(--light-border-color); --shadow-color: var(--light-shadow-color); }
-        html { height: -webkit-fill-available; }
-        body { height: 100vh; height: -webkit-fill-available; margin: 0; overflow: hidden; font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-primary); -webkit-text-size-adjust: 100%; }
+        
+        /* --- ESTRUTURA BASE OTIMIZADA PARA MOBILE SAFARI --- */
+        html {
+            height: -webkit-fill-available;
+        }
+        body {
+            height: 100vh; /* Fallback para navegadores antigos */
+            height: 100dvh; /* MUDANÇA PRINCIPAL: Usa a altura dinâmica do viewport */
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            -webkit-text-size-adjust: 100%;
+        }
         #app-container { display: flex; height: 100%; width: 100%; transition: background-color 0.3s; }
+
+        /* ... O resto do CSS é o mesmo ... */
         #history-sidebar { background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; transition: transform 0.3s ease; flex-shrink: 0; }
         #history-sidebar .header { padding: 15px; border-bottom: 1px solid var(--border-color); }
         #history-sidebar .new-chat-btn { display: block; width: 100%; padding: 12px; background-color: var(--color-primary); color: white; border: none; border-radius: 8px; font-size: 1em; cursor: pointer; text-align: center; text-decoration: none; box-sizing: border-box; }
@@ -36,6 +51,7 @@
         #sidebar-toggle { background: none; border: none; color: var(--text-primary); font-size: 1.5em; cursor: pointer; }
         .chat-view { display: flex; flex-direction: column; flex-grow: 1; height: 100%; overflow: hidden; }
         #welcome-screen, #chat-container { flex-grow: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
+        #chat-container { padding-bottom: 20px; }
         #welcome-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         #welcome-screen .logo { font-family: 'Montserrat', sans-serif; font-size: 2.5em; font-weight: 700; color: var(--color-primary); }
         #welcome-screen .subtitle { font-size: 1.1em; color: var(--text-secondary); margin-top: 10px; max-width: 90%; }
@@ -56,7 +72,14 @@
         .message-actions i:hover { color: var(--text-primary); }
         .typing-cursor { display: inline-block; width: 8px; height: 1em; background-color: var(--text-primary); animation: blink 1s step-end infinite; }
         @keyframes blink { from, to { background-color: transparent } 50% { background-color: var(--text-primary); } }
-        #input-area-wrapper { padding: 15px 20px; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+        #input-area-wrapper { 
+            padding: 15px 20px; 
+            border-top: 1px solid var(--border-color); 
+            flex-shrink: 0;
+            box-sizing: border-box;
+            /* MUDANÇA PRINCIPAL 2: Adiciona padding na parte inferior para a Home Bar do iPhone */
+            padding-bottom: calc(15px + env(safe-area-inset-bottom));
+        }
         #input-area { max-width: 800px; margin: 0 auto; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; box-shadow: 0 5px 20px var(--shadow-color); }
         .profile-buttons-top { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
         .profile-buttons-top button { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
@@ -77,8 +100,8 @@
             #history-sidebar { position: fixed; height: 100%; z-index: 1001; width: 80%; max-width: 300px; transform: translateX(-100%); border-right: 1px solid var(--border-color); box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
             #history-sidebar.open { transform: translateX(0); }
             #main-header { display: flex; }
-            #main-content { height: 100vh; }
-            .chat-view { height: calc(100% - 50px); }
+            #main-content { height: 100%; } /* Usa 100% da altura do body, que agora é 100dvh */
+            .chat-view { height: 100%; }
         }
     </style>
 </head>
@@ -277,7 +300,7 @@
                             currentConversationId = parseInt(line.split('data: ')[1], 10);
                         } else if (line.startsWith('data: ')) {
                             const data = JSON.parse(line.substring(6));
-                            if (data.error) { // Checa por uma mensagem de erro no stream
+                            if (data.error) {
                                 throw new Error(data.error);
                             }
                             fullResponse += data.content;
