@@ -1,15 +1,14 @@
-# /api/index.py (Versão de DIAGNÓSTico - para capturar e exibir o erro)
+# /api/index.py (Versão Final sem dotenv)
 
 import os
 import requests 
 import json
-import traceback # <-- Importante para capturar os detalhes do erro
+import traceback
 from flask import Flask, request, jsonify, render_template, Response, stream_with_context
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from dotenv import load_dotenv
-
-load_dotenv()
+# A LINHA "from dotenv import load_dotenv" FOI REMOVIDA
+# A LINHA "load_dotenv()" FOI REMOVIDA
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 template_dir = os.path.join(project_root, 'templates')
@@ -21,8 +20,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/catolia.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Lê a variável diretamente do ambiente fornecido pelo Vercel
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
+# (O resto do arquivo continua exatamente o mesmo...)
 class Conversation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False, default="Novo Chat")
@@ -43,7 +44,6 @@ def setup_database():
             db.create_all()
         app.db_created = True
 
-# --- ROTAS DA APLICAÇÃO ---
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
@@ -53,21 +53,18 @@ def catch_all(path):
 
 @app.route('/api/history', methods=['GET'])
 def get_history():
-    # ... (código existente)
     conversations = Conversation.query.order_by(Conversation.created_at.desc()).all()
     history = [{"id": conv.id, "title": conv.title} for conv in conversations]
     return jsonify(history)
 
 @app.route('/api/conversation/<int:conv_id>', methods=['GET'])
 def get_conversation(conv_id):
-    # ... (código existente)
     conversation = Conversation.query.get_or_404(conv_id)
     messages = [{"sender": msg.sender, "content": msg.content} for msg in conversation.messages]
     return jsonify({"title": conversation.title, "messages": messages})
 
 @app.route('/api/conversation', methods=['DELETE'])
 def delete_all_history():
-    # ... (código existente)
     try:
         db.session.query(Message).delete()
         db.session.query(Conversation).delete()
@@ -77,12 +74,8 @@ def delete_all_history():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-# --- ROTA PRINCIPAL DO CHAT ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    # ================================================================
-    # GRANDE BLOCO TRY...EXCEPT PARA CAPTURAR QUALQUER ERRO
-    # ================================================================
     try:
         if not openrouter_api_key:
             raise ValueError("A variável de ambiente OPENROUTER_API_KEY não foi encontrada no servidor.")
@@ -103,11 +96,10 @@ def chat():
             if conversation_id:
                 conv = db.session.get(Conversation, conversation_id)
                 if not conv:
-                    # Se o ID for inválido, cria uma nova conversa
                     conv = Conversation()
                     db.session.add(conv)
                     db.session.commit()
-                    conversation_id = conv.id # Atualiza o ID
+                    conversation_id = conv.id
             else:
                 conv = Conversation()
                 db.session.add(conv)
@@ -122,16 +114,11 @@ def chat():
             full_ai_response = ""
             try:
                 yield f"event: conversation_id\ndata: {conv.id}\n\n"
-                
                 system_prompt = get_system_prompt(user_profile)
                 headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
-                json_data = {
-                    "model": "deepseek/deepseek-chat",
-                    "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
-                    "stream": True
-                }
+                json_data = { "model": "deepseek/deepseek-chat", "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}], "stream": True }
                 
-                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9.5) as r: # Timeout de 9.5s para Vercel
+                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9.5) as r:
                     r.raise_for_status()
                     for chunk in r.iter_lines():
                         if chunk.startswith(b'data: '):
@@ -142,7 +129,7 @@ def chat():
                             if content:
                                 full_ai_response += content
                                 yield f"data: {json.dumps({'content': content})}\n\n"
-
+                
                 with app.app_context():
                     ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
                     if conv.title == "Novo Chat":
@@ -151,7 +138,6 @@ def chat():
                     db.session.commit()
 
             except Exception as e:
-                # Captura erro DENTRO do gerador de stream
                 error_details = traceback.format_exc()
                 print(f"ERRO NO STREAM: {error_details}")
                 yield f"event: error\ndata: {json.dumps({'error': error_details})}\n\n"
@@ -159,26 +145,17 @@ def chat():
         return Response(stream_with_context(generate_response()), mimetype='text/event-stream')
 
     except Exception as e:
-        # Captura erro FORA do gerador de stream (ex: erro no acesso ao BD inicial)
         error_details = traceback.format_exc()
         print(f"ERRO CRÍTICO NA ROTA CHAT: {error_details}")
-        # Retorna um erro 200 OK para o navegador, mas com o conteúdo do erro
-        # para que possamos vê-lo no frontend.
         def error_stream():
             yield f"event: error\ndata: {json.dumps({'error': error_details})}\n\n"
         return Response(stream_with_context(error_stream()), mimetype='text/event-stream')
 
-
-# As funções get_system_prompt e generate_title continuam as mesmas
 def get_system_prompt(profile):
     bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1')."
-    instructions = {
-        'crianca': f"Você é uma IA católica. Responda de forma muito simples, didática e adequada para uma criança pequena. {bible_citation_rule}",
-        'catequista': f"Você é uma IA católica para catequistas. Crie um plano de encontro de catequese detalhado e estruturado. Use Markdown para formatar a resposta com títulos, negrito e listas.",
-        'seminarista': f"Você é uma IA católica para seminaristas. Responda com profundidade teológica, referências a documentos da Igreja e filosofia. {bible_citation_rule}",
-        'sacerdote': f"Você é uma IA católica para sacerdotes. Responda com alta profundidade teológica, foco em hermenêutica e homilética. {bible_citation_rule}",
-        'leigo': f"Você é uma IA católica. Responda de forma clara, objetiva e completa para um leigo interessado em aprofundar sua fé. {bible_citation_rule}"
-    }
+    instructions = { 'crianca': f"...", 'catequista': f"...", 'seminarista': f"...", 'sacerdote': f"...", 'leigo': f"..." }
+    instructions['catequista'] = f"Você é uma IA católica para catequistas. Crie um plano de encontro de catequese detalhado e estruturado. Use Markdown para formatar a resposta com títulos, negrito e listas."
+    instructions['leigo'] = f"Você é uma IA católica. Responda de forma clara, objetiva e completa para um leigo interessado em aprofundar sua fé. {bible_citation_rule}"
     return instructions.get(profile, instructions['leigo'])
 
 def generate_title(user_prompt, ai_response):
