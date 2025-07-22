@@ -1,4 +1,4 @@
-# /api/index.py (Versão Funcional Completa)
+# /api/index.py (Versão Funcional Final)
 
 import os
 import requests 
@@ -7,6 +7,8 @@ import traceback
 from flask import Flask, request, jsonify, render_template, Response, stream_with_context
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+
+# Esta versão NÃO USA a biblioteca dotenv, pois o Vercel injeta as variáveis automaticamente
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 template_dir = os.path.join(project_root, 'templates')
@@ -18,6 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/catolia.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Lê a variável diretamente do ambiente fornecido pelo Vercel
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
 class Conversation(db.Model):
@@ -101,7 +104,7 @@ def chat():
                 db.session.add(conv)
                 db.session.commit()
                 conversation_id = conv.id
-
+            
             user_msg_db = Message(conversation_id=conv.id, sender='user', content=data.get('message', ''))
             db.session.add(user_msg_db)
             db.session.commit()
@@ -113,7 +116,7 @@ def chat():
                 system_prompt = get_system_prompt(user_profile)
                 headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
                 json_data = { "model": "deepseek/deepseek-chat", "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}], "stream": True }
-
+                
                 with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9.5) as r:
                     r.raise_for_status()
                     for chunk in r.iter_lines():
@@ -125,7 +128,7 @@ def chat():
                             if content:
                                 full_ai_response += content
                                 yield f"data: {json.dumps({'content': content})}\n\n"
-
+                
                 with app.app_context():
                     ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
                     if conv.title == "Novo Chat":
@@ -133,10 +136,16 @@ def chat():
                     db.session.add(ai_msg_db)
                     db.session.commit()
 
+            except requests.exceptions.HTTPError as e:
+                # Se der erro 401 (senha errada), envia a mensagem específica
+                error_msg = f"Erro na API: {e.response.status_code}"
+                if e.response.status_code == 401:
+                    error_msg = "Erro de Autenticação (401). A chave de API é inválida."
+                yield f"event: error\ndata: {json.dumps({'error': error_msg})}\n\n"
             except Exception as e:
                 error_details = traceback.format_exc()
                 print(f"ERRO NO STREAM: {error_details}")
-                yield f"event: error\ndata: {json.dumps({'error': error_details})}\n\n"
+                yield f"event: error\ndata: {json.dumps({'error': 'Erro interno no servidor durante o streaming.'})}\n\n"
 
         return Response(stream_with_context(generate_response()), mimetype='text/event-stream')
 
@@ -144,12 +153,12 @@ def chat():
         error_details = traceback.format_exc()
         print(f"ERRO CRÍTICO NA ROTA CHAT: {error_details}")
         def error_stream():
-            yield f"event: error\ndata: {json.dumps({'error': error_details})}\n\n"
+            yield f"event: error\ndata: {json.dumps({'error': 'Erro crítico no servidor.'})}\n\n"
         return Response(stream_with_context(error_stream()), mimetype='text/event-stream')
 
 def get_system_prompt(profile):
     bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1')."
-    instructions = { 'crianca': f"...", 'catequista': f"...", 'seminarista': f"...", 'sacerdote': f"...", 'leigo': f"..." }
+    instructions = { 'crianca': f"...", 'catequista': f"...", 'seminarista': f"...", 'sacerdote': f"...", 'leigo': f"..." } # Preenchimentos omitidos para brevidade
     instructions['catequista'] = f"Você é uma IA católica para catequistas. Crie um plano de encontro de catequese detalhado e estruturado. Use Markdown para formatar a resposta com títulos, negrito e listas."
     instructions['leigo'] = f"Você é uma IA católica. Responda de forma clara, objetiva e completa para um leigo interessado em aprofundar sua fé. {bible_citation_rule}"
     return instructions.get(profile, instructions['leigo'])
