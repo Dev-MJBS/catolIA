@@ -1,8 +1,9 @@
-# /api/index.py (Versão Robusta para Vercel)
+# /api/index.py (Versão de DIAGNÓSTico - para capturar e exibir o erro)
 
 import os
 import requests 
 import json
+import traceback # <-- Importante para capturar os detalhes do erro
 from flask import Flask, request, jsonify, render_template, Response, stream_with_context
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -10,23 +11,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# --- CONFIGURAÇÃO ROBUSTA DE CAMINHOS ---
-# Descobre o caminho absoluto do diretório do projeto (a pasta 'catolia')
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 template_dir = os.path.join(project_root, 'templates')
-static_dir = os.path.join(project_root, 'static') # Mesmo que não usemos, é bom definir
+static_dir = os.path.join(project_root, 'static')
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 
-# O Vercel usa um sistema de arquivos temporário
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/catolia.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
-# --- MODELOS DO BANCO DE DADOS ---
-# (O código das classes Conversation e Message continua o mesmo)
 class Conversation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False, default="Novo Chat")
@@ -40,35 +36,38 @@ class Message(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-with app.app_context():
-    db.create_all()
+@app.before_request
+def setup_database():
+    if not hasattr(app, 'db_created'):
+        with app.app_context():
+            db.create_all()
+        app.db_created = True
 
 # --- ROTAS DA APLICAÇÃO ---
-# Esta rota agora pega TUDO que não começa com /api/
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    # Ignora as chamadas de API para não criar um loop
     if path.startswith('api/'):
         return jsonify({"error": "Esta rota é inválida"}), 404
     return render_template("index.html")
 
-# --- ROTAS DA API ---
-# (Todo o resto do seu código de rotas /api/history, /api/chat, etc. continua o mesmo)
 @app.route('/api/history', methods=['GET'])
 def get_history():
+    # ... (código existente)
     conversations = Conversation.query.order_by(Conversation.created_at.desc()).all()
     history = [{"id": conv.id, "title": conv.title} for conv in conversations]
     return jsonify(history)
 
 @app.route('/api/conversation/<int:conv_id>', methods=['GET'])
 def get_conversation(conv_id):
+    # ... (código existente)
     conversation = Conversation.query.get_or_404(conv_id)
     messages = [{"sender": msg.sender, "content": msg.content} for msg in conversation.messages]
     return jsonify({"title": conversation.title, "messages": messages})
 
 @app.route('/api/conversation', methods=['DELETE'])
 def delete_all_history():
+    # ... (código existente)
     try:
         db.session.query(Message).delete()
         db.session.query(Conversation).delete()
@@ -78,11 +77,16 @@ def delete_all_history():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+# --- ROTA PRINCIPAL DO CHAT ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    if not openrouter_api_key:
-        return Response(json.dumps({"error": "API Key not configured"}), status=500, mimetype='application/json')
+    # ================================================================
+    # GRANDE BLOCO TRY...EXCEPT PARA CAPTURAR QUALQUER ERRO
+    # ================================================================
     try:
+        if not openrouter_api_key:
+            raise ValueError("A variável de ambiente OPENROUTER_API_KEY não foi encontrada no servidor.")
+
         data = request.get_json()
         user_message = data.get('message', '').strip()
         conversation_id = data.get('conversation_id')
@@ -95,21 +99,30 @@ def chat():
         if not user_message:
             return Response("Mensagem vazia.", status=400)
 
-        if conversation_id:
-            conv = Conversation.query.get(conversation_id)
-        else:
-            conv = Conversation()
-            db.session.add(conv)
+        with app.app_context():
+            if conversation_id:
+                conv = db.session.get(Conversation, conversation_id)
+                if not conv:
+                    # Se o ID for inválido, cria uma nova conversa
+                    conv = Conversation()
+                    db.session.add(conv)
+                    db.session.commit()
+                    conversation_id = conv.id # Atualiza o ID
+            else:
+                conv = Conversation()
+                db.session.add(conv)
+                db.session.commit()
+                conversation_id = conv.id
+            
+            user_msg_db = Message(conversation_id=conv.id, sender='user', content=data.get('message', ''))
+            db.session.add(user_msg_db)
             db.session.commit()
-        
-        user_msg_db = Message(conversation_id=conv.id, sender='user', content=data.get('message', ''))
-        db.session.add(user_msg_db)
-        db.session.commit()
 
         def generate_response():
             full_ai_response = ""
             try:
                 yield f"event: conversation_id\ndata: {conv.id}\n\n"
+                
                 system_prompt = get_system_prompt(user_profile)
                 headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
                 json_data = {
@@ -118,37 +131,45 @@ def chat():
                     "stream": True
                 }
                 
-                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=60) as r:
+                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9.5) as r: # Timeout de 9.5s para Vercel
                     r.raise_for_status()
                     for chunk in r.iter_lines():
                         if chunk.startswith(b'data: '):
                             chunk_data = chunk.decode('utf-8')[6:]
-                            if chunk_data.strip() == '[DONE]':
-                                break
-                            try:
-                                json_chunk = json.loads(chunk_data)
-                                content = json_chunk['choices'][0]['delta'].get('content', '')
-                                if content:
-                                    full_ai_response += content
-                                    yield f"data: {json.dumps({'content': content})}\n\n"
-                            except (json.JSONDecodeError, KeyError):
-                                continue
+                            if chunk_data.strip() == '[DONE]': break
+                            json_chunk = json.loads(chunk_data)
+                            content = json_chunk['choices'][0]['delta'].get('content', '')
+                            if content:
+                                full_ai_response += content
+                                yield f"data: {json.dumps({'content': content})}\n\n"
 
-                ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
-                if conv.title == "Novo Chat":
-                    conv.title = generate_title(data.get('message', ''), full_ai_response)
-                db.session.add(ai_msg_db)
-                db.session.commit()
+                with app.app_context():
+                    ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
+                    if conv.title == "Novo Chat":
+                        conv.title = generate_title(data.get('message', ''), full_ai_response)
+                    db.session.add(ai_msg_db)
+                    db.session.commit()
 
-            except requests.exceptions.HTTPError as e:
-                yield f"event: error\ndata: Erro na API: {e.response.status_code}\n\n"
             except Exception as e:
-                yield f"event: error\ndata: {str(e)}\n\n"
+                # Captura erro DENTRO do gerador de stream
+                error_details = traceback.format_exc()
+                print(f"ERRO NO STREAM: {error_details}")
+                yield f"event: error\ndata: {json.dumps({'error': error_details})}\n\n"
 
         return Response(stream_with_context(generate_response()), mimetype='text/event-stream')
-    except Exception as e:
-        return Response(json.dumps({"error": "Internal Server Error"}), status=500, mimetype='application/json')
 
+    except Exception as e:
+        # Captura erro FORA do gerador de stream (ex: erro no acesso ao BD inicial)
+        error_details = traceback.format_exc()
+        print(f"ERRO CRÍTICO NA ROTA CHAT: {error_details}")
+        # Retorna um erro 200 OK para o navegador, mas com o conteúdo do erro
+        # para que possamos vê-lo no frontend.
+        def error_stream():
+            yield f"event: error\ndata: {json.dumps({'error': error_details})}\n\n"
+        return Response(stream_with_context(error_stream()), mimetype='text/event-stream')
+
+
+# As funções get_system_prompt e generate_title continuam as mesmas
 def get_system_prompt(profile):
     bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1')."
     instructions = {
@@ -165,7 +186,7 @@ def generate_title(user_prompt, ai_response):
         title_prompt = f"Gere um título muito curto (3 a 5 palavras) para a seguinte conversa:\n\nPERGUNTA: {user_prompt}\nRESPOSTA: {ai_response}\n\nTÍTULO:"
         headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
         json_data = {"model": "deepseek/deepseek-chat", "messages": [{"role": "user", "content": title_prompt}], "max_tokens": 20}
-        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data)
+        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, timeout=5)
         response.raise_for_status()
         title = response.json()['choices'][0]['message']['content'].strip().strip('"')
         return title if title else "Chat sobre " + user_prompt[:20]
