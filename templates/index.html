@@ -17,9 +17,32 @@
             --bg-body: var(--dark-bg-body); --bg-sidebar: var(--dark-bg-sidebar); --bg-main: var(--dark-bg-main); --bg-chat-bubble: var(--dark-bg-chat-bubble); --bg-input: var(--dark-bg-input); --text-primary: var(--dark-text-primary); --text-secondary: var(--dark-text-secondary); --border-color: var(--dark-border-color); --shadow-color: var(--dark-shadow-color);
         }
         body.light-mode { --bg-body: var(--light-bg-body); --bg-sidebar: var(--light-bg-sidebar); --bg-main: var(--light-bg-main); --bg-chat-bubble: var(--light-bg-chat-bubble); --bg-input: var(--light-bg-input); --text-primary: var(--light-text-primary); --text-secondary: var(--light-text-secondary); --border-color: var(--light-border-color); --shadow-color: var(--light-shadow-color); }
-        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-primary); }
-        #app-container { display: flex; height: 100%; transition: background-color 0.3s; }
-        #history-sidebar { width: 280px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; transition: all 0.3s; flex-shrink: 0; }
+        
+        /* --- ESTRUTURA BASE OTIMIZADA --- */
+        html {
+            height: -webkit-fill-available;
+        }
+        body {
+            height: 100vh;
+            height: -webkit-fill-available;
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            -webkit-text-size-adjust: 100%;
+        }
+        #app-container { display: flex; height: 100%; width: 100%; transition: background-color 0.3s; }
+
+        /* --- BARRA LATERAL (HISTÓRICO) --- */
+        #history-sidebar {
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
         #history-sidebar .header { padding: 15px; border-bottom: 1px solid var(--border-color); }
         #history-sidebar .new-chat-btn { display: block; width: 100%; padding: 12px; background-color: var(--color-primary); color: white; border: none; border-radius: 8px; font-size: 1em; cursor: pointer; text-align: center; text-decoration: none; box-sizing: border-box; }
         #history-sidebar .history-list { flex-grow: 1; list-style: none; margin: 0; padding: 15px; overflow-y: auto; }
@@ -30,33 +53,74 @@
         #history-sidebar .footer a { color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; padding: 8px; border-radius: 8px; }
         #history-sidebar .footer a:hover { background-color: var(--bg-input); }
         #history-sidebar .footer a i { margin-right: 10px; width: 20px; text-align: center; }
-        #main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100%; position: relative; }
-        #main-header { display: none; padding: 10px; border-bottom: 1px solid var(--border-color); align-items: center; }
-        #sidebar-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5em; cursor: pointer; }
-        #welcome-screen { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        #welcome-screen .logo { font-family: 'Montserrat', sans-serif; font-size: 3em; font-weight: 700; color: var(--color-primary); }
-        #welcome-screen .subtitle { font-size: 1.2em; color: var(--text-secondary); margin-top: 10px; }
-        #welcome-screen .donation-plea { margin-top: 40px; max-width: 600px; padding: 15px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9em; line-height: 1.6; }
-        #welcome-screen .pix-key { font-weight: bold; color: var(--color-accent); margin-top: 10px; }
-        .suggestion-pills { margin-top: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 700px; }
-        .suggestion-pill { padding: 10px 15px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; transition: background-color 0.2s; font-size: 0.9em; }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        #main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        #main-header {
+            display: none; /* Escondido por padrão, visível no mobile */
+            padding: 0 15px;
+            height: 50px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            background-color: var(--bg-body);
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+        #sidebar-toggle { background: none; border: none; color: var(--text-primary); font-size: 1.5em; cursor: pointer; }
+        
+        .chat-view {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #welcome-screen, #chat-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+        #welcome-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        #welcome-screen .logo { font-family: 'Montserrat', sans-serif; font-size: 2.5em; font-weight: 700; color: var(--color-primary); }
+        #welcome-screen .subtitle { font-size: 1.1em; color: var(--text-secondary); margin-top: 10px; max-width: 90%; }
+        #welcome-screen .donation-plea { margin-top: 30px; max-width: 500px; padding: 15px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9em; line-height: 1.6; }
+        #welcome-screen .pix-key { font-weight: bold; color: var(--color-accent); margin-top: 10px; word-break: break-all; }
+        .suggestion-pills { margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 90%; }
+        .suggestion-pill { padding: 10px 15px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; transition: background-color 0.2s; font-size: 0.85em; }
         .suggestion-pill:hover { background-color: var(--color-primary-dark); color: white; border-color: var(--color-primary-dark); }
-        #chat-container { display: none; flex-grow: 1; padding: 20px; overflow-y: auto; }
-        .message { display: flex; max-width: 80%; margin-bottom: 20px; align-items: flex-start; }
+        
+        #chat-container { display: none; }
+        .message { display: flex; max-width: 85%; margin-bottom: 15px; align-items: flex-start; }
         .message.user { margin-left: auto; flex-direction: row-reverse; }
-        .message-avatar { width: 35px; height: 35px; border-radius: 50%; background-color: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 10px; }
-        .message-content { padding: 15px 20px; background-color: var(--bg-chat-bubble); border-radius: 12px; min-width: 0; overflow-wrap: break-word; word-break: break-all; }
+        .message-avatar { width: 30px; height: 30px; border-radius: 50%; background-color: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 10px; font-size: 0.8em; }
+        .message-content { padding: 12px 15px; background-color: var(--bg-chat-bubble); border-radius: 12px; min-width: 0; overflow-wrap: break-word; word-break: break-all; font-size: 1em; }
         .message-content p:first-child { margin-top: 0; } .message-content p:last-child { margin-bottom: 0; }
-        .message-actions { margin-top: 10px; display: flex; gap: 15px; opacity: 0; transition: opacity 0.2s; }
+        .message-actions { margin-top: 8px; display: flex; gap: 15px; opacity: 0; transition: opacity 0.2s; }
         .message:hover .message-actions { opacity: 1; }
         .message-actions i { cursor: pointer; color: var(--text-secondary); font-size: 0.9em; }
         .message-actions i:hover { color: var(--text-primary); }
         .typing-cursor { display: inline-block; width: 8px; height: 1em; background-color: var(--text-primary); animation: blink 1s step-end infinite; }
         @keyframes blink { from, to { background-color: transparent } 50% { background-color: var(--text-primary); } }
-        #input-area-wrapper { padding: 20px; border-top: 1px solid var(--border-color); }
+        
+        #input-area-wrapper { padding: 15px 20px; border-top: 1px solid var(--border-color); flex-shrink: 0; }
         #input-area { max-width: 800px; margin: 0 auto; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; box-shadow: 0 5px 20px var(--shadow-color); }
-        .profile-buttons-top { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
-        .profile-buttons-top button { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; cursor: pointer; transition: all 0.2s; }
+        .profile-buttons-top { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .profile-buttons-top button { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
         .profile-buttons-top button.selected { background-color: var(--color-primary); color: white; border-color: var(--color-primary); }
         #catechist-options { margin-bottom: 10px; }
         .age-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
@@ -64,24 +128,51 @@
         .age-group input[type="radio"] { display: none; }
         .age-group input[type="radio"]:checked + label { background-color: var(--color-primary-dark); color: white; border-color: var(--color-primary-dark); }
         .main-input-wrapper { display: flex; align-items: center; }
-        #userMessageInput { width: 100%; background: transparent; border: none; color: var(--text-primary); resize: none; font-size: 1em; line-height: 1.5; max-height: 200px; outline: none; padding: 10px; }
-        #sendMessageButton { background-color: var(--color-primary); color: white; border: none; border-radius: 8px; width: 40px; height: 40px; font-size: 1.2em; cursor: pointer; margin-left: 10px; }
+        #userMessageInput { flex-grow: 1; background: transparent; border: none; color: var(--text-primary); resize: none; font-size: 1em; line-height: 1.5; max-height: 200px; outline: none; padding: 10px; }
+        #sendMessageButton { background-color: var(--color-primary); color: white; border: none; border-radius: 8px; width: 40px; height: 40px; font-size: 1.2em; cursor: pointer; margin-left: 10px; flex-shrink: 0; }
         #sendMessageButton:disabled { background-color: #555; cursor: not-allowed; }
+        
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999; }
         .overlay.open { display: block; }
+
+        /* --- LAYOUT PARA DESKTOP --- */
+        @media (min-width: 769px) {
+            #history-sidebar {
+                width: 280px;
+                display: flex;
+            }
+        }
+        
+        /* --- LAYOUT PARA MOBILE --- */
         @media (max-width: 768px) {
-            #history-sidebar { position: fixed; left: -100%; z-index: 1000; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
-            #history-sidebar.open { left: 0; }
-            #main-header { display: flex; }
-            #sidebar-toggle { display: block; }
+            #history-sidebar {
+                position: fixed;
+                height: 100%;
+                z-index: 1001;
+                width: 80%;
+                max-width: 300px;
+                transform: translateX(-100%);
+                border-right: 1px solid var(--border-color);
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+            #history-sidebar.open {
+                transform: translateX(0);
+            }
+            #main-header {
+                display: flex;
+            }
+            .chat-view {
+                height: calc(100% - 50px); /* Subtrai a altura do header */
+            }
         }
     </style>
 </head>
 <body>
-
     <div id="app-container">
         <aside id="history-sidebar">
-            <div class="header"><a href="#" id="new-chat-btn" class="new-chat-btn"><i class="fas fa-plus"></i> Novo Chat</a></div>
+            <div class="header">
+                <a href="#" id="new-chat-btn" class="new-chat-btn"><i class="fas fa-plus"></i> Novo Chat</a>
+            </div>
             <ul id="history-list" class="history-list"></ul>
             <div class="footer">
                 <a href="#" id="theme-toggle-btn"><i class="fas fa-sun"></i><span id="theme-label">Mudar para Tema Claro</span></a>
@@ -90,43 +181,37 @@
         </aside>
 
         <main id="main-content">
-            <header id="main-header"><button id="sidebar-toggle"><i class="fas fa-bars"></i></button></header>
-            <div id="welcome-screen">
-                <div class="logo">CatólIA 🕊️</div>
-                <div class="subtitle">Seu Guia de Fé, alimentado por Inteligência Artificial.</div>
-                <div class="suggestion-pills">
-                    <div class="suggestion-pill">Explique a Santíssima Trindade</div>
-                    <div class="suggestion-pill">Fale sobre o Advento</div>
-                    <div class="suggestion-pill">Quem foi Santa Teresinha?</div>
-                    <div class="suggestion-pill">Como fazer uma boa confissão?</div>
-                </div>
-                <div class="donation-plea">
-                    <strong>Apoie a Evangelização Digital!</strong><br>
-                    O CatólIA é um projeto independente, mantido com recursos próprios do desenvolvedor para cobrir os custos de servidor e da API de Inteligência Artificial. Sua doação generosa nos ajuda a manter esta ferramenta no ar, gratuita para todos.
-                    <div class="pix-key">Chave Pix (e-mail): mateus.job@outlook.com</div>
-                </div>
-            </div>
-            <div id="chat-container"></div>
-            <div id="input-area-wrapper">
-                <div id="input-area">
-                    <div class="profile-buttons-top">
-                        <button class="prompt-button selected" data-profile="leigo">Leigo</button>
-                        <button class="prompt-button" data-profile="catequista">Catequista</button>
-                        <button class="prompt-button" data-profile="seminarista">Seminarista</button>
-                        <button class="prompt-button" data-profile="crianca">Criança</button>
-                        <button class="prompt-button" data-profile="sacerdote">Sacerdote</button>
+            <header id="main-header">
+                <button id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+            </header>
+
+            <div class="chat-view">
+                <div id="welcome-screen">
+                    <div class="logo">CatólIA 🕊️</div>
+                    <div class="subtitle">Seu Guia de Fé, alimentado por Inteligência Artificial.</div>
+                    <div class="suggestion-pills">
+                        <div class="suggestion-pill">Explique a Santíssima Trindade</div>
+                        <div class="suggestion-pill">Fale sobre o Advento</div>
+                        <div class="suggestion-pill">Quem foi Santa Teresinha?</div>
+                        <div class="suggestion-pill">Como fazer uma boa confissão?</div>
                     </div>
-                    <div id="catechist-options" style="display: none;">
-                        <div class="age-group">
-                            <input type="radio" id="age_f1" name="age_group" value="Fundamental I (6-10 anos)" checked><label for="age_f1">Fund. I (6-10)</label>
-                            <input type="radio" id="age_f2" name="age_group" value="Fundamental II (11-14 anos)"><label for="age_f2">Fund. II (11-14)</label>
-                            <input type="radio" id="age_crisma" name="age_group" value="Crisma/Jovens (+14 anos)"><label for="age_crisma">Jovens (+14)</label>
-                            <input type="radio" id="age_adultos" name="age_group" value="Adultos/Catecumenato"><label for="age_adultos">Adultos</label>
+                    <div class="donation-plea">
+                        <strong>Apoie a Evangelização Digital!</strong><br>
+                        O CatólIA é um projeto independente, mantido com recursos próprios do desenvolvedor para cobrir os custos de servidor e da API de Inteligência Artificial. Sua doação generosa nos ajuda a manter esta ferramenta no ar, gratuita para todos.
+                        <div class="pix-key">Chave Pix (e-mail): mateus.job@outlook.com</div>
+                    </div>
+                </div>
+
+                <div id="chat-container"></div>
+
+                <div id="input-area-wrapper">
+                    <div id="input-area">
+                        <div class="profile-buttons-top" style="display: none;"> {/* Escondido por enquanto */} </div>
+                        <div id="catechist-options" style="display: none;"> {/* Escondido por enquanto */} </div>
+                        <div class="main-input-wrapper">
+                            <textarea id="userMessageInput" placeholder="Digite sua pergunta..." rows="1"></textarea>
+                            <button id="sendMessageButton"><i class="fas fa-paper-plane"></i></button>
                         </div>
-                    </div>
-                    <div class="main-input-wrapper">
-                        <textarea id="userMessageInput" placeholder="Digite sua pergunta..." rows="1"></textarea>
-                        <button id="sendMessageButton"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
@@ -156,10 +241,9 @@
             return marked.marked(processedText);
         };
 
-        const appendMessage = (text, sender, messageId = null) => {
+        const appendMessage = (text, sender) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
-            if (messageId) messageDiv.id = messageId;
             const avatar = sender === 'user' ? '<i class="fas fa-user"></i>' : '🕊️';
             messageDiv.innerHTML = `
                 <div class="message-avatar">${avatar}</div>
@@ -176,7 +260,8 @@
 
         const startChat = () => {
             welcomeScreen.style.display = 'none';
-            chatContainer.style.display = 'block';
+            chatContainer.style.display = 'flex';
+            chatContainer.style.flexDirection = 'column';
         };
         
         const resetToWelcome = () => {
@@ -235,12 +320,8 @@
             const aiMessageDiv = appendMessage('<span class="typing-cursor"></span>', 'ai');
             const textContentDiv = aiMessageDiv.querySelector('.text-content');
             
-            // LOG DE DIAGNÓSTICO
-            const apiUrl = new URL('/api/chat', window.location.origin);
-            console.log("LOG JS: Tentando enviar para a URL:", apiUrl.href);
-
             try {
-                const response = await fetch(apiUrl.href, {
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -286,7 +367,7 @@
                 loadHistory();
 
             } catch (error) {
-                console.error("LOG JS: Erro no sendMessage (fetch):", error);
+                console.error("Erro no sendMessage (fetch):", error);
                 textContentDiv.innerHTML = `Desculpe, ocorreu um erro de comunicação. Por favor, tente novamente. (${error.message})`;
             } finally {
                 sendMessageButton.disabled = false;
@@ -347,7 +428,7 @@
         const sidebar = document.getElementById('history-sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const menuOverlay = document.getElementById('menuOverlay');
-        sidebarToggle.addEventListener('click', () => { sidebar.classList.add('open'); menuOverlay.classList.add('open'); });
+        sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('open'); menuOverlay.classList.toggle('open'); });
         menuOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); menuOverlay.classList.remove('open'); });
 
         loadHistory();
