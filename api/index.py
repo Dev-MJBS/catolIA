@@ -1,4 +1,4 @@
-# /api/index.py
+# /api/index.py (Versão Robusta para Vercel)
 
 import os
 import requests 
@@ -8,14 +8,17 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from dotenv import load_dotenv
 
-# --- CONFIGURAÇÃO INICIAL ---
 load_dotenv()
 
-# O Vercel precisa que a pasta de templates seja especificada a partir da raiz do projeto
-# ../templates significa "volte uma pasta e entre em templates"
-app = Flask(__name__, template_folder='../templates')
+# --- CONFIGURAÇÃO ROBUSTA DE CAMINHOS ---
+# Descobre o caminho absoluto do diretório do projeto (a pasta 'catolia')
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+template_dir = os.path.join(project_root, 'templates')
+static_dir = os.path.join(project_root, 'static') # Mesmo que não usemos, é bom definir
 
-# O Vercel usa um sistema de arquivos temporário, então o BD será criado lá
+app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
+
+# O Vercel usa um sistema de arquivos temporário
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/catolia.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -23,6 +26,7 @@ db = SQLAlchemy(app)
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
 # --- MODELOS DO BANCO DE DADOS ---
+# (O código das classes Conversation e Message continua o mesmo)
 class Conversation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False, default="Novo Chat")
@@ -36,25 +40,27 @@ class Message(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Cria as tabelas antes da primeira requisição
 with app.app_context():
     db.create_all()
 
 # --- ROTAS DA APLICAÇÃO ---
+# Esta rota agora pega TUDO que não começa com /api/
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    # Esta rota serve o index.html para qualquer caminho que não seja uma API
+    # Ignora as chamadas de API para não criar um loop
+    if path.startswith('api/'):
+        return jsonify({"error": "Esta rota é inválida"}), 404
     return render_template("index.html")
 
-# --- ROTAS DA API PARA O HISTÓRICO ---
+# --- ROTAS DA API ---
+# (Todo o resto do seu código de rotas /api/history, /api/chat, etc. continua o mesmo)
 @app.route('/api/history', methods=['GET'])
 def get_history():
     conversations = Conversation.query.order_by(Conversation.created_at.desc()).all()
     history = [{"id": conv.id, "title": conv.title} for conv in conversations]
     return jsonify(history)
 
-# ... (O resto do seu código de rotas continua exatamente o mesmo)
 @app.route('/api/conversation/<int:conv_id>', methods=['GET'])
 def get_conversation(conv_id):
     conversation = Conversation.query.get_or_404(conv_id)
@@ -74,7 +80,6 @@ def delete_all_history():
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    # ... (Esta função continua exatamente a mesma)
     if not openrouter_api_key:
         return Response(json.dumps({"error": "API Key not configured"}), status=500, mimetype='application/json')
     try:
@@ -145,7 +150,6 @@ def chat():
         return Response(json.dumps({"error": "Internal Server Error"}), status=500, mimetype='application/json')
 
 def get_system_prompt(profile):
-    # ... (Esta função continua a mesma)
     bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1')."
     instructions = {
         'crianca': f"Você é uma IA católica. Responda de forma muito simples, didática e adequada para uma criança pequena. {bible_citation_rule}",
@@ -157,7 +161,6 @@ def get_system_prompt(profile):
     return instructions.get(profile, instructions['leigo'])
 
 def generate_title(user_prompt, ai_response):
-    # ... (Esta função continua a mesma)
     try:
         title_prompt = f"Gere um título muito curto (3 a 5 palavras) para a seguinte conversa:\n\nPERGUNTA: {user_prompt}\nRESPOSTA: {ai_response}\n\nTÍTULO:"
         headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
