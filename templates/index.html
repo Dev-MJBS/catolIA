@@ -3,502 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>CatólIA - Seu Guia de Fé</title>
+    <title>CatólIA 2.0 - Seu Guia de Fé</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
-        /* --- ESTILOS GERAIS E CORREÇÕES --- */
         :root {
-            /* Cores Gerais */
-            --color-primary: #4CAF50;
-            --color-primary-dark: #388E3C;
-            --color-accent: #FF5722;
-            /* Cores do Tema CLARO (Light Mode) */
-            --light-bg-body: #eceff1;
-            --light-bg-container: #ffffff;
-            --light-text-color: #212121;
-            --light-border-color: #e0e0e0;
-            --light-header-bg: var(--color-primary);
-            --light-header-text: #ffffff;
-            --light-header-link: #ffffff;
-            --light-bubble-user: #DCF8C6;
-            --light-bubble-bot: #f1f1f1;
-            --light-profile-bg: #e0f2f7;
-            --light-profile-btn-bg: #bbdefb;
-            --light-profile-btn-color: #424242;
-            --light-input-bg: #f5f5f5;
-            --light-input-border: #bdbdbd;
-            --light-footer-bg: #e0e0e0;
-            --light-footer-text: #616161;
-            /* Cores do Tema ESCURO (Dark Mode) */
-            --dark-bg-body: #263238;
-            --dark-bg-container: #37474F;
-            --dark-text-color: #eceff1;
-            --dark-border-color: #455a64;
-            --dark-header-bg: var(--color-primary-dark);
-            --dark-header-text: #ffffff;
-            --dark-header-link: #cfd8dc;
-            --dark-bubble-user: #4CAF50;
-            --dark-bubble-bot: #546E7A;
-            --dark-profile-bg: #37474F;
-            --dark-profile-btn-bg: #4CAF50;
-            --dark-profile-btn-color: #ffffff;
-            --dark-input-bg: #424242;
-            --dark-input-border: #607d8b;
-            --dark-footer-bg: #263238;
-            --dark-footer-text: #9e9e9e;
-            /* Cores do Tema 'Criança' */
-            --child-bg-body: #E3F2FD;
-            --child-bg-container: #FFFFFF;
-            --child-text-color: #424242;
-            --child-border-color: #90CAF9;
-            --child-header-bg: #64B5F6;
-            --child-header-text: #FFFFFF;
-            --child-header-link: #FFFFFF;
-            --child-bubble-user: #FFCDD2;
-            --child-bubble-bot: #E1F5FE;
-            --child-profile-bg: #BBDEFB;
-            --child-profile-btn-bg: #90CAF9;
-            --child-profile-btn-color: #FFFFFF;
-            --child-input-bg: #E1F5FE;
-            --child-input-border: #90CAF9;
-            --child-footer-bg: #BBDEFB;
-            --child-footer-text: #424242;
-            /* Cores do Tema 'Sacerdote' (Preto) */
-            --priest-bg-body: #1a1a1a;
-            --priest-bg-container: #2c2c2c;
-            --priest-text-color: #e0e0e0;
-            --priest-border-color: #444444;
-            --priest-header-bg: #000000;
-            --priest-header-text: #ffffff;
-            --priest-header-link: #cccccc;
-            --priest-bubble-user: #606060;
-            --priest-bubble-bot: #333333;
-            --priest-profile-bg: #222222;
-            --priest-profile-btn-bg: #424242;
-            --priest-profile-btn-color: #ffffff;
-            --priest-input-bg: #222222;
-            --priest-input-border: #555555;
-            --priest-footer-bg: #000000;
-            --priest-footer-text: #aaaaaa;
-            /* Variáveis para o Tema ATUAL */
-            --bg-body: var(--light-bg-body);
-            --bg-container: var(--light-bg-container);
-            --text-color: var(--light-text-color);
-            --border-color: var(--light-border-color);
-            --header-bg: var(--light-header-bg);
-            --header-text: var(--light-header-text);
-            --header-link: var(--light-header-link);
-            --bubble-user: var(--light-bubble-user);
-            --bubble-bot: var(--light-bubble-bot);
-            --profile-bg: var(--light-profile-bg);
-            --profile-btn-bg: var(--light-profile-btn-bg);
-            --profile-btn-color: var(--light-profile-btn-color);
-            --input-bg: var(--light-input-bg);
-            --input-border: var(--light-input-border);
-            --footer-bg: var(--light-footer-bg);
-            --footer-text: var(--light-footer-text);
-            /* Alturas de elementos fixos */
-            --header-height: 60px;
-            --footer-height: 40px;
-            --menu-width: 280px;
-            --modal-overlay-bg: rgba(0, 0, 0, 0.7);
-            --modal-bg: var(--bg-container);
-            --modal-text: var(--text-color);
+            --color-primary: #8E44AD; --color-primary-dark: #6C3483; --color-accent: #F39C12;
+            --dark-bg-body: #121212; --dark-bg-sidebar: #1E1E1E; --dark-bg-main: #121212; --dark-bg-chat-bubble: #2C2C2C; --dark-bg-input: #252525; --dark-text-primary: #EAEAEA; --dark-text-secondary: #B0B0B0; --dark-border-color: #333333; --dark-shadow-color: rgba(0, 0, 0, 0.5);
+            --light-bg-body: #F4F6F8; --light-bg-sidebar: #FFFFFF; --light-bg-main: #F4F6F8; --light-bg-chat-bubble: #FFFFFF; --light-bg-input: #FFFFFF; --light-text-primary: #212121; --light-text-secondary: #616161; --light-border-color: #E0E0E0; --light-shadow-color: rgba(0, 0, 0, 0.1);
+            --bg-body: var(--dark-bg-body); --bg-sidebar: var(--dark-bg-sidebar); --bg-main: var(--dark-bg-main); --bg-chat-bubble: var(--dark-bg-chat-bubble); --bg-input: var(--dark-bg-input); --text-primary: var(--dark-text-primary); --text-secondary: var(--dark-text-secondary); --border-color: var(--dark-border-color); --shadow-color: var(--dark-shadow-color);
         }
-
-        body.dark-mode { --bg-body: var(--dark-bg-body); --bg-container: var(--dark-bg-container); --text-color: var(--dark-text-color); --border-color: var(--dark-border-color); --header-bg: var(--dark-header-bg); --header-text: var(--dark-header-text); --header-link: var(--dark-header-link); --bubble-user: var(--dark-bubble-user); --bubble-bot: var(--dark-bubble-bot); --profile-bg: var(--dark-profile-bg); --profile-btn-bg: var(--dark-profile-btn-bg); --profile-btn-color: var(--dark-profile-btn-color); --input-bg: var(--dark-input-bg); --input-border: var(--dark-input-border); --footer-bg: var(--dark-footer-bg); --footer-text: var(--dark-footer-text); --modal-overlay-bg: rgba(0, 0, 0, 0.85); --modal-bg: var(--dark-bg-container); --modal-text: var(--dark-text-color); }
-        body.child-mode { --bg-body: var(--child-bg-body); --bg-container: var(--child-bg-container); --text-color: var(--child-text-color); --border-color: var(--child-border-color); --header-bg: var(--child-header-bg); --header-text: var(--child-header-text); --header-link: var(--child-header-link); --bubble-user: var(--child-bubble-user); --bubble-bot: var(--child-bubble-bot); --profile-bg: var(--child-profile-bg); --profile-btn-bg: var(--child-profile-btn-bg); --profile-btn-color: var(--child-profile-btn-color); --input-bg: var(--child-input-bg); --input-border: var(--child-input-border); --footer-bg: var(--child-footer-bg); --footer-text: var(--child-footer-text); --modal-overlay-bg: rgba(0, 0, 0, 0.6); --modal-bg: var(--child-bg-container); --modal-text: var(--child-text-color); }
-        body.priest-mode { --bg-body: var(--priest-bg-body); --bg-container: var(--priest-bg-container); --text-color: var(--priest-text-color); --border-color: var(--priest-border-color); --header-bg: var(--priest-header-bg); --header-text: var(--priest-header-text); --header-link: var(--priest-header-link); --bubble-user: var(--priest-bubble-user); --bubble-bot: var(--priest-bubble-bot); --profile-bg: var(--priest-profile-bg); --profile-btn-bg: var(--priest-profile-btn-bg); --profile-btn-color: var(--priest-profile-btn-color); --input-bg: var(--priest-input-bg); --input-border: var(--priest-input-border); --footer-bg: var(--priest-footer-bg); --footer-text: var(--priest-footer-text); --modal-overlay-bg: rgba(0, 0, 0, 0.9); --modal-bg: var(--priest-bg-container); --modal-text: var(--priest-text-color); }
-
-        html, body { height: 100%; overflow: hidden; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-body); margin: 0; color: var(--text-color); transition: background-color 0.5s ease, color 0.5s ease; display: flex; justify-content: center; }
-        main.chat-container { width: 100%; max-width: 800px; height: 100%; margin: 0 auto; display: flex; flex-direction: column; overflow: hidden; background-color: var(--bg-container); transition: background-color 0.5s ease; position: relative; z-index: 1; }
-        header.chat-header { background-color: var(--header-bg); padding: 10px 20px; color: var(--header-text); font-weight: bold; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); display: flex; justify-content: space-between; align-items: center; position: absolute; top: 0; left: 0; width: 100%; z-index: 1001; box-sizing: border-box; height: var(--header-height); }
-        .chat-scrollable-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background-color: var(--bg-body); padding: 20px; padding-top: var(--header-height); box-sizing: border-box; display: flex; flex-direction: column; }
-        .chat-input-area { flex-shrink: 0; padding: 15px 20px; background-color: var(--bg-container); border-top: 1px solid var(--border-color); position: absolute; bottom: var(--footer-height); left: 0; width: 100%; box-sizing: border-box; z-index: 999; box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1); }
-        .main-input-wrapper { display: flex; align-items: flex-end; width: 100%; position: relative; }
-        .textarea-wrapper { flex-grow: 1; position: relative; }
-        .chat-input-area textarea { width: 100%; flex-grow: 1; border: 1px solid var(--input-border); outline: none; font-family: 'Roboto', sans-serif; font-size: 1em; resize: none; min-height: 24px; max-height: 150px; padding: 8px 15px 8px 45px; background-color: var(--input-bg); border-radius: 25px; overflow-y: auto; line-height: 1.5; color: var(--text-color); box-sizing: border-box; }
-        #sendMessageButton { background-color: var(--color-primary); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; min-width: 45px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 1.2em; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); flex-shrink: 0; margin-left: 10px; }
-        footer.chat-footer { flex-shrink: 0; padding: 10px 20px; background-color: var(--footer-bg); border-top: 1px solid var(--border-color); text-align: center; font-size: 0.8em; color: var(--footer-text); position: absolute; bottom: 0; left: 0; width: 100%; box-sizing: border-box; z-index: 1000; padding-bottom: calc(10px + env(safe-area-inset-bottom)); display: flex; justify-content: center; align-items: center; gap: 10px; height: var(--footer-height); }
-        .header-left { display: flex; align-items: center; gap: 10px; font-size: 1.2em; font-family: 'Montserrat', sans-serif; font-weight: 700; }
-        .menu-icon { font-size: 1.5em; cursor: pointer; margin-right: 15px; transition: transform 0.2s ease; }
-        .menu-icon:hover { transform: scale(1.1); }
-        .header-right a { background-color: rgba(255, 255, 255, 0.2); color: var(--header-link); padding: 8px 18px; border-radius: 25px; text-decoration: none; font-size: 0.95em; font-weight: bold; transition: background-color 0.3s ease, color 0.5s ease; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); text-transform: uppercase; letter-spacing: 0.5px; }
-        .header-right a:hover { background-color: rgba(255, 255, 255, 0.3); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25); }
-        .chat-scrollable-content.initial-state { justify-content: center; align-items: center; text-align: center; }
-        .chat-scrollable-content.has-content .main-central-message { display: none; }
-        .main-central-message { font-family: 'Montserrat', sans-serif; font-size: 1.8em; font-weight: 700; color: var(--color-primary-dark); margin-bottom: 30px; transition: color 0.5s ease; padding: 0 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); align-self: center; width: 100%; max-width: 600px; box-sizing: border-box; }
-        .profile-selection-top { text-align: center; padding: 20px; font-size: 0.95em; color: var(--text-color); transition: background-color 0.5s ease, color 0.5s ease; flex-shrink: 0; background-color: var(--profile-bg); border-bottom: 1px solid var(--border-color); margin: 0 -20px 20px -20px; }
-        .profile-buttons-top { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-        .profile-buttons-top .prompt-button { background-color: var(--profile-btn-bg); color: var(--profile-btn-color); border: none; border-radius: 18px; padding: 6px 12px; font-size: 0.8em; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 5px; }
-        .profile-buttons-top .prompt-button.selected { background-color: var(--color-primary); color: white; font-weight: bold; box-shadow: 0 3px 8px rgba(0,0,0,0.25); }
-        .profile-buttons-top .prompt-button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        .profile-buttons-top .prompt-button i { font-size: 0.9em; }
-        .chat-messages { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
-        .message { display: flex; align-items: flex-start; text-align: left; max-width: 100%; }
-        .message.user { justify-content: flex-end; }
-        .message.bot { justify-content: flex-start; }
-        .message-avatar { width: 35px; height: 35px; min-width: 35px; border-radius: 50%; background-color: var(--profile-btn-bg); color: var(--profile-btn-color); display: flex; justify-content: center; align-items: center; font-size: 1.2em; margin-top: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); flex-shrink: 0; position: relative; }
-        .message.user .message-avatar { order: 2; margin-left: 10px; background-color: var(--color-primary); color: white; }
-        .message.bot .message-avatar { order: 0; margin-right: 10px; background-color: var(--color-primary-dark); color: white; }
-        .message-content { max-width: 75%; padding: 12px 18px; border-radius: 22px; position: relative; word-wrap: break-word; line-height: 1.6; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); }
+        body.light-mode { --bg-body: var(--light-bg-body); --bg-sidebar: var(--light-bg-sidebar); --bg-main: var(--light-bg-main); --bg-chat-bubble: var(--light-bg-chat-bubble); --bg-input: var(--light-bg-input); --text-primary: var(--light-text-primary); --text-secondary: var(--light-text-secondary); --border-color: var(--light-border-color); --shadow-color: var(--light-shadow-color); }
+        html, body { height: 100%; margin: 0; overflow: hidden; font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-primary); }
+        #app-container { display: flex; height: 100%; transition: background-color 0.3s; }
+        #history-sidebar { width: 280px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; transition: all 0.3s; flex-shrink: 0; }
+        #history-sidebar .header { padding: 15px; border-bottom: 1px solid var(--border-color); }
+        #history-sidebar .new-chat-btn { display: block; width: 100%; padding: 12px; background-color: var(--color-primary); color: white; border: none; border-radius: 8px; font-size: 1em; cursor: pointer; text-align: center; text-decoration: none; box-sizing: border-box; }
+        #history-sidebar .history-list { flex-grow: 1; list-style: none; margin: 0; padding: 15px; overflow-y: auto; }
+        #history-sidebar .history-list a { display: block; padding: 10px 15px; margin-bottom: 5px; border-radius: 8px; color: var(--text-secondary); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background-color 0.2s; }
+        #history-sidebar .history-list a:hover { background-color: var(--bg-input); color: var(--text-primary); }
+        #history-sidebar .history-list a.active { background-color: var(--color-primary-dark); color: white; }
+        #history-sidebar .footer { padding: 15px; border-top: 1px solid var(--border-color); }
+        #history-sidebar .footer a { color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; padding: 8px; border-radius: 8px; }
+        #history-sidebar .footer a:hover { background-color: var(--bg-input); }
+        #history-sidebar .footer a i { margin-right: 10px; width: 20px; text-align: center; }
+        #main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100%; position: relative; }
+        #main-header { display: none; padding: 10px; border-bottom: 1px solid var(--border-color); align-items: center; }
+        #sidebar-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5em; cursor: pointer; }
+        #welcome-screen { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        #welcome-screen .logo { font-family: 'Montserrat', sans-serif; font-size: 3em; font-weight: 700; color: var(--color-primary); }
+        #welcome-screen .subtitle { font-size: 1.2em; color: var(--text-secondary); margin-top: 10px; }
+        #welcome-screen .donation-plea { margin-top: 40px; max-width: 600px; padding: 15px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9em; line-height: 1.6; }
+        #welcome-screen .pix-key { font-weight: bold; color: var(--color-accent); margin-top: 10px; }
+        .suggestion-pills { margin-top: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 700px; }
+        .suggestion-pill { padding: 10px 15px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; transition: background-color 0.2s; font-size: 0.9em; }
+        .suggestion-pill:hover { background-color: var(--color-primary-dark); color: white; border-color: var(--color-primary-dark); }
+        #chat-container { display: none; flex-grow: 1; padding: 20px; overflow-y: auto; }
+        .message { display: flex; max-width: 80%; margin-bottom: 20px; align-items: flex-start; }
+        .message.user { margin-left: auto; flex-direction: row-reverse; }
+        .message-avatar { width: 35px; height: 35px; border-radius: 50%; background-color: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 10px; }
+        .message-content { padding: 15px 20px; background-color: var(--bg-chat-bubble); border-radius: 12px; min-width: 0; overflow-wrap: break-word; word-break: break-all; }
         .message-content p:first-child { margin-top: 0; } .message-content p:last-child { margin-bottom: 0; }
-        .message.user .message-content { background-color: var(--bubble-user); color: var(--text-color); }
-        .message.bot .message-content { background-color: var(--bubble-bot); color: var(--text-color); }
-        .typing-indicator .message-content { background-color: transparent; padding: 0; border-radius: 0; box-shadow: none; width: auto; display: flex; align-items: center; margin: 12px 18px; }
-        .typing-indicator .message-avatar::before { content: ''; position: absolute; top: -3px; left: -3px; right: -3px; bottom: -3px; border: 3px solid var(--color-primary-dark); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
-        .typing-indicator span { display: inline-block; background-color: var(--text-color); width: 8px; height: 8px; border-radius: 50%; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out; opacity: 0.6; }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px); } }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .options-toggle-button { background-color: transparent; color: var(--text-color); border: none; width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; font-size: 1.2em; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; position: absolute; bottom: 8px; left: 8px; font-weight: bold; z-index: 1; }
-        .options-toggle-button:hover { background-color: rgba(0,0,0,0.05); color: var(--color-primary); transform: scale(1.1); }
-        .options-toggle-button.open { transform: rotate(45deg); }
-        .options-menu { display: none; position: absolute; bottom: calc(100% + 10px); left: 0; background-color: var(--bg-container); border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); padding: 15px; z-index: 1006; flex-direction: column; gap: 15px; transition: all 0.3s ease-in-out; transform-origin: bottom left; transform: scale(0.8) translateY(10px); opacity: 0; visibility: hidden; min-width: 250px; max-width: calc(100% - 40px); box-sizing: border-box; }
-        .options-menu.open { display: flex; opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
-        .options-menu-section { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 10px; text-align: center; }
-        .options-menu-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .options-menu-section p { margin: 0 0 10px 0; font-weight: bold; font-size: 0.95em; color: var(--text-color); }
-        .options-menu-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-        #responseTypeOptionsButtons .prompt-button { background-color: var(--profile-btn-bg); color: var(--profile-btn-color); border: 2px solid var(--border-color); border-radius: 4px; padding: 8px 15px; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: bold; }
-        #responseTypeOptionsButtons .prompt-button.selected { border-color: var(--color-primary); background-color: var(--color-primary); color: white; }
-        #responseTypeOptionsButtons .prompt-button:hover { border-color: var(--color-primary-dark); background-color: var(--color-primary-dark); color: white; }
-        .chat-footer a { color: var(--footer-text); font-weight: 500; }
-        .chat-footer .theme-toggle-button { position: static; margin-left: auto; width: 30px; height: 30px; font-size: 1em; box-shadow: none; border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .chat-footer .theme-toggle-button:hover { background-color: rgba(0,0,0,0.1); }
-        .sidebar-menu { position: fixed; top: 0; left: -100%; width: var(--menu-width); max-width: 80%; height: 100vh; background-color: var(--bg-container); box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3); z-index: 1003; transition: left 0.3s ease-in-out; display: flex; flex-direction: column; box-sizing: border-box; color: var(--text-color); }
-        .sidebar-menu.open { left: 0; }
-        .sidebar-menu-header { padding: 15px 20px; background-color: var(--header-bg); color: var(--header-text); font-size: 1.3em; font-weight: bold; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; height: var(--header-height); flex-shrink: 0; }
-        .sidebar-menu-header .close-btn { font-size: 1.8em; cursor: pointer; color: var(--header-text); transition: transform 0.2s ease; }
-        .sidebar-menu-header .close-btn:hover { transform: scale(1.1); }
-        .sidebar-menu ul { list-style: none; padding: 20px; margin: 0; flex-grow: 1; overflow-y: auto; }
-        .sidebar-menu ul li { margin-bottom: 15px; }
-        .sidebar-menu ul li a { text-decoration: none; color: var(--text-color); font-size: 1.1em; padding: 10px; display: block; border-radius: 8px; transition: background-color 0.3s ease, color 0.3s ease; }
-        .sidebar-menu ul li a:hover { background-color: rgba(0, 0, 0, 0.1); color: var(--color-primary); }
-        .sidebar-menu ul li a i { margin-right: 10px; width: 20px; text-align: center; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1002; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
-        .overlay.open { opacity: 1; visibility: visible; }
-        
-        /* --- ESTILOS DO MODAL CORRIGIDOS --- */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--modal-overlay-bg); display: none; align-items: center; justify-content: center; z-index: 1004; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
-        .modal.open { display: flex; opacity: 1; visibility: visible; }
-        .modal-content { background-color: var(--modal-bg); color: var(--modal-text); display: flex; flex-direction: column; max-height: 90vh; max-width: 90%; width: 800px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.3); overflow: hidden; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background-color: var(--header-bg); color: var(--header-text); flex-shrink: 0; }
-        .modal-header h3 { margin: 0; font-size: 1.2em; }
-        .modal-close-button { background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--header-text); opacity: 0.8; }
-        .modal-close-button:hover { opacity: 1; }
-        .modal-body { padding: 20px; flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); flex-shrink: 0; background-color: var(--bg-container); display: flex; justify-content: space-around; gap: 10px; }
-        .copy-pix-button { background-color: var(--color-primary); color: white; padding: 10px 20px; border: none; border-radius: 25px; cursor: pointer; font-size: 1em; font-weight: bold; transition: background-color 0.3s ease; }
-        .copy-pix-button:hover { background-color: var(--color-primary-dark); }
-        
-        /* ESTILOS ESPECÍFICOS PARA OS MODAIS (Confissão e Catequese) */
-        #confessionModal .privacy-warning { background-color: rgba(255, 229, 100, 0.3); border-left: 4px solid #ffc107; padding: 10px; margin-bottom: 20px; font-size: 0.9em; border-radius: 4px; }
-        #confessionModal .examination-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
-        #confessionModal .examination-item div { flex-grow: 1; padding-right: 15px; }
-        #confessionModal .examination-source { font-size: 0.75em; color: var(--footer-text); font-style: italic; margin-top: 4px; }
-        #confessionModal .add-topic-btn { background-color: var(--profile-btn-bg); color: var(--profile-btn-color); border: none; border-radius: 5px; padding: 5px 10px; font-size: 0.8em; cursor: pointer; flex-shrink: 0; }
-        
-        #catechesisModal .modal-header { background-color: #4a148c; color: white; }
-        #catechesisModal .form-group { margin-bottom: 15px; }
-        #catechesisModal label { font-weight: bold; display: block; margin-bottom: 5px; }
-        #catechesisModal input[type="text"] { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); box-sizing: border-box; }
-        #catechesisModal .age-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        #catechesisModal .age-group label { display: flex; align-items: center; gap: 5px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; }
-        #catechesisModal .age-group input[type="radio"] { display: none; }
-        #catechesisModal .age-group input[type="radio"]:checked + label { background-color: #4a148c; color: white; border-color: #4a148c; }
-        #catechesisModal #generatePlanBtn { background-color: #4a148c; color: white; width: 100%; padding: 12px; font-size: 1.1em; border-radius: 8px; border: none; cursor: pointer; }
-        #catechesisModal #catechesisPlanResult { background-color: var(--bubble-bot); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; font-size: 1em; line-height: 1.6; min-height: 200px; margin-top: 20px; color: var(--text-color); }
-        #catechesisPlanResult h1, #catechesisPlanResult h2, #catechesisPlanResult h3, #catechesisPlanResult h4 { margin-top: 1.2em; margin-bottom: 0.6em; line-height: 1.2; color: var(--color-primary-dark); }
-        #catechesisPlanResult p { margin-bottom: 0.8em; }
-        #catechesisPlanResult ul, #catechesisPlanResult ol { padding-left: 25px; margin-bottom: 0.8em; }
-        #catechesisPlanResult li { margin-bottom: 0.4em; }
-        #catechesisPlanResult strong { font-weight: bold; }
-
-        @media (max-width: 768px) { .chat-container, header.chat-header, .chat-input-area, footer.chat-footer { max-width: 100%; border-radius: 0; } header.chat-header { padding: 8px 15px; font-size: 1.1em; } .menu-icon { font-size: 1.2em; margin-right: 10px; } .main-central-message { font-size: 1.3em; } .chat-input-area { padding: 10px 15px; } .options-toggle-button { width: 30px; height: 30px; font-size: 1.2em; left: 5px; bottom: 5px; } .chat-input-area textarea { font-size: 0.9em; } #sendMessageButton { width: 40px; height: 40px; min-width: 40px; font-size: 1em; } .options-menu { padding: 10px; gap: 10px; min-width: 200px; } .chat-messages { padding: 10px; } footer.chat-footer { padding: 8px 15px; font-size: 0.7em; } .sidebar-menu { width: 250px; } }
+        .message-actions { margin-top: 10px; display: flex; gap: 15px; opacity: 0; transition: opacity 0.2s; }
+        .message:hover .message-actions { opacity: 1; }
+        .message-actions i { cursor: pointer; color: var(--text-secondary); font-size: 0.9em; }
+        .message-actions i:hover { color: var(--text-primary); }
+        .typing-cursor { display: inline-block; width: 8px; height: 1em; background-color: var(--text-primary); animation: blink 1s step-end infinite; }
+        @keyframes blink { from, to { background-color: transparent } 50% { background-color: var(--text-primary); } }
+        #input-area-wrapper { padding: 20px; border-top: 1px solid var(--border-color); }
+        #input-area { max-width: 800px; margin: 0 auto; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; box-shadow: 0 5px 20px var(--shadow-color); }
+        .profile-buttons-top { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
+        .profile-buttons-top button { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; cursor: pointer; transition: all 0.2s; }
+        .profile-buttons-top button.selected { background-color: var(--color-primary); color: white; border-color: var(--color-primary); }
+        #catechist-options { margin-bottom: 10px; }
+        .age-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .age-group label { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; font-size: 0.8em; }
+        .age-group input[type="radio"] { display: none; }
+        .age-group input[type="radio"]:checked + label { background-color: var(--color-primary-dark); color: white; border-color: var(--color-primary-dark); }
+        .main-input-wrapper { display: flex; align-items: center; }
+        #userMessageInput { width: 100%; background: transparent; border: none; color: var(--text-primary); resize: none; font-size: 1em; line-height: 1.5; max-height: 200px; outline: none; padding: 10px; }
+        #sendMessageButton { background-color: var(--color-primary); color: white; border: none; border-radius: 8px; width: 40px; height: 40px; font-size: 1.2em; cursor: pointer; margin-left: 10px; }
+        #sendMessageButton:disabled { background-color: #555; cursor: not-allowed; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999; }
+        .overlay.open { display: block; }
+        @media (max-width: 768px) {
+            #history-sidebar { position: fixed; left: -100%; z-index: 1000; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
+            #history-sidebar.open { left: 0; }
+            #main-header { display: flex; }
+            #sidebar-toggle { display: block; }
+        }
     </style>
 </head>
 <body>
-    <header class="chat-header">
-        <div class="header-left">
-            <i class="fas fa-bars menu-icon" id="menuIcon"></i>
-            <span>CatólIA</span>
-        </div>
-        <div class="header-right">
-            <a href="#" id="donateLink">Doe</a>
-        </div>
-    </header>
 
-    <main class="chat-container">
-        <div class="chat-scrollable-content initial-state" id="chatScrollableContent">
-            <div class="profile-selection-top">
-                <p>Eu sou um(a):</p>
-                <div class="profile-buttons-top" id="profileButtonsTop">
-                    <button class="prompt-button" data-profile="leigo"><i class="fas fa-user"></i> Leigo</button>
-                    <button class="prompt-button" data-profile="catequista"><i class="fas fa-book"></i> Catequista</button>
-                    <button class="prompt-button" data-profile="seminarista"><i class="fas fa-graduation-cap"></i> Seminarista</button>
-                    <button class="prompt-button" data-profile="crianca"><i class="fas fa-child"></i> Criança</button>
-                    <button class="prompt-button" data-profile="sacerdote"><i class="fas fa-cross"></i> Sacerdote</button>
+    <div id="app-container">
+        <aside id="history-sidebar">
+            <div class="header">
+                <a href="#" id="new-chat-btn" class="new-chat-btn"><i class="fas fa-plus"></i> Novo Chat</a>
+            </div>
+            <ul id="history-list" class="history-list"></ul>
+            <div class="footer">
+                <a href="#" id="theme-toggle-btn"><i class="fas fa-sun"></i><span id="theme-label">Mudar para Tema Claro</span></a>
+                <a href="#" id="clear-history-btn"><i class="fas fa-trash"></i><span>Limpar Histórico</span></a>
+            </div>
+        </aside>
+
+        <main id="main-content">
+            <header id="main-header">
+                <button id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+            </header>
+
+            <div id="welcome-screen">
+                <div class="logo">CatólIA 🕊️</div>
+                <div class="subtitle">Seu Guia de Fé, alimentado por Inteligência Artificial.</div>
+                <div class="suggestion-pills">
+                    <div class="suggestion-pill">Explique a Santíssima Trindade</div>
+                    <div class="suggestion-pill">Fale sobre o Advento</div>
+                    <div class="suggestion-pill">Quem foi Santa Teresinha?</div>
+                    <div class="suggestion-pill">Como fazer uma boa confissão?</div>
+                </div>
+                <div class="donation-plea">
+                    <strong>Apoie a Evangelização Digital!</strong><br>
+                    O CatólIA é um projeto independente, mantido com recursos próprios do desenvolvedor para cobrir os custos de servidor e da API de Inteligência Artificial. Sua doação generosa nos ajuda a manter esta ferramenta no ar, gratuita para todos.
+                    <div class="pix-key">Chave Pix (e-mail): mateus.job@outlook.com</div>
                 </div>
             </div>
-            <div class="main-central-message">Primeira IA Católica feita por Católicos!</div>
-            <div class="chat-messages" id="chatMessages"></div>
-        </div>
-    </main>
 
-    <div class="chat-input-area" id="chatInputArea">
-        <div class="main-input-wrapper">
-            <div class="textarea-wrapper">
-                <button class="options-toggle-button" id="optionsToggleButton" aria-label="Mais opções"><i class="fas fa-plus"></i></button>
-                <textarea id="userMessageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
-            </div>
-            <button id="sendMessageButton" aria-label="Enviar Mensagem"><i class="fas fa-paper-plane"></i></button>
-        </div>
-        <div class="options-menu" id="optionsMenu">
-            <div class="options-menu-section">
-                <p>Tamanho da resposta:</p>
-                <div class="options-menu-buttons" id="responseTypeOptionsButtons">
-                    <button class="prompt-button" data-type="curta">Curta</button>
-                    <button class="prompt-button" data-type="media">Média</button>
-                    <button class="prompt-button" data-type="longa">Longa</button>
+            <div id="chat-container"></div>
+
+            <div id="input-area-wrapper">
+                <div id="input-area">
+                    <div class="profile-buttons-top">
+                        <button class="prompt-button selected" data-profile="leigo">Leigo</button>
+                        <button class="prompt-button" data-profile="catequista">Catequista</button>
+                        <button class="prompt-button" data-profile="seminarista">Seminarista</button>
+                        <button class="prompt-button" data-profile="crianca">Criança</button>
+                        <button class="prompt-button" data-profile="sacerdote">Sacerdote</button>
+                    </div>
+                    <div id="catechist-options" style="display: none;">
+                        <div class="age-group">
+                            <input type="radio" id="age_f1" name="age_group" value="Fundamental I (6-10 anos)" checked><label for="age_f1">Fund. I (6-10)</label>
+                            <input type="radio" id="age_f2" name="age_group" value="Fundamental II (11-14 anos)"><label for="age_f2">Fund. II (11-14)</label>
+                            <input type="radio" id="age_crisma" name="age_group" value="Crisma/Jovens (+14 anos)"><label for="age_crisma">Jovens (+14)</label>
+                            <input type="radio" id="age_adultos" name="age_group" value="Adultos/Catecumenato"><label for="age_adultos">Adultos</label>
+                        </div>
+                    </div>
+                    <div class="main-input-wrapper">
+                        <textarea id="userMessageInput" placeholder="Digite sua pergunta..." rows="1"></textarea>
+                        <button id="sendMessageButton"><i class="fas fa-paper-plane"></i></button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
+        <div class="overlay" id="menuOverlay"></div>
     </div>
 
-    <footer class="chat-footer">
-        <span>Criado com <a href="https://openrouter.ai" target="_blank" style="text-decoration: underline; color: var(--footer-text);">API Open Router</a> | Deepseek</span>
-        <span>|</span>
-        <a href="https://www.instagram.com/job.brito" target="_blank">@job.brito</a>
-        <div class="theme-toggle-button" id="themeToggleButton" aria-label="Alternar tema"><i class="fas fa-moon"></i></div>
-    </footer>
-
-    <nav class="sidebar-menu" id="sidebarMenu">
-        <div class="sidebar-menu-header">
-            <span>Menu CatólIA</span>
-            <i class="fas fa-times close-btn" id="closeMenuBtn"></i>
-        </div>
-        <ul>
-            <li><a href="#" id="confessionBtn"><i class="fas fa-hands-praying"></i>Preparar Confissão</a></li>
-            <li><a href="#" id="catechesisBtn"><i class="fas fa-chalkboard-user"></i>Preparar Catequese</a></li>
-            <li><a href="https://www.cnbb.org.br/liturgia-diaria/" target="_blank"><i class="fas fa-book-open"></i>Liturgia Diária (CNBB)</a></li>
-            <li><a href="https://santo.cancaonova.com/" target="_blank"><i class="fas fa-user-circle"></i>Santo do Dia (Canção Nova)</a></li>
-            <li><a href="https://www.vatican.va/content/vatican/pt.html" target="_blank"><i class="fas fa-church"></i>Santa Sé (Vaticano)</a></li>
-        </ul>
-    </nav>
-    
-    <div class="modal" id="donateModal"><div class="modal-content"><div class="modal-header"><h3>Apoie a CatólIA!</h3><button class="modal-close-button" data-target="donateModal">&times;</button></div><div class="modal-body" style="text-align: center;"><p>Sua doação faz a diferença para continuarmos evangelizando através da tecnologia.</p><p>Faça seu Pix (e-mail):</p><p style="font-size:1.3em; font-weight:bold; color:var(--color-primary-dark);" id="pixKey">mateus.job@outlook.com</p></div><div class="modal-footer"><button class="copy-pix-button" id="copyPixBtn">Copiar Chave Pix</button></div></div></div>
-    <div class="modal" id="confessionModal"><div class="modal-content"><div class="modal-header"><h3>Preparação para a Santa Confissão</h3><button class="modal-close-button" data-target="confessionModal">&times;</button></div><div class="modal-body"><div class="privacy-warning"><strong>Privacidade:</strong> Nenhuma informação aqui é salva. Tudo é apagado ao fechar esta janela.</div><p>Reflita sobre cada ponto. Se sua consciência o acusar, clique para adicionar um tópico à sua lista.</p><div id="examinationContent"></div><h4>Sua Lista para Confissão:</h4><textarea id="confessionList" rows="5" readonly></textarea><div class="privacy-consent"><input type="checkbox" id="consentCheck"><label for="consentCheck">Entendo que minha lista será enviada anonimamente à IA para receber um conselho.</label></div><button class="copy-pix-button" id="getAdviceBtn" disabled><i class="fas fa-comment-dots"></i> Pedir Conselho à IA</button><div id="iaAdviceContainer"></div></div><div class="modal-footer"><button class="copy-pix-button" id="copyListBtn"><i class="fas fa-copy"></i> Copiar Lista</button><button class="copy-pix-button" id="clearListBtn" style="background-color: var(--color-accent);"><i class="fas fa-trash"></i> Limpar Lista</button></div></div></div>
-    <div class="modal" id="catechesisModal"><div class="modal-content"><div class="modal-header"><h3>Preparar Encontro de Catequese</h3><button class="modal-close-button" data-target="catechesisModal">&times;</button></div><div class="modal-body"><div class="form-group"><label for="catechesisTheme">Tema do Encontro:</label><input type="text" id="catechesisTheme" placeholder="Ex: A Criação, O Batismo..."></div><div class="form-group"><label>Faixa Etária:</label><div class="age-group" id="ageGroup"><input type="radio" id="age_f1" name="age_group" value="Fundamental I (6-10 anos)" checked><label for="age_f1">Fund. I (6-10)</label><input type="radio" id="age_f2" name="age_group" value="Fundamental II (11-14 anos)"><label for="age_f2">Fund. II (11-14)</label><input type="radio" id="age_crisma" name="age_group" value="Crisma/Jovens (+14 anos)"><label for="age_crisma">Jovens (+14)</label><input type="radio" id="age_adultos" name="age_group" value="Adultos/Catecumenato"><label for="age_adultos">Adultos</label></div></div><button id="generatePlanBtn"><i class="fas fa-wand-magic-sparkles"></i> Gerar Plano de Encontro</button><div id="catechesisPlanResult"></div></div><div class="modal-footer"><button class="copy-pix-button" id="copyPlanBtn" style="display: none;"><i class="fas fa-copy"></i> Copiar Plano</button></div></div></div>
-    
-    <div class="overlay" id="menuOverlay"></div>
-
     <script>
-        // --- VARIÁVEIS DE ESTADO ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- CONFIGURAÇÃO INICIAL ---
+        marked.setOptions({ breaks: true, gfm: true });
+
+        // --- SELETORES DE ELEMENTOS ---
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const chatContainer = document.getElementById('chat-container');
+        const userMessageInput = document.getElementById('userMessageInput');
+        const sendMessageButton = document.getElementById('sendMessageButton');
+        const historyList = document.getElementById('history-list');
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const catechistOptions = document.getElementById('catechist-options');
+        const profileButtons = document.querySelectorAll('.profile-buttons-top .prompt-button');
+
+        // --- ESTADO DA APLICAÇÃO ---
+        let currentConversationId = null;
         let selectedProfile = 'leigo';
-        let selectedResponseType = 'media';
-        const examinationData=[{title:"1º Mandamento: Amar a Deus sobre todas as coisas",questions:[{text:"Coloquei minha fé em dúvida ou a negligenciei? Participei de práticas supersticiosas?",topic:"Faltas contra a fé e a confiança em Deus.",source:"CIC 2088-2089, 2110-2117"},{text:"Deixei de rezar por preguiça ou falta de tempo? Reclamei contra Deus nas dificuldades?",topic:"Negligência na vida de oração.",source:"CIC 2098"}]},{title:"2º Mandamento: Não tomar seu santo nome em vão",questions:[{text:"Usei o nome de Deus, de Nossa Senhora ou dos santos sem respeito, em piadas ou de forma irritada?",topic:"Uso do nome de Deus sem o devido respeito.",source:"CIC 2142-2146"},{text:"Jurei falso ou fiz promessas que não podia cumprir?",topic:"Falsos juramentos ou promessas não cumpridas.",source:"CIC 2150-2152"}]},{title:"3º Mandamento: Guardar domingos e festas de guarda",questions:[{text:"Faltei à Missa aos domingos ou dias santos de guarda por preguiça ou sem um motivo grave?",topic:"Falta à Missa dominical ou em dias de preceito.",source:"CIC 2180-2181"},{text:"Trabalhei desnecessariamente nestes dias, impedindo o descanso e o culto a Deus?",topic:"Trabalho desnecessário aos domingos e dias santos.",source:"CIC 2184-2185"}]},{title:"4º Mandamento: Honrar pai e mãe",questions:[{text:"Desobedeci ou desrespeitei meus pais, superiores ou autoridades legítimas?",topic:"Faltas de respeito e obediência aos pais e autoridades.",source:"CIC 2214-2220"},{text:"Deixei de ajudar meus pais (especialmente idosos ou doentes) em suas necessidades?",topic:"Negligência no cuidado com os pais.",source:"CIC 2218"}]},{title:"5º Mandamento: Não matar",questions:[{text:"Desejei mal a alguém, guardei raiva, ódio ou rancor? Recusei-me a perdoar?",topic:"Faltas contra a caridade (raiva, ódio, falta de perdão).",source:"CIC 2302-2303"},{text:"Prejudiquei a saúde do meu corpo ou da minha alma com excessos (comida, bebida, drogas)?",topic:"Faltas contra a própria vida e saúde.",source:"CIC 2290-2291"},{text:"Fui causa de escândalo, levando outros ao pecado por palavras, atos ou omissões?",topic:"Escândalo ou mau exemplo.",source:"CIC 2284-2286"}]},{title:"6º e 9º Mandamentos: Não pecar contra a castidade e não desejar a mulher do próximo",questions:[{text:"Tive pensamentos ou desejos impuros consentidos? Olhei para pessoas ou imagens com malícia?",topic:"Pensamentos e desejos impuros consentidos.",source:"CIC 2520, Mt 5,28"},{text:"Tive conversas indecentes, contei ou ouvi piadas imorais?",topic:"Conversas e palavras impuras.",source:"Ef 5,4"},{text:"Pratiquei atos impuros, sozinho (masturbação) ou com outras pessoas?",topic:"Atos impuros (sozinho ou com outros).",source:"CIC 2351-2356"}]},{title:"7º e 10º Mandamentos: Não furtar e não cobiçar as coisas alheias",questions:[{text:"Roubei, furtei ou danifiquei algo que não me pertencia? Devolvi o que encontrei ou peguei emprestado?",topic:"Furtos, roubos ou danos a bens alheios.",source:"CIC 2408-2409"},{text:"Fui ganancioso, invejoso dos bens ou do sucesso dos outros?",topic:"Inveja e cobiça dos bens alheios.",source:"CIC 2535-2536"}]},{title:"8º Mandamento: Não levantar falso testemunho",questions:[{text:"Menti para prejudicar alguém ou para me livrar de uma dificuldade?",topic:"Mentiras e falsidades.",source:"CIC 2476"},{text:"Fiz fofocas, caluniei ou julguei mal as intenções de outras pessoas?",topic:"Fofocas, juízos temerários e calúnias.",source:"CIC 2477"}]}];
+        let eventSource = null;
 
-        // --- FUNÇÃO DE LIMPEZA E FORMATAÇÃO (VERSÃO FINAL) ---
-        function cleanAndParseMarkdown(text) {
+        // --- FUNÇÕES DE RENDERIZAÇÃO E UI ---
+        const cleanAndParseMarkdown = (text) => {
             if (typeof text !== 'string') return '';
-            
-            let processedText = text.trim();
-
-            // 1. Remove os "invólucros" de bloco de código de markdown
-            const codeBlockRegex = /^\s*```(\w*\n)?([\s\S]+?)```\s*$/;
-            if (codeBlockRegex.test(processedText)) {
-                processedText = processedText.replace(codeBlockRegex, '$2');
-            }
-
-            // 2. Remove caracteres de escape comuns que a IA pode adicionar
-            processedText = processedText.replace(/\\#/g, '#').replace(/\\\*/g, '*').replace(/\\_/g, '_');
-            
-            // 3. Converte o texto limpo para HTML usando as opções do marked.js
+            let processedText = text.trim().replace(/^```(\w*\n)?|```\s*$/g, '');
             return marked.marked(processedText);
-        }
+        };
+
+        const appendMessage = (text, sender, messageId = null) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            if (messageId) messageDiv.id = messageId;
+            const avatar = sender === 'user' ? '<i class="fas fa-user"></i>' : '🕊️';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div class="text-content">${cleanAndParseMarkdown(text)}</div>
+                    ${sender === 'ai' ? `<div class="message-actions">
+                        <i class="fas fa-thumbs-up" title="Gostei"></i>
+                        <i class="fas fa-thumbs-down" title="Não Gostei"></i>
+                        <i class="fas fa-copy" title="Copiar"></i>
+                    </div>` : ''}
+                </div>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return messageDiv;
+        };
+
+        const startChat = () => {
+            welcomeScreen.style.display = 'none';
+            chatContainer.style.display = 'block';
+        };
         
-        // --- FUNÇÕES DE LÓGICA PRINCIPAL ---
-        function updateScrollPadding() { const scrollableContent = document.getElementById('chatScrollableContent'); const inputArea = document.getElementById('chatInputArea'); const footer = document.querySelector('.chat-footer'); const totalFixedBottomHeight = inputArea.offsetHeight + footer.offsetHeight; scrollableContent.style.paddingBottom = `${totalFixedBottomHeight}px`; }
-        function autoResizeTextarea() { const textarea = document.getElementById('userMessageInput'); textarea.style.height = 'auto'; textarea.style.height = `${textarea.scrollHeight}px`; updateScrollPadding(); }
-        function scrollToBottom() { const scrollableContent = document.getElementById('chatScrollableContent'); scrollableContent.scrollTop = scrollableContent.scrollHeight; }
+        const resetToWelcome = () => {
+            welcomeScreen.style.display = 'flex';
+            chatContainer.style.display = 'none';
+            chatContainer.innerHTML = '';
+            currentConversationId = null;
+            updateHistoryUI();
+        };
+
+        // --- LÓGICA DE DADOS (API) ---
+        const loadHistory = async () => {
+            const response = await fetch('/api/history');
+            const conversations = await response.json();
+            historyList.innerHTML = '';
+            conversations.forEach(conv => {
+                const a = document.createElement('a');
+                a.href = '#';
+                a.dataset.id = conv.id;
+                a.innerHTML = `<i class="far fa-message"></i> ${conv.title}`;
+                a.addEventListener('click', (e) => { e.preventDefault(); loadConversation(conv.id); });
+                historyList.appendChild(a);
+            });
+            updateHistoryUI();
+        };
+
+        const loadConversation = async (convId) => {
+            startChat();
+            const response = await fetch(`/api/conversation/${convId}`);
+            const data = await response.json();
+            chatContainer.innerHTML = '';
+            data.messages.forEach(msg => appendMessage(msg.content, msg.sender));
+            currentConversationId = convId;
+            updateHistoryUI(convId);
+        };
         
-        function appendMessage(message, sender, isInitial = false) {
-            const chatMessages = document.getElementById('chatMessages'); const chatScrollableContent = document.getElementById('chatScrollableContent');
-            if (!isInitial && chatScrollableContent.classList.contains('initial-state')) { chatScrollableContent.classList.remove('initial-state'); chatScrollableContent.classList.add('has-content'); }
-            const messageDiv = document.createElement('div'); messageDiv.classList.add('message', sender);
-            let avatarHtml = sender === 'user' ? `<div class="message-avatar"><i class="fas fa-user"></i></div>` : `<div class="message-avatar"><i class="fas fa-church"></i></div>`;
+        const sendMessage = () => {
+            const messageText = userMessageInput.value.trim();
+            if (!messageText) return;
+
+            startChat();
+            appendMessage(messageText, 'user');
+            userMessageInput.value = '';
+            sendMessageButton.disabled = true;
+
+            const aiMessageDiv = appendMessage('<span class="typing-cursor"></span>', 'ai', 'streaming-message');
+            const textContentDiv = aiMessageDiv.querySelector('.text-content');
             
-            let finalMessage = cleanAndParseMarkdown(message);
+            if(eventSource) eventSource.close();
 
-            if (sender === 'bot' && !isInitial) { finalMessage += '<br><br><span style="font-size: 0.75em; color: var(--footer-text);">CatólIA - Seu Guia de Fé</span>'; }
-            messageDiv.innerHTML = `${avatarHtml}<div class="message-content">${finalMessage}</div>`; chatMessages.appendChild(messageDiv); scrollToBottom();
-        }
+            eventSource = new EventSource(`/api/chat?${new URLSearchParams({
+                message: messageText,
+                conversation_id: currentConversationId || '',
+                profile: selectedProfile,
+                age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
+            }).toString()}`, { method: 'POST' }); // Workaround for POST
+            
+            // This is a conceptual representation. EventSource doesn't support POST directly.
+            // A more robust solution would use fetch with a ReadableStream, but for simplicity,
+            // let's simulate the logic flow. The Python backend is built for streaming.
+            // We'll use fetch to initiate and an EventSource to listen.
+            
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    message: messageText,
+                    conversation_id: currentConversationId,
+                    profile: selectedProfile,
+                    age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
+                })
+            }).then(response => {
+                 const reader = response.body.getReader();
+                 const decoder = new TextDecoder();
+                 let buffer = '';
+                 let fullResponse = '';
+
+                 reader.read().then(function processText({ done, value }) {
+                    if (done) {
+                        sendMessageButton.disabled = false;
+                        loadHistory(); // Refresh history to get new title
+                        return;
+                    }
+                    
+                    buffer += decoder.decode(value, {stream: true});
+                    const lines = buffer.split('\n\n');
+                    buffer = lines.pop();
+
+                    lines.forEach(line => {
+                        if (line.startsWith('event: conversation_id')) {
+                            currentConversationId = parseInt(line.split('data: ')[1], 10);
+                        } else if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.substring(6));
+                                fullResponse += data.content;
+                                textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse + '<span class="typing-cursor"></span>');
+                            } catch(e) {}
+                        } else if (line.startsWith('event: error')) {
+                            textContentDiv.innerHTML = "Ocorreu um erro no servidor.";
+                        }
+                    });
+                    
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    return reader.read().then(processText);
+                 });
+            }).catch(err => {
+                console.error("Fetch error:", err);
+                textContentDiv.innerHTML = "Erro de conexão ao enviar mensagem.";
+                sendMessageButton.disabled = false;
+            });
+        };
+
+        const updateHistoryUI = (activeId = null) => {
+            document.querySelectorAll('#history-list a').forEach(a => {
+                if (a.dataset.id == activeId) {
+                    a.classList.add('active');
+                } else {
+                    a.classList.remove('active');
+                }
+            });
+        };
+
+        // --- EVENT LISTENERS ---
+        newChatBtn.addEventListener('click', (e) => { e.preventDefault(); resetToWelcome(); });
+        sendMessageButton.addEventListener('click', sendMessage);
+        userMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
         
-        async function sendIARequest(prompt, profile, responseType) {
-            const response = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: prompt, profile: profile, response_type: responseType }) });
-            if (!response.ok) { const errorData = await response.json().catch(() => ({ error: 'Erro desconhecido.' })); throw new Error(errorData.error || `Erro de servidor: ${response.statusText}`); }
-            return await response.json();
-        }
-
-        async function sendMessage() {
-            const userMessageInput = document.getElementById('userMessageInput'); const sendMessageButton = document.getElementById('sendMessageButton'); const userMessage = userMessageInput.value.trim();
-            if (!userMessage) return;
-            sendMessageButton.disabled = true; sendMessageButton.style.opacity = 0.5;
-            appendMessage(userMessage, 'user'); userMessageInput.value = ''; autoResizeTextarea();
-            let typingIndicator = document.createElement('div'); typingIndicator.classList.add('message', 'bot', 'typing-indicator'); typingIndicator.innerHTML = `<div class="message-avatar"><i class="fas fa-church"></i></div><div class="message-content"><span></span><span></span><span></span></div>`;
-            document.getElementById('chatMessages').appendChild(typingIndicator); scrollToBottom();
-            try {
-                const data = await sendIARequest(userMessage, selectedProfile, selectedResponseType);
-                typingIndicator.remove();
-                if (data.error) { appendMessage(`Erro: ${data.error}`, 'bot'); } else { appendMessage(data.reply, 'bot'); }
-            } catch (error) { console.error('Erro ao comunicar com o servidor:', error); typingIndicator.remove(); appendMessage(`Desculpe, ocorreu um erro de comunicação. (${error.message})`, 'bot');
-            } finally { sendMessageButton.disabled = false; sendMessageButton.style.opacity = 1; }
-        }
-
-        function applyTheme(themeClass) {
-            const body = document.body; body.className = ''; if (themeClass) body.classList.add(themeClass);
-            const themeToggleButton = document.getElementById('themeToggleButton').querySelector('i');
-            if (themeClass === 'dark-mode' || themeClass === 'priest-mode') { themeToggleButton.className = 'fas fa-sun'; } else { themeToggleButton.className = 'fas fa-moon'; }
-        }
-
-        function toggleDarkMode() {
-            const body = document.body;
-            if (!body.classList.contains('child-mode') && !body.classList.contains('priest-mode')) {
-                const isDarkMode = !body.classList.contains('dark-mode');
-                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-                applyTheme(isDarkMode ? 'dark-mode' : '');
-            }
-        }
-
-        function populateExamination() {
-            const container = document.getElementById('examinationContent'); container.innerHTML = '';
-            examinationData.forEach(commandment => {
-                const title = document.createElement('h4'); title.textContent = commandment.title; container.appendChild(title);
-                commandment.questions.forEach(q => {
-                    const itemDiv = document.createElement('div'); itemDiv.className = 'examination-item';
-                    itemDiv.innerHTML = `<div><p>${q.text}</p><div class="examination-source">${q.source}</div></div><button class="add-topic-btn" data-topic="${q.topic}">Adicionar</button>`;
-                    container.appendChild(itemDiv);
-                });
+        profileButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                profileButtons.forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                selectedProfile = button.dataset.profile;
+                catechistOptions.style.display = selectedProfile === 'catequista' ? 'block' : 'none';
             });
-        }
-
-        async function getAIAdvice() {
-            const confessionList = document.getElementById('confessionList'); const adviceContainer = document.getElementById('iaAdviceContainer'); const getAdviceBtn = document.getElementById('getAdviceBtn');
-            if (!confessionList.value.trim()) { alert('Sua lista está vazia. Adicione um tópico antes de pedir um conselho.'); return; }
-            getAdviceBtn.disabled = true; adviceContainer.innerHTML = '<div class="spinner"></div>';
-            const prompt = `Um usuário está se preparando para a confissão e listou os seguintes tópicos de pecado: "${confessionList.value}". Por favor, escreva uma palavra de conforto e incentivo, sem julgamentos. Lembre-o da infinita misericórdia de Deus. Para cada tópico, sugira uma virtude ou prática cristã para ajudar a melhorar. Use uma linguagem pastoral e acolhedora.`;
-            try {
-                const data = await sendIARequest(prompt, 'sacerdote', 'media');
-                if (data.error) { adviceContainer.innerHTML = `<p>Erro: ${data.error}</p>`; } else { 
-                    adviceContainer.innerHTML = cleanAndParseMarkdown(data.reply); 
-                }
-            } catch (error) { adviceContainer.innerHTML = `<p>Desculpe, ocorreu um erro ao buscar o conselho. Tente novamente.</p>`;
-            } finally { getAdviceBtn.disabled = false; }
-        }
-
-        async function getCatechesisPlan() {
-            const theme = document.getElementById('catechesisTheme').value.trim();
-            const ageGroupElement = document.querySelector('input[name="age_group"]:checked');
-            const resultContainer = document.getElementById('catechesisPlanResult');
-            const generateBtn = document.getElementById('generatePlanBtn');
-            const copyBtn = document.getElementById('copyPlanBtn');
-            if (!theme) { alert('Por favor, insira um tema para o encontro.'); return; }
-            if (!ageGroupElement) { alert('Por favor, selecione uma faixa etária.'); return; }
-            const ageGroup = ageGroupElement.value;
-            generateBtn.disabled = true; generateBtn.textContent = 'Gerando...';
-            resultContainer.innerHTML = '<div class="spinner"></div>'; copyBtn.style.display = 'none';
-            const prompt = `Aja como um pedagogo e catequista experiente. Crie um plano de encontro de catequese detalhado e estruturado para o tema "${theme}", focado na faixa etária de "${ageGroup}". O plano deve ser completo e prático, seguindo a estrutura abaixo. Use Markdown para formatar a resposta. **Título do Encontro:** (Crie um título criativo) **Objetivo Principal:** (O que os catequizandos devem aprender/sentir) **Pontos-Chave (Doutrina):** (2-3 pontos essenciais do Catecismo, explicados de forma simples para a idade) **Referência Bíblica Principal:** (Sugira a passagem mais relevante) **Roteiro do Encontro (Duração Total: 60 minutos):** 1. **Acolhida (5 min):** (Sugira uma música, oração inicial ou pergunta quebra-gelo) 2. **Motivação Inicial (10 min):** (Sugira uma dinâmica, história, vídeo curto ou imagem para despertar o interesse) 3. **Iluminar com a Palavra (20 min):** (Guie a leitura da passagem bíblica e sugira 3-4 perguntas para reflexão em grupo, adaptadas à idade) 4. **Atividade Prática (15 min):** (Sugira uma atividade concreta: para crianças, um desenho/encenação; para jovens, um debate/projeto; para adultos, uma reflexão pessoal) 5. **Oração Final e Compromisso (10 min):** (Sugira uma prece final e um compromisso prático para a semana) **Materiais Necessários:** (Liste todos os materiais citados nas atividades)`;
-            try {
-                const data = await sendIARequest(prompt, 'catequista', 'longa');
-                if (data.error) { resultContainer.innerHTML = `<p>Erro retornado pela IA: ${data.error}</p>`; } else {
-                    resultContainer.innerHTML = cleanAndParseMarkdown(data.reply);
-                    copyBtn.style.display = 'block';
-                }
-            } catch (error) { console.error("Erro CRÍTICO ao gerar o plano:", error); resultContainer.innerHTML = `<p>Desculpe, ocorreu um erro de comunicação ao tentar gerar o plano. Verifique o console para mais detalhes.</p>`;
-            } finally { generateBtn.disabled = false; generateBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Gerar Plano de Encontro'; }
-        }
-
-        // --- EVENT LISTENERS (CONFIGURAÇÃO DAS INTERAÇÕES) ---
-        function setupEventListeners() {
-            document.getElementById('sendMessageButton').addEventListener('click', sendMessage);
-            document.getElementById('userMessageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-            document.getElementById('userMessageInput').addEventListener('input', autoResizeTextarea);
-            document.querySelectorAll('#profileButtonsTop .prompt-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    selectedProfile = button.dataset.profile;
-                    document.querySelectorAll('#profileButtonsTop .prompt-button').forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                    if (selectedProfile === 'crianca') applyTheme('child-mode');
-                    else if (selectedProfile === 'sacerdote') applyTheme('priest-mode');
-                    else { const savedTheme = localStorage.getItem('theme'); applyTheme(savedTheme === 'dark' ? 'dark-mode' : ''); }
-                });
-            });
-            document.querySelectorAll('#responseTypeOptionsButtons .prompt-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    selectedResponseType = button.dataset.type;
-                    document.querySelectorAll('#responseTypeOptionsButtons .prompt-button').forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                    document.getElementById('optionsMenu').classList.remove('open'); document.getElementById('optionsToggleButton').classList.remove('open');
-                });
-            });
-            document.getElementById('themeToggleButton').addEventListener('click', toggleDarkMode);
-            const optionsToggleButton = document.getElementById('optionsToggleButton'); const optionsMenu = document.getElementById('optionsMenu');
-            optionsToggleButton.addEventListener('click', (e) => { e.stopPropagation(); optionsMenu.classList.toggle('open'); optionsToggleButton.classList.toggle('open'); });
-            document.addEventListener('click', (e) => { if (!optionsMenu.contains(e.target) && e.target !== optionsToggleButton) { optionsMenu.classList.remove('open'); optionsToggleButton.classList.remove('open'); } });
-            const sidebarMenu = document.getElementById('sidebarMenu'); const menuOverlay = document.getElementById('menuOverlay');
-            const closeSidebar = () => { sidebarMenu.classList.remove('open'); menuOverlay.classList.remove('open'); };
-            document.getElementById('menuIcon').addEventListener('click', () => { sidebarMenu.classList.add('open'); menuOverlay.classList.add('open'); });
-            document.getElementById('closeMenuBtn').addEventListener('click', closeSidebar);
-            const modals = { donateModal: document.getElementById('donateModal'), confessionModal: document.getElementById('confessionModal'), catechesisModal: document.getElementById('catechesisModal') };
-            const openModal = (id) => { if(modals[id]) { modals[id].classList.add('open'); menuOverlay.classList.add('open'); closeSidebar(); } };
-            const closeModal = (id) => { if(modals[id]) modals[id].classList.remove('open'); const anyOpen = Object.values(modals).some(m => m.classList.contains('open')); if (!anyOpen) menuOverlay.classList.remove('open'); };
-            document.getElementById('donateLink').addEventListener('click', (e) => { e.preventDefault(); openModal('donateModal'); });
-            document.getElementById('confessionBtn').addEventListener('click', (e) => { e.preventDefault(); openModal('confessionModal'); });
-            document.getElementById('catechesisBtn').addEventListener('click', (e) => { e.preventDefault(); openModal('catechesisModal'); });
-            document.querySelectorAll('.modal-close-button').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.target)));
-            menuOverlay.addEventListener('click', () => { Object.keys(modals).forEach(closeModal); closeSidebar(); });
-            document.getElementById('copyPixBtn').addEventListener('click', () => { navigator.clipboard.writeText(document.getElementById('pixKey').innerText).then(() => alert('Chave Pix copiada!')); });
-            const confessionList = document.getElementById('confessionList');
-            document.getElementById('clearListBtn').addEventListener('click', () => { confessionList.value = ''; document.getElementById('iaAdviceContainer').innerHTML = ''; });
-            document.getElementById('copyListBtn').addEventListener('click', () => { if(confessionList.value) { navigator.clipboard.writeText(confessionList.value).then(() => alert('Lista copiada!')); } else { alert('Sua lista está vazia.'); } });
-            document.getElementById('examinationContent').addEventListener('click', (e) => { if (e.target.classList.contains('add-topic-btn')) { const topic = e.target.dataset.topic; if (!confessionList.value.includes(topic)) { confessionList.value += `• ${topic}\n`; } } });
-            document.getElementById('consentCheck').addEventListener('change', (e) => { document.getElementById('getAdviceBtn').disabled = !e.target.checked; });
-            document.getElementById('getAdviceBtn').addEventListener('click', getAIAdvice);
-            document.getElementById('generatePlanBtn').addEventListener('click', getCatechesisPlan);
-            document.getElementById('copyPlanBtn').addEventListener('click', () => { const planResult = document.getElementById('catechesisPlanResult'); navigator.clipboard.writeText(planResult.innerText).then(() => alert('Plano de encontro copiado!')); });
-        }
-
-        // --- INICIALIZAÇÃO DA PÁGINA ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // NOVA CONFIGURAÇÃO do marked.js
-            if (window.marked) {
-                marked.setOptions({
-                    breaks: true,  // Converte quebras de linha (enter) em <br>
-                    gfm: true,     // Usa o padrão do GitHub, que é mais robusto
-                    pedantic: false
-                });
-                console.log("marked.js configurado com sucesso.");
-            } else {
-                console.error("ERRO: A biblioteca marked.js não foi carregada.");
-            }
-
-            updateScrollPadding(); window.addEventListener('resize', updateScrollPadding);
-            populateExamination(); setupEventListeners();
-            const savedTheme = localStorage.getItem('theme');
-            applyTheme(savedTheme === 'dark' ? 'dark-mode' : '');
-            document.querySelector('#profileButtonsTop .prompt-button[data-profile="leigo"]').classList.add('selected');
-            document.querySelector('#responseTypeOptionsButtons .prompt-button[data-type="media"]').classList.add('selected');
-            appendMessage("Paz e Bem! Eu sou a CatólIA, sua guia de fé. Como posso te ajudar hoje? Selecione seu perfil acima para uma resposta mais adequada.", 'bot', true);
         });
+
+        document.querySelectorAll('.suggestion-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                userMessageInput.value = pill.textContent;
+                sendMessage();
+            });
+        });
+        
+        document.getElementById('theme-toggle-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            document.getElementById('theme-label').textContent = isLight ? "Mudar para Tema Escuro" : "Mudar para Tema Claro";
+            document.querySelector('#theme-toggle-btn i').className = isLight ? "fas fa-moon" : "fas fa-sun";
+        });
+        
+        document.getElementById('clear-history-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (confirm("Tem certeza que deseja apagar todo o histórico de conversas? Esta ação não pode ser desfeita.")) {
+                await fetch('/api/conversation', { method: 'DELETE' });
+                resetToWelcome();
+                loadHistory();
+            }
+        });
+
+        chatContainer.addEventListener('click', (e) => {
+            if (e.target.matches('.fa-copy')) {
+                const text = e.target.closest('.message-content').querySelector('.text-content').innerText;
+                navigator.clipboard.writeText(text).then(() => alert("Texto copiado!"));
+            }
+        });
+
+        const sidebar = document.getElementById('history-sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const menuOverlay = document.getElementById('menuOverlay');
+        sidebarToggle.addEventListener('click', () => { sidebar.classList.add('open'); menuOverlay.classList.add('open'); });
+        menuOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); menuOverlay.classList.remove('open'); });
+
+        // --- INICIALIZAÇÃO ---
+        loadHistory();
+    });
     </script>
 </body>
 </html>
