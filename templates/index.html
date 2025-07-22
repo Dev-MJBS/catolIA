@@ -81,9 +81,7 @@
 
     <div id="app-container">
         <aside id="history-sidebar">
-            <div class="header">
-                <a href="#" id="new-chat-btn" class="new-chat-btn"><i class="fas fa-plus"></i> Novo Chat</a>
-            </div>
+            <div class="header"><a href="#" id="new-chat-btn" class="new-chat-btn"><i class="fas fa-plus"></i> Novo Chat</a></div>
             <ul id="history-list" class="history-list"></ul>
             <div class="footer">
                 <a href="#" id="theme-toggle-btn"><i class="fas fa-sun"></i><span id="theme-label">Mudar para Tema Claro</span></a>
@@ -92,9 +90,7 @@
         </aside>
 
         <main id="main-content">
-            <header id="main-header">
-                <button id="sidebar-toggle"><i class="fas fa-bars"></i></button>
-            </header>
+            <header id="main-header"><button id="sidebar-toggle"><i class="fas fa-bars"></i></button></header>
             <div id="welcome-screen">
                 <div class="logo">CatólIA 🕊️</div>
                 <div class="subtitle">Seu Guia de Fé, alimentado por Inteligência Artificial.</div>
@@ -160,9 +156,10 @@
             return marked.marked(processedText);
         };
 
-        const appendMessage = (text, sender) => {
+        const appendMessage = (text, sender, messageId = null) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
+            if (messageId) messageDiv.id = messageId;
             const avatar = sender === 'user' ? '<i class="fas fa-user"></i>' : '🕊️';
             messageDiv.innerHTML = `
                 <div class="message-avatar">${avatar}</div>
@@ -238,8 +235,12 @@
             const aiMessageDiv = appendMessage('<span class="typing-cursor"></span>', 'ai');
             const textContentDiv = aiMessageDiv.querySelector('.text-content');
             
+            // LOG DE DIAGNÓSTICO
+            const apiUrl = new URL('/api/chat', window.location.origin);
+            console.log("LOG JS: Tentando enviar para a URL:", apiUrl.href);
+
             try {
-                const response = await fetch('/api/chat', {
+                const response = await fetch(apiUrl.href, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -270,24 +271,22 @@
                     for (const line of lines) {
                         if (line.startsWith('event: conversation_id')) {
                             currentConversationId = parseInt(line.split('data: ')[1], 10);
-                            console.log("Nova conversation_id recebida:", currentConversationId);
                         } else if (line.startsWith('data: ')) {
                             const data = JSON.parse(line.substring(6));
                             fullResponse += data.content;
                             textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse + '<span class="typing-cursor"></span>');
                         } else if (line.startsWith('event: error')) {
                             const errorMsg = line.split('data: ')[1];
-                            textContentDiv.innerHTML = `Erro no servidor: ${errorMsg}`;
                             throw new Error(errorMsg);
                         }
                     }
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 }
-                textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse); // Remove cursor
+                textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse);
                 loadHistory();
 
             } catch (error) {
-                console.error("Erro no sendMessage (fetch):", error);
+                console.error("LOG JS: Erro no sendMessage (fetch):", error);
                 textContentDiv.innerHTML = `Desculpe, ocorreu um erro de comunicação. Por favor, tente novamente. (${error.message})`;
             } finally {
                 sendMessageButton.disabled = false;
