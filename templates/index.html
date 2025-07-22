@@ -379,8 +379,8 @@
                 a.classList.toggle('active', a.dataset.id == activeId);
             });
         };
-
-        // --- EVENT LISTENERS ---
+    
+    
         newChatBtn.addEventListener('click', (e) => { e.preventDefault(); resetToWelcome(); });
         sendMessageButton.addEventListener('click', sendMessage);
         userMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
