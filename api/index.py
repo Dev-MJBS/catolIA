@@ -1,4 +1,4 @@
-# /api/index.py (Versão Otimizada com Modelo Rápido)
+# /api/index.py (Versão com Lógica de BD Refatorada e Segura)
 
 import os
 import requests 
@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, render_template, Response, stream_wit
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+# Esta versão NÃO USA a biblioteca dotenv
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 template_dir = os.path.join(project_root, 'templates')
 static_dir = os.path.join(project_root, 'static')
@@ -47,6 +48,7 @@ def catch_all(path):
         return jsonify({"error": "Esta rota é inválida"}), 404
     return render_template("index.html")
 
+# --- ROTAS DE HISTÓRICO (SEM MUDANÇAS) ---
 @app.route('/api/history', methods=['GET'])
 def get_history():
     conversations = Conversation.query.order_by(Conversation.created_at.desc()).all()
@@ -70,57 +72,47 @@ def delete_all_history():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+# --- ROTA PRINCIPAL DO CHAT (COM LÓGICA REESTRUTURADA) ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     try:
         if not openrouter_api_key:
-            raise ValueError("A variável de ambiente OPENROUTER_API_KEY não foi encontrada no servidor.")
+            raise ValueError("A variável de ambiente OPENROUTER_API_KEY não foi encontrada.")
 
         data = request.get_json()
-        user_message = data.get('message', '').strip()
+        user_message_content = data.get('message', '').strip()
         conversation_id = data.get('conversation_id')
         user_profile = data.get('profile', 'leigo')
-
-        if user_profile == 'catequista':
-            age_group = data.get('age_group', 'Não especificado')
-            user_message = f"Tema da Catequese: {user_message}\nFaixa Etária: {age_group}"
-
-        if not user_message:
+        
+        if not user_message_content:
             return Response("Mensagem vazia.", status=400)
 
-        with app.app_context():
-            if conversation_id:
-                conv = db.session.get(Conversation, conversation_id)
-                if not conv:
-                    conv = Conversation()
-                    db.session.add(conv)
-                    db.session.commit()
-                    conversation_id = conv.id
-            else:
-                conv = Conversation()
-                db.session.add(conv)
-                db.session.commit()
-                conversation_id = conv.id
-            
-            user_msg_db = Message(conversation_id=conv.id, sender='user', content=data.get('message', ''))
-            db.session.add(user_msg_db)
-            db.session.commit()
+        # Prepara o prompt completo
+        final_user_prompt = user_message_content
+        if user_profile == 'catequista':
+            age_group = data.get('age_group', 'Não especificado')
+            final_user_prompt = f"Tema da Catequese: {user_message_content}\nFaixa Etária: {age_group}"
 
+        # --- NOVA LÓGICA DE STREAMING ---
         def generate_response():
             full_ai_response = ""
+            temp_conv_id = conversation_id
+            
+            # 1. OBTÉM A RESPOSTA DA IA PRIMEIRO (ISOLANDO A OPERAÇÃO DE REDE)
             try:
-                yield f"event: conversation_id\ndata: {conv.id}\n\n"
+                # Envia um ID temporário se for um novo chat, para o frontend saber que é um novo chat
+                if not temp_conv_id:
+                    yield f"event: conversation_id\ndata: new\n\n"
+
                 system_prompt = get_system_prompt(user_profile)
                 headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
-                
-                # --- MUDANÇA PRINCIPAL AQUI ---
                 json_data = { 
-                    "model": "mistralai/mistral-7b-instruct", # Usando um modelo mais rápido
-                    "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}], 
+                    "model": "mistralai/mistral-7b-instruct",
+                    "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": final_user_prompt}], 
                     "stream": True 
                 }
                 
-                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9) as r: # Timeout de 9s
+                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9) as r:
                     r.raise_for_status()
                     for chunk in r.iter_lines():
                         if chunk.startswith(b'data: '):
@@ -131,23 +123,39 @@ def chat():
                             if content:
                                 full_ai_response += content
                                 yield f"data: {json.dumps({'content': content})}\n\n"
-                
-                with app.app_context():
-                    ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
-                    if conv.title == "Novo Chat":
-                        conv.title = generate_title(data.get('message', ''), full_ai_response)
-                    db.session.add(ai_msg_db)
-                    db.session.commit()
-
-            except requests.exceptions.Timeout:
-                yield f"event: error\ndata: {json.dumps({'error': 'A API da IA demorou muito para responder (Timeout).'})}\n\n"
-            except requests.exceptions.HTTPError as e:
-                error_msg = f"Erro na API externa: {e.response.status_code}"
-                yield f"event: error\ndata: {json.dumps({'error': error_msg})}\n\n"
+            
             except Exception as e:
                 error_details = traceback.format_exc()
-                print(f"ERRO NO STREAM: {error_details}")
-                yield f"event: error\ndata: {json.dumps({'error': 'Erro interno no servidor durante o streaming.'})}\n\n"
+                print(f"ERRO DURANTE O STREAMING DA API: {error_details}")
+                yield f"event: error\ndata: {json.dumps({'error': 'Erro ao comunicar com a IA.'})}\n\n"
+                return # Para a execução aqui se a IA falhar
+
+            # 2. SALVA TUDO NO BANCO DE DADOS DE UMA SÓ VEZ (APÓS O SUCESSO DA IA)
+            try:
+                with app.app_context():
+                    if temp_conv_id:
+                        conv = db.session.get(Conversation, temp_conv_id)
+                    else:
+                        conv = Conversation()
+                        db.session.add(conv)
+                        db.session.commit() # Salva para obter o ID real
+                    
+                    # Envia o ID real para o frontend
+                    yield f"event: conversation_id\ndata: {conv.id}\n\n"
+
+                    user_msg_db = Message(conversation_id=conv.id, sender='user', content=user_message_content)
+                    ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
+                    db.session.add_all([user_msg_db, ai_msg_db])
+
+                    if conv.title == "Novo Chat":
+                        conv.title = generate_title(user_message_content, full_ai_response)
+                    
+                    db.session.commit()
+            
+            except Exception as e:
+                error_details = traceback.format_exc()
+                print(f"ERRO AO SALVAR NO BANCO DE DADOS: {error_details}")
+                yield f"event: error\ndata: {json.dumps({'error': 'Erro ao salvar a conversa.'})}\n\n"
 
         return Response(stream_with_context(generate_response()), mimetype='text/event-stream')
 
