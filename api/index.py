@@ -1,19 +1,18 @@
-# /api/index.py (Versão com correção de idioma e desativação de histórico)
+# /api/index.py (Versão de Produção Final)
 
 import os
 import requests 
 import json
 import traceback
 from flask import Flask, request, jsonify, render_template, Response, stream_with_context
-# A SQLAlchemy não será usada para salvar o histórico nesta versão por segurança
-# from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 # --- PROMPT MANAGER EMBUTIDO ---
 BASE_PROMPT = """
 Você é a 'Católia', uma assistente de IA especialista e catequista experiente, absolutamente fiel ao Magistério da Igreja Católica. Sua identidade é ser uma ferramenta de evangelização e formação.
 REGRAS FUNDAMENTAIS E INFLEXÍVEIS:
-1.  FONTES DE CONHECIMENTO: Suas respostas devem ser baseadas EXCLUSIVAMENTE nas seguintes fontes: a Sagrada Escritura (interpretada segundo a Tradição e o Magistério da Igreja), o Catecismo da Igreja Católica (CIC), o Código de Direito Canônico, e os documentos da Doutrina Social da Igreja (DSI), incluindo encíclicas como Laudato Si' e Fratelli Tutti.
+1.  FONTES DE CONHECimento: Suas respostas devem ser baseadas EXCLUSIVAMENTE nas seguintes fontes: a Sagrada Escritura (interpretada segundo a Tradição e o Magistério da Igreja), o Catecismo da Igreja Católica (CIC), o Código de Direito Canônico, e os documentos da Doutrina Social da Igreja (DSI), incluindo encíclicas como Laudato Si' e Fratelli Tutti.
 2.  GUARDAILES DOUTRINÁRIOS: É de extrema importância que você NÃO use informações de outras denominações cristãs, de outras religiões ou de fontes seculares para responder a questões de doutrina. Em pontos dogmáticos, como a Virgindade Perpétua de Maria (Ela não teve outros filhos biológicos), a Imaculada Conceição, a Assunção de Maria, a presença real de Cristo na Eucaristia (Transubstanciação) e a infalibilidade Papal, sua resposta deve ser clara, direta e 100% alinhada com a fé Católica. Se uma pergunta desafia um dogma, reafirme a doutrina da Igreja com caridade e clareza.
 3.  VALORES A PROMOVER: Sempre que apropriado e de forma natural, suas respostas devem inspirar valores de fraternidade universal, solidariedade com os pobres e marginalizados, e o cuidado com a Casa Comum (ecologia integral), conforme ensinado pelo Papa Francisco.
 4.  NOME E PERSONA: Você sempre se refere a si mesma como Católia. Sua linguagem deve ser acolhedora, clara e catequética.
@@ -36,30 +35,48 @@ template_dir = os.path.join(project_root, 'templates')
 static_dir = os.path.join(project_root, 'static')
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/catolia.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+
+class Conversation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False, default="Novo Chat")
+    messages = db.relationship('Message', backref='conversation', lazy=True, cascade="all, delete-orphan")
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
+    sender = db.Column(db.String(10), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+@app.before_request
+def setup_database():
+    if not hasattr(app, 'db_created'):
+        with app.app_context():
+            db.create_all()
+        app.db_created = True
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+    if path.startswith('api/'):
+        return jsonify({"error": "Rota inválida"}), 404
     return render_template("index.html")
 
-# --- ROTAS DA API PARA O HISTÓRICO (DESATIVADAS) ---
+# --- ROTAS DA API PARA O HISTÓRICO (DESATIVADAS POR SEGURANÇA) ---
 @app.route('/api/history', methods=['GET'])
 def get_history():
-    # Retorna uma lista vazia para desativar o histórico no frontend
     return jsonify([])
 
 @app.route('/api/conversation/<int:conv_id>', methods=['GET'])
 def get_conversation(conv_id):
-    # Retorna uma conversa vazia
     return jsonify({"title": "Histórico desativado", "messages": []})
 
 @app.route('/api/conversation', methods=['DELETE'])
 def delete_all_history():
-    # Retorna sucesso, mas não faz nada
     return jsonify({"success": True})
+# --- FIM DAS ROTAS DE HISTÓRICO ---
 
-# --- ROTA PRINCIPAL DO CHAT ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     try:
