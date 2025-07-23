@@ -17,24 +17,9 @@
             --bg-body: var(--dark-bg-body); --bg-sidebar: var(--dark-bg-sidebar); --bg-main: var(--dark-bg-main); --bg-chat-bubble: var(--dark-bg-chat-bubble); --bg-input: var(--dark-bg-input); --text-primary: var(--dark-text-primary); --text-secondary: var(--dark-text-secondary); --border-color: var(--dark-border-color); --shadow-color: var(--dark-shadow-color);
         }
         body.light-mode { --bg-body: var(--light-bg-body); --bg-sidebar: var(--light-bg-sidebar); --bg-main: var(--light-bg-main); --bg-chat-bubble: var(--light-bg-chat-bubble); --bg-input: var(--light-bg-input); --text-primary: var(--light-text-primary); --text-secondary: var(--light-text-secondary); --border-color: var(--light-border-color); --shadow-color: var(--light-shadow-color); }
-        
-        /* --- ESTRUTURA BASE OTIMIZADA PARA MOBILE SAFARI --- */
-        html {
-            height: -webkit-fill-available;
-        }
-        body {
-            height: 100vh; /* Fallback para navegadores antigos */
-            height: 100dvh; /* MUDANÇA PRINCIPAL: Usa a altura dinâmica do viewport */
-            margin: 0;
-            overflow: hidden;
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-primary);
-            -webkit-text-size-adjust: 100%;
-        }
+        html { height: -webkit-fill-available; }
+        body { height: 100vh; height: 100dvh; margin: 0; overflow: hidden; font-family: 'Roboto', sans-serif; background-color: var(--bg-body); color: var(--text-primary); -webkit-text-size-adjust: 100%; }
         #app-container { display: flex; height: 100%; width: 100%; transition: background-color 0.3s; }
-
-        /* ... O resto do CSS é o mesmo ... */
         #history-sidebar { background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; transition: transform 0.3s ease; flex-shrink: 0; }
         #history-sidebar .header { padding: 15px; border-bottom: 1px solid var(--border-color); }
         #history-sidebar .new-chat-btn { display: block; width: 100%; padding: 12px; background-color: var(--color-primary); color: white; border: none; border-radius: 8px; font-size: 1em; cursor: pointer; text-align: center; text-decoration: none; box-sizing: border-box; }
@@ -64,7 +49,21 @@
         .message { display: flex; max-width: 85%; margin-bottom: 15px; align-items: flex-start; }
         .message.user { margin-left: auto; flex-direction: row-reverse; }
         .message-avatar { width: 30px; height: 30px; border-radius: 50%; background-color: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin: 0 10px; font-size: 0.8em; }
-        .message-content { padding: 12px 15px; background-color: var(--bg-chat-bubble); border-radius: 12px; min-width: 0; overflow-wrap: break-word; word-break: break-all; font-size: 1em; }
+        
+        /* CORREÇÃO DA QUEBRA DE TEXTO */
+        .message-content {
+            padding: 12px 15px;
+            background-color: var(--bg-chat-bubble);
+            border-radius: 12px;
+            min-width: 0;
+            font-size: 1em;
+            word-break: normal;
+            overflow-wrap: break-word;
+            -webkit-hyphens: auto;
+            -ms-hyphens: auto;
+            hyphens: auto;
+        }
+
         .message-content p:first-child { margin-top: 0; } .message-content p:last-child { margin-bottom: 0; }
         .message-actions { margin-top: 8px; display: flex; gap: 15px; opacity: 0; transition: opacity 0.2s; }
         .message:hover .message-actions { opacity: 1; }
@@ -72,14 +71,7 @@
         .message-actions i:hover { color: var(--text-primary); }
         .typing-cursor { display: inline-block; width: 8px; height: 1em; background-color: var(--text-primary); animation: blink 1s step-end infinite; }
         @keyframes blink { from, to { background-color: transparent } 50% { background-color: var(--text-primary); } }
-        #input-area-wrapper { 
-            padding: 15px 20px; 
-            border-top: 1px solid var(--border-color); 
-            flex-shrink: 0;
-            box-sizing: border-box;
-            /* MUDANÇA PRINCIPAL 2: Adiciona padding na parte inferior para a Home Bar do iPhone */
-            padding-bottom: calc(15px + env(safe-area-inset-bottom));
-        }
+        #input-area-wrapper { padding: 15px 20px; border-top: 1px solid var(--border-color); flex-shrink: 0; box-sizing: border-box; padding-bottom: calc(15px + env(safe-area-inset-bottom)); }
         #input-area { max-width: 800px; margin: 0 auto; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; box-shadow: 0 5px 20px var(--shadow-color); }
         .profile-buttons-top { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
         .profile-buttons-top button { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
@@ -100,7 +92,7 @@
             #history-sidebar { position: fixed; height: 100%; z-index: 1001; width: 80%; max-width: 300px; transform: translateX(-100%); border-right: 1px solid var(--border-color); box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
             #history-sidebar.open { transform: translateX(0); }
             #main-header { display: flex; }
-            #main-content { height: 100%; } /* Usa 100% da altura do body, que agora é 100dvh */
+            #main-content { height: 100%; }
             .chat-view { height: 100%; }
         }
     </style>
@@ -168,7 +160,6 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         marked.setOptions({ breaks: true, gfm: true });
-
         const welcomeScreen = document.getElementById('welcome-screen');
         const chatContainer = document.getElementById('chat-container');
         const userMessageInput = document.getElementById('userMessageInput');
@@ -177,16 +168,13 @@
         const newChatBtn = document.getElementById('new-chat-btn');
         const catechistOptions = document.getElementById('catechist-options');
         const profileButtons = document.querySelectorAll('.profile-buttons-top .prompt-button');
-
         let currentConversationId = null;
         let selectedProfile = 'leigo';
-
         const cleanAndParseMarkdown = (text) => {
             if (typeof text !== 'string') return '';
             let processedText = text.trim().replace(/^```(\w*\n)?|```\s*$/g, '');
             return marked.marked(processedText);
         };
-
         const appendMessage = (text, sender) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
@@ -203,13 +191,11 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return messageDiv;
         };
-
         const startChat = () => {
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
             chatContainer.style.flexDirection = 'column';
         };
-        
         const resetToWelcome = () => {
             welcomeScreen.style.display = 'flex';
             chatContainer.style.display = 'none';
@@ -217,7 +203,6 @@
             currentConversationId = null;
             updateHistoryUI();
         };
-
         const loadHistory = async () => {
             try {
                 const response = await fetch('/api/history');
@@ -233,11 +218,8 @@
                     historyList.appendChild(a);
                 });
                 updateHistoryUI();
-            } catch (error) {
-                console.error("Erro no loadHistory:", error);
-            }
+            } catch (error) { console.error("Erro no loadHistory:", error); }
         };
-
         const loadConversation = async (convId) => {
             startChat();
             try {
@@ -253,19 +235,15 @@
                 appendMessage(`Erro ao carregar a conversa: ${error.message}`, 'ai');
             }
         };
-        
         const sendMessage = async () => {
             const messageText = userMessageInput.value.trim();
             if (!messageText) return;
-
             startChat();
             appendMessage(messageText, 'user');
             userMessageInput.value = '';
             sendMessageButton.disabled = true;
-
             const aiMessageDiv = appendMessage('<span class="typing-cursor"></span>', 'ai');
             const textContentDiv = aiMessageDiv.querySelector('.text-content');
-            
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
@@ -277,32 +255,24 @@
                         age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
                     })
                 });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
                 let fullResponse = '';
-
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    
                     buffer += decoder.decode(value, {stream: true});
                     const lines = buffer.split('\n\n');
                     buffer = lines.pop();
-
                     for (const line of lines) {
                         if (line.startsWith('event: conversation_id')) {
-                            currentConversationId = parseInt(line.split('data: ')[1], 10);
+                            const newId = line.split('data: ')[1];
+                            if(newId !== 'new') currentConversationId = parseInt(newId, 10);
                         } else if (line.startsWith('data: ')) {
                             const data = JSON.parse(line.substring(6));
-                            if (data.error) {
-                                throw new Error(data.error);
-                            }
+                            if (data.error) { throw new Error(data.error); }
                             fullResponse += data.content;
                             textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse + '<span class="typing-cursor"></span>');
                         } else if (line.startsWith('event: error')) {
@@ -314,7 +284,6 @@
                 }
                 textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse);
                 loadHistory();
-
             } catch (error) {
                 console.error("Erro no sendMessage (fetch):", error);
                 textContentDiv.innerHTML = `Desculpe, ocorreu um erro de comunicação. Por favor, tente novamente. (${error.message})`;
@@ -322,17 +291,14 @@
                 sendMessageButton.disabled = false;
             }
         };
-
         const updateHistoryUI = (activeId = null) => {
             document.querySelectorAll('#history-list a').forEach(a => {
                 a.classList.toggle('active', a.dataset.id == activeId);
             });
         };
-
         newChatBtn.addEventListener('click', (e) => { e.preventDefault(); resetToWelcome(); });
         sendMessageButton.addEventListener('click', sendMessage);
         userMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
-        
         profileButtons.forEach(button => {
             button.addEventListener('click', () => {
                 profileButtons.forEach(btn => btn.classList.remove('selected'));
@@ -341,14 +307,12 @@
                 catechistOptions.style.display = selectedProfile === 'catequista' ? 'block' : 'none';
             });
         });
-
         document.querySelectorAll('.suggestion-pill').forEach(pill => {
             pill.addEventListener('click', () => {
                 userMessageInput.value = pill.textContent;
                 sendMessage();
             });
         });
-        
         document.getElementById('theme-toggle-btn').addEventListener('click', (e) => {
             e.preventDefault();
             document.body.classList.toggle('light-mode');
@@ -356,7 +320,6 @@
             document.getElementById('theme-label').textContent = isLight ? "Mudar para Tema Escuro" : "Mudar para Tema Claro";
             document.querySelector('#theme-toggle-btn i').className = isLight ? "fas fa-moon" : "fas fa-sun";
         });
-        
         document.getElementById('clear-history-btn').addEventListener('click', async (e) => {
             e.preventDefault();
             if (confirm("Tem certeza que deseja apagar todo o histórico de conversas? Esta ação não pode ser desfeita.")) {
@@ -365,20 +328,17 @@
                 loadHistory();
             }
         });
-
         chatContainer.addEventListener('click', (e) => {
             if (e.target.matches('.fa-copy')) {
                 const text = e.target.closest('.message-content').querySelector('.text-content').innerText;
                 navigator.clipboard.writeText(text).then(() => alert("Texto copiado!"));
             }
         });
-
         const sidebar = document.getElementById('history-sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const menuOverlay = document.getElementById('menuOverlay');
         sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('open'); menuOverlay.classList.toggle('open'); });
         menuOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); menuOverlay.classList.remove('open'); });
-
         loadHistory();
     });
     </script>
