@@ -45,22 +45,7 @@
         .suggestion-pills { margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 90%; }
         .suggestion-pill { padding: 10px 15px; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; transition: background-color 0.2s; font-size: 0.85em; }
         .suggestion-pill:hover { background-color: var(--color-primary-dark); color: white; border-color: var(--color-primary-dark); }
-        .support-button {
-            margin-top: 20px;
-            padding: 12px 25px;
-            background-color: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .support-button { margin-top: 20px; padding: 12px 25px; background-color: var(--color-primary); color: white; border: none; border-radius: 8px; font-size: 1em; font-weight: bold; cursor: pointer; transition: background-color 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
         .support-button:hover { background-color: var(--color-primary-dark); }
         #chat-container { display: none; }
         .message { display: flex; max-width: 85%; margin-bottom: 15px; align-items: flex-start; }
@@ -186,7 +171,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         marked.setOptions({ breaks: true, gfm: true });
 
-        // Seletores de Elementos
         const welcomeScreen = document.getElementById('welcome-screen');
         const chatContainer = document.getElementById('chat-container');
         const userMessageInput = document.getElementById('userMessageInput');
@@ -199,11 +183,9 @@
         const partnersBtnSidebar = document.getElementById('partners-btn-sidebar');
         const modalCloseBtn = document.getElementById('modal-close-btn');
 
-        // Estado da Aplicação
         let currentConversationId = null;
         let selectedProfile = 'leigo';
 
-        // Funções de UI
         const cleanAndParseMarkdown = (text) => {
             if (typeof text !== 'string') return '';
             let processedText = text.trim().replace(/^```(\w*\n)?|```\s*$/g, '');
@@ -241,7 +223,6 @@
             updateHistoryUI();
         };
 
-        // Funções de API
         const loadHistory = async () => { /* Histórico desativado */ };
         const loadConversation = async (convId) => { /* Histórico desativado */ };
         
@@ -263,7 +244,7 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         message: messageText,
-                        conversation_id: null, // Histórico desativado
+                        conversation_id: null,
                         profile: selectedProfile,
                         age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
                     })
@@ -309,7 +290,6 @@
 
         const updateHistoryUI = (activeId = null) => { /* Histórico desativado */ };
 
-        // Event Listeners
         newChatBtn.addEventListener('click', (e) => { e.preventDefault(); resetToWelcome(); });
         sendMessageButton.addEventListener('click', sendMessage);
         userMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
@@ -338,7 +318,7 @@
             document.querySelector('#theme-toggle-btn i').className = isLight ? "fas fa-moon" : "fas fa-sun";
         });
         
-        document.getElementById('clear-history-btn').style.display = 'none'; // Desativa botão de limpar histórico
+        document.getElementById('clear-history-btn').style.display = 'none';
 
         chatContainer.addEventListener('click', (e) => {
             if (e.target.matches('.fa-copy')) {
@@ -347,7 +327,6 @@
             }
         });
         
-        // Listeners do Modal de Parceiros
         partnersBtnSidebar.addEventListener('click', (e) => { e.preventDefault(); partnersModal.classList.add('open'); });
         modalCloseBtn.addEventListener('click', () => partnersModal.classList.remove('open'));
         window.addEventListener('click', (e) => { if (e.target == partnersModal) { partnersModal.classList.remove('open'); } });
