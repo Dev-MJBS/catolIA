@@ -171,40 +171,56 @@
     document.addEventListener('DOMContentLoaded', () => {
         marked.setOptions({ breaks: true, gfm: true });
 
-        // Seletores de Elementos
+        // --- SELETORES DE ELEMENTOS ---
         const welcomeScreen = document.getElementById('welcome-screen');
         const chatContainer = document.getElementById('chat-container');
         const userMessageInput = document.getElementById('userMessageInput');
         const sendMessageButton = document.getElementById('sendMessageButton');
-        const historyList = document.getElementById('history-list');
         const newChatBtn = document.getElementById('new-chat-btn');
         const catechistOptions = document.getElementById('catechist-options');
         const profileButtons = document.querySelectorAll('.profile-buttons-top .prompt-button');
         
-        const partnersModal = document.getElementById('partnersModal');
-        const partnersBtnSidebar = document.getElementById('partners-btn-sidebar');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
         const sidebar = document.getElementById('history-sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const menuOverlay = document.getElementById('menuOverlay');
 
-        // Estado da Aplicação
-        let currentConversationId = null;
+        const partnersModal = document.getElementById('partnersModal');
+        const partnersBtnSidebar = document.getElementById('partners-btn-sidebar');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        // --- ESTADO DA APLICAÇÃO ---
         let selectedProfile = 'leigo';
 
-        // --- LÓGICA CENTRALIZADA PARA MODAIS E OVERLAYS ---
+        // --- LÓGICA DE POPUPS CENTRALIZADA (CORREÇÃO) ---
         const closeAllPopups = () => {
             sidebar.classList.remove('open');
             partnersModal.classList.remove('open');
             menuOverlay.classList.remove('open');
         };
 
-        // Funções de UI
+        sidebarToggle.addEventListener('click', () => {
+            closeAllPopups(); // Garante que outros popups fechem
+            sidebar.classList.add('open');
+            menuOverlay.classList.add('open');
+        });
+
+        partnersBtnSidebar.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeAllPopups(); // Garante que outros popups fechem
+            partnersModal.classList.add('open');
+            menuOverlay.classList.add('open');
+        });
+
+        modalCloseBtn.addEventListener('click', closeAllPopups);
+        menuOverlay.addEventListener('click', closeAllPopups);
+        // Fim da lógica de popups
+
         const cleanAndParseMarkdown = (text) => {
             if (typeof text !== 'string') return '';
             let processedText = text.trim().replace(/^```(\w*\n)?|```\s*$/g, '');
             return marked.marked(processedText);
         };
+
         const appendMessage = (text, sender) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
@@ -221,20 +237,18 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return messageDiv;
         };
+
         const startChat = () => {
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
             chatContainer.style.flexDirection = 'column';
         };
+        
         const resetToWelcome = () => {
             welcomeScreen.style.display = 'flex';
             chatContainer.style.display = 'none';
             chatContainer.innerHTML = '';
-            currentConversationId = null;
         };
-
-        // Funções de API
-        const loadHistory = async () => { /* Histórico desativado */ };
         
         const sendMessage = async () => {
             const messageText = userMessageInput.value.trim();
@@ -289,7 +303,6 @@
             }
         };
 
-        // --- EVENT LISTENERS ---
         newChatBtn.addEventListener('click', (e) => { e.preventDefault(); resetToWelcome(); });
         sendMessageButton.addEventListener('click', sendMessage);
         userMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
@@ -326,14 +339,6 @@
                 navigator.clipboard.writeText(text).then(() => alert("Texto copiado!"));
             }
         });
-        
-        // Listeners da Sidebar e do Modal de Parceiros
-        sidebarToggle.addEventListener('click', () => { sidebar.classList.add('open'); menuOverlay.classList.add('open'); });
-        partnersBtnSidebar.addEventListener('click', (e) => { e.preventDefault(); closeAllPopups(); partnersModal.classList.add('open'); menuOverlay.classList.add('open'); });
-        modalCloseBtn.addEventListener('click', closeAllPopups);
-        menuOverlay.addEventListener('click', closeAllPopups);
-        
-        loadHistory();
     });
     </script>
 </body>
