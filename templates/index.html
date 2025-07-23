@@ -171,6 +171,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         marked.setOptions({ breaks: true, gfm: true });
 
+        // Seletores de Elementos
         const welcomeScreen = document.getElementById('welcome-screen');
         const chatContainer = document.getElementById('chat-container');
         const userMessageInput = document.getElementById('userMessageInput');
@@ -179,19 +180,31 @@
         const newChatBtn = document.getElementById('new-chat-btn');
         const catechistOptions = document.getElementById('catechist-options');
         const profileButtons = document.querySelectorAll('.profile-buttons-top .prompt-button');
+        
         const partnersModal = document.getElementById('partnersModal');
         const partnersBtnSidebar = document.getElementById('partners-btn-sidebar');
         const modalCloseBtn = document.getElementById('modal-close-btn');
+        const sidebar = document.getElementById('history-sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const menuOverlay = document.getElementById('menuOverlay');
 
+        // Estado da Aplicação
         let currentConversationId = null;
         let selectedProfile = 'leigo';
 
+        // --- LÓGICA CENTRALIZADA PARA MODAIS E OVERLAYS ---
+        const closeAllPopups = () => {
+            sidebar.classList.remove('open');
+            partnersModal.classList.remove('open');
+            menuOverlay.classList.remove('open');
+        };
+
+        // Funções de UI
         const cleanAndParseMarkdown = (text) => {
             if (typeof text !== 'string') return '';
             let processedText = text.trim().replace(/^```(\w*\n)?|```\s*$/g, '');
             return marked.marked(processedText);
         };
-
         const appendMessage = (text, sender) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
@@ -208,36 +221,30 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return messageDiv;
         };
-
         const startChat = () => {
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
             chatContainer.style.flexDirection = 'column';
         };
-        
         const resetToWelcome = () => {
             welcomeScreen.style.display = 'flex';
             chatContainer.style.display = 'none';
             chatContainer.innerHTML = '';
             currentConversationId = null;
-            updateHistoryUI();
         };
 
+        // Funções de API
         const loadHistory = async () => { /* Histórico desativado */ };
-        const loadConversation = async (convId) => { /* Histórico desativado */ };
         
         const sendMessage = async () => {
             const messageText = userMessageInput.value.trim();
             if (!messageText) return;
-
             startChat();
             appendMessage(messageText, 'user');
             userMessageInput.value = '';
             sendMessageButton.disabled = true;
-
             const aiMessageDiv = appendMessage('<span class="typing-cursor"></span>', 'ai');
             const textContentDiv = aiMessageDiv.querySelector('.text-content');
-            
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
@@ -249,22 +256,17 @@
                         age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
                     })
                 });
-
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
                 let fullResponse = '';
-
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    
                     buffer += decoder.decode(value, {stream: true});
                     const lines = buffer.split('\n\n');
                     buffer = lines.pop();
-
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
                             const data = JSON.parse(line.substring(6));
@@ -279,7 +281,6 @@
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 }
                 textContentDiv.innerHTML = cleanAndParseMarkdown(fullResponse);
-
             } catch (error) {
                 console.error("Erro no sendMessage (fetch):", error);
                 textContentDiv.innerHTML = `Desculpe, ocorreu um erro de comunicação. Por favor, tente novamente. (${error.message})`;
@@ -288,8 +289,7 @@
             }
         };
 
-        const updateHistoryUI = (activeId = null) => { /* Histórico desativado */ };
-
+        // --- EVENT LISTENERS ---
         newChatBtn.addEventListener('click', (e) => { e.preventDefault(); resetToWelcome(); });
         sendMessageButton.addEventListener('click', sendMessage);
         userMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
@@ -327,16 +327,12 @@
             }
         });
         
-        partnersBtnSidebar.addEventListener('click', (e) => { e.preventDefault(); partnersModal.classList.add('open'); });
-        modalCloseBtn.addEventListener('click', () => partnersModal.classList.remove('open'));
-        window.addEventListener('click', (e) => { if (e.target == partnersModal) { partnersModal.classList.remove('open'); } });
-
-        const sidebar = document.getElementById('history-sidebar');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const menuOverlay = document.getElementById('menuOverlay');
-        sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('open'); menuOverlay.classList.toggle('open'); });
-        menuOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); menuOverlay.classList.remove('open'); });
-
+        // Listeners da Sidebar e do Modal de Parceiros
+        sidebarToggle.addEventListener('click', () => { sidebar.classList.add('open'); menuOverlay.classList.add('open'); });
+        partnersBtnSidebar.addEventListener('click', (e) => { e.preventDefault(); closeAllPopups(); partnersModal.classList.add('open'); menuOverlay.classList.add('open'); });
+        modalCloseBtn.addEventListener('click', closeAllPopups);
+        menuOverlay.addEventListener('click', closeAllPopups);
+        
         loadHistory();
     });
     </script>
