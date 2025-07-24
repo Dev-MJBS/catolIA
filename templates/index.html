@@ -67,8 +67,8 @@
         #catechist-options { margin-bottom: 10px; }
         .age-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
         .age-group label { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 20px; cursor: pointer; font-size: 0.8em; }
-        .age-group input[type="radio"] { display: none; }
-        .age-group input[type="radio"]:checked + label { background-color: var(--color-primary-dark); color: white; border-color: var(--color-primary-dark); }
+        .age-group input{ display: none; }
+        .age-group input:checked + label { background-color: var(--color-primary-dark); color: white; border-color: var(--color-primary-dark); }
         .main-input-wrapper { display: flex; align-items: center; }
         #userMessageInput { flex-grow: 1; background: transparent; border: none; color: var(--text-primary); resize: none; font-size: 1em; line-height: 1.5; max-height: 200px; outline: none; padding: 10px; }
         #sendMessageButton { background-color: var(--color-primary); color: white; border: none; border-radius: 8px; width: 40px; height: 40px; font-size: 1.2em; cursor: pointer; margin-left: 10px; flex-shrink: 0; }
@@ -160,9 +160,7 @@
                 <span id="modal-close-btn" class="modal-close">&times;</span>
                 <h3>Nossos Parceiros</h3>
                 <p>Agradecemos às empresas e pessoas que acreditam e apoiam a missão do Catolia.</p>
-                <a href="https://www.instagram.com/divinoamor_jatai/" target="_blank">
-                    <img src="{{ url_for('static', filename='images/divino_amor_logo.png') }}" alt="Logo Divino Amor" class="partner-logo">
-                </a>
+                
             </div>
         </div>
     </div>
@@ -171,56 +169,40 @@
     document.addEventListener('DOMContentLoaded', () => {
         marked.setOptions({ breaks: true, gfm: true });
 
-        // --- SELETORES DE ELEMENTOS ---
+        // Seletores de Elementos
         const welcomeScreen = document.getElementById('welcome-screen');
         const chatContainer = document.getElementById('chat-container');
         const userMessageInput = document.getElementById('userMessageInput');
         const sendMessageButton = document.getElementById('sendMessageButton');
+        const historyList = document.getElementById('history-list');
         const newChatBtn = document.getElementById('new-chat-btn');
         const catechistOptions = document.getElementById('catechist-options');
         const profileButtons = document.querySelectorAll('.profile-buttons-top .prompt-button');
         
+        const partnersModal = document.getElementById('partnersModal');
+        const partnersBtnSidebar = document.getElementById('partners-btn-sidebar');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
         const sidebar = document.getElementById('history-sidebar');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const menuOverlay = document.getElementById('menuOverlay');
 
-        const partnersModal = document.getElementById('partnersModal');
-        const partnersBtnSidebar = document.getElementById('partners-btn-sidebar');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-
-        // --- ESTADO DA APLICAÇÃO ---
+        // Estado da Aplicação
+        let currentConversationId = null;
         let selectedProfile = 'leigo';
 
-        // --- LÓGICA DE POPUPS CENTRALIZADA (CORREÇÃO) ---
+        // --- LÓGICA CENTRALIZADA PARA MODAIS E OVERLAYS ---
         const closeAllPopups = () => {
             sidebar.classList.remove('open');
             partnersModal.classList.remove('open');
             menuOverlay.classList.remove('open');
         };
 
-        sidebarToggle.addEventListener('click', () => {
-            closeAllPopups(); // Garante que outros popups fechem
-            sidebar.classList.add('open');
-            menuOverlay.classList.add('open');
-        });
-
-        partnersBtnSidebar.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeAllPopups(); // Garante que outros popups fechem
-            partnersModal.classList.add('open');
-            menuOverlay.classList.add('open');
-        });
-
-        modalCloseBtn.addEventListener('click', closeAllPopups);
-        menuOverlay.addEventListener('click', closeAllPopups);
-        // Fim da lógica de popups
-
+        // Funções de UI
         const cleanAndParseMarkdown = (text) => {
             if (typeof text !== 'string') return '';
-            let processedText = text.trim().replace(/^```(\w*\n)?|```\s*$/g, '');
+            let processedText = text.trim().replace(/^`{3}(?:\w+\n)?([\s\S]+?)`{3}$/gm, '$1').trim();
             return marked.marked(processedText);
         };
-
         const appendMessage = (text, sender) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
@@ -237,18 +219,20 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return messageDiv;
         };
-
         const startChat = () => {
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
             chatContainer.style.flexDirection = 'column';
         };
-        
         const resetToWelcome = () => {
             welcomeScreen.style.display = 'flex';
             chatContainer.style.display = 'none';
             chatContainer.innerHTML = '';
+            currentConversationId = null;
         };
+
+        // Funções de API
+        const loadHistory = async () => { /* Histórico desativado */ };
         
         const sendMessage = async () => {
             const messageText = userMessageInput.value.trim();
@@ -267,16 +251,16 @@
                         message: messageText,
                         conversation_id: null,
                         profile: selectedProfile,
-                        age_group: selectedProfile === 'catequista' ? document.querySelector('input[name="age_group"]:checked').value : ''
+                        age_group: selectedProfile === 'catequista' ? document.querySelector('input.age-radio:checked')?.value : ''
                     })
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const reader = response.body.getReader();
+                const reader = response.body?.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
                 let fullResponse = '';
                 while (true) {
-                    const { done, value } = await reader.read();
+                    const { done, value } = await reader?.read();
                     if (done) break;
                     buffer += decoder.decode(value, {stream: true});
                     const lines = buffer.split('\n\n');
@@ -303,6 +287,7 @@
             }
         };
 
+        // --- EVENT LISTENERS ---
         newChatBtn.addEventListener('click', (e) => { e.preventDefault(); resetToWelcome(); });
         sendMessageButton.addEventListener('click', sendMessage);
         userMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }});
@@ -339,6 +324,14 @@
                 navigator.clipboard.writeText(text).then(() => alert("Texto copiado!"));
             }
         });
+        
+        // Listeners da Sidebar e do Modal de Parceiros
+        sidebarToggle.addEventListener('click', () => { sidebar.classList.add('open'); menuOverlay.classList.add('open'); });
+        partnersBtnSidebar.addEventListener('click', (e) => { e.preventDefault(); closeAllPopups(); partnersModal.classList.add('open'); menuOverlay.classList.add('open'); });
+        modalCloseBtn.addEventListener('click', closeAllPopups);
+        menuOverlay.addEventListener('click', closeAllPopups);
+        
+        loadHistory();
     });
     </script>
 </body>
