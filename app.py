@@ -1,174 +1,250 @@
-# app.py (PARA TESTES NO SEU COMPUTADOR LOCAL)
-
 import os
-import requests 
-import json
-import traceback
-from flask import Flask, request, jsonify, render_template, Response, stream_with_context
+from flask import Flask, request, jsonify, render_template, Response, stream_with_context, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from dotenv import load_dotenv
+import requests
+import json
 
-# Para o ambiente local, usamos o dotenv para ler o .env
+# Carrega variáveis do .env
 load_dotenv()
 
-# Para o ambiente local, as pastas estão no mesmo nível
 app = Flask(__name__, template_folder='templates', static_folder='static')
-
-# Para o ambiente local, o banco de dados é um arquivo na mesma pasta
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///catolia.db'
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "catolia-secret")
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PASSWORD')}"
+    f"@{os.getenv('MYSQL_HOST','localhost')}/{os.getenv('MYSQL_DB')}"
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
-# --- PROMPT MANAGER EMBUTIDO ---
-BASE_PROMPT = """
-Você é a 'Católia', uma assistente de IA especialista e catequista experiente, absolutamente fiel ao Magistério da Igreja Católica. Sua identidade é ser uma ferramenta de evangelização e formação.
-REGRAS FUNDAMENTAIS E INFLEXÍVEIS:
-1.  FONTES DE CONHECIMENTO: Suas respostas devem ser baseadas EXCLUSIVAMENTE nas seguintes fontes: a Sagrada Escritura (interpretada segundo a Tradição e o Magistério da Igreja), o Catecismo da Igreja Católica (CIC), o Código de Direito Canônico, e os documentos da Doutrina Social da Igreja (DSI), incluindo encíclicas como Laudato Si' e Fratelli Tutti.
-2.  GUARDAILES DOUTRINÁRIOS: É de extrema importância que você NÃO use informações de outras denominações cristãs, de outras religiões ou de fontes seculares para responder a questões de doutrina. Em pontos dogmáticos, como a Virgindade Perpétua de Maria (Ela não teve outros filhos biológicos), a Imaculada Conceição, a Assunção de Maria, a presença real de Cristo na Eucaristia (Transubstanciação) e a infalibilidade Papal, sua resposta deve ser clara, direta e 100% alinhada com a fé Católica. Se uma pergunta desafia um dogma, reafirme a doutrina da Igreja com caridade e clareza.
-3.  VALORES A PROMOVER: Sempre que apropriado e de forma natural, suas respostas devem inspirar valores de fraternidade universal, solidariedade com os pobres e marginalizados, e o cuidado com a Casa Comum (ecologia integral), conforme ensinado pelo Papa Francisco.
-4.  NOME E PERSONA: Você sempre se refere a si mesma como Católia. Sua linguagem deve ser acolhedora, clara e catequética.
-"""
-PROMPT_PROFILES = {
-    'leigo': "Para este usuário, que é um leigo, foque em respostas claras, objetivas e práticas para a vida cotidiana da fé. Use analogias e exemplos.",
-    'catequista': "Para este usuário, que é um catequista, sua resposta deve ter um foco pedagógico. Ao criar planos de catequese sobre um tema, inclua sugestões de atividades práticas que promovam a ecologia integral (ex: reciclagem) e a solidariedade (ex: campanhas de arrecadação), conectando-as ao tema. Estruture a resposta de forma clara usando Markdown.",
-    'seminarista': "Para este usuário, que é um seminarista, aprofunde a resposta com referências teológicas robustas, citando parágrafos específicos do Catecismo (ex: CIC §1234) e, se possível, conectando com a filosofia e a patrística.",
-    'sacerdote': "Para este usuário, que é um sacerdote, ofereça insights com foco em hermenêutica bíblica e homilética. Forneça pontos práticos e teológicos que possam ser usados em pregações e aconselhamento pastoral.",
-    'crianca': "Para este usuário, que é uma criança, use uma linguagem extremamente simples e lúdica. Use analogias fáceis (ex: 'a Santíssima Trindade é como um trevo') e mantenha as respostas curtas."
-}
-def get_system_prompt(profile: str) -> str:
-    profile_instruction = PROMPT_PROFILES.get(profile, PROMPT_PROFILES['leigo'])
-    return f"{BASE_PROMPT}\n\nINSTRUÇÃO ESPECÍFICA PARA ESTA CONVERSA:\n{profile_instruction}"
-# --- FIM DO PROMPT MANAGER ---
+# Configuração do Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# MODELOS DO BANCO DE DADOS
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(100))
+    conversations = db.relationship('Conversation', backref='user', lazy=True, cascade="all, delete-orphan")
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 class Conversation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False, default="Novo Chat")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     messages = db.relationship('Message', backref='conversation', lazy=True, cascade="all, delete-orphan")
+
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
-    sender = db.Column(db.String(10), nullable=False)
+    sender = db.Column(db.String(10), nullable=False) # 'user' ou 'ai'
     content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Rotas e o resto da lógica são idênticas ao /api/index.py
+# ROTAS DE AUTENTICAÇÃO
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form['email'].strip().lower()
+        password = request.form['password']
+        name = request.form['name'].strip()
+        if User.query.filter_by(email=email).first():
+            return render_template('register.html', error='Email já cadastrado!')
+        user = User(email=email, name=name)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        return redirect(url_for('index'))
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email'].strip().lower()
+        password = request.form['password']
+        user = User.query.filter_by(email=email).first()
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for('index'))
+        return render_template('login.html', error='Email ou senha inválidos!')
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', user=current_user if getattr(current_user, "is_authenticated", False) else None)
 
+# ROTAS DE HISTÓRICO
 @app.route('/api/history', methods=['GET'])
+@login_required
 def get_history():
-    conversations = Conversation.query.order_by(Conversation.id.desc()).all()
-    return jsonify([{"id": conv.id, "title": conv.title} for conv in conversations])
+    # Corrigido: só mostra histórico para usuário logado
+    conversations = Conversation.query.filter_by(user_id=current_user.id).order_by(Conversation.created_at.desc()).all()
+    history = [{"id": conv.id, "title": conv.title} for conv in conversations]
+    return jsonify(history)
 
-# ... (O resto das funções de rota são as mesmas) ...
 @app.route('/api/conversation/<int:conv_id>', methods=['GET'])
+@login_required
 def get_conversation(conv_id):
-    conv = Conversation.query.get_or_404(conv_id)
-    return jsonify({"title": conv.title, "messages": [{"sender": msg.sender, "content": msg.content} for msg in conv.messages]})
+    # Corrigido: só mostra conversa do usuário logado
+    conversation = Conversation.query.filter_by(id=conv_id, user_id=current_user.id).first_or_404()
+    messages = [{"sender": msg.sender, "content": msg.content} for msg in conversation.messages]
+    return jsonify({"title": conversation.title, "messages": messages})
 
 @app.route('/api/conversation', methods=['DELETE'])
+@login_required
 def delete_all_history():
     try:
-        db.session.query(Message).delete()
-        db.session.query(Conversation).delete()
+        conversations = Conversation.query.filter_by(user_id=current_user.id).all()
+        for conv in conversations:
+            Message.query.filter_by(conversation_id=conv.id).delete()
+        Conversation.query.filter_by(user_id=current_user.id).delete()
         db.session.commit()
-        return jsonify({"success": True})
+        return jsonify({"success": "Histórico apagado com sucesso."})
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+# CHAT IA (STREAMING) -- NÃO EXIGE LOGIN!
 @app.route('/api/chat', methods=['POST'])
 def chat():
+    if not openrouter_api_key:
+        return Response(json.dumps({"error": "API Key não configurada"}), status=500, mimetype='application/json')
     try:
-        if not openrouter_api_key:
-            raise ValueError("Chave OPENROUTER_API_KEY não encontrada.")
         data = request.get_json()
-        user_message_content = data.get('message', '').strip()
+        user_message = data.get('message', '').strip()
         conversation_id = data.get('conversation_id')
         user_profile = data.get('profile', 'leigo')
-        if not user_message_content:
-            return Response("Mensagem vazia.", status=400)
+        age_group = data.get('age_group', '')
 
-        final_user_prompt = user_message_content
-        if user_profile == 'catequista':
-            age_group = data.get('age_group', 'Não especificado')
-            final_user_prompt = f"Crie um plano de catequese sobre o tema '{user_message_content}' para a faixa etária '{age_group}'."
-        
+        if not user_message:
+            return Response(json.dumps({"error": "Mensagem vazia."}), status=400, mimetype='application/json')
+
+        # user_id: se logado, associa, se anônimo, salva como None
+        uid = current_user.id if getattr(current_user, "is_authenticated", False) else None
+
+        conv = None
+        # Se veio conversation_id, pega conversa (qualquer usuário)
+        if conversation_id:
+            conv = Conversation.query.filter_by(id=conversation_id).first()
+        # Se não existe, cria nova conversa (associando usuário logado, se houver)
+        if not conv:
+            conv = Conversation(user_id=uid)
+            db.session.add(conv)
+            db.session.commit()
+
+        # Salva mensagem do usuário
+        user_msg_db = Message(conversation_id=conv.id, sender='user', content=user_message)
+        db.session.add(user_msg_db)
+        db.session.commit()
+
         def generate_response():
             full_ai_response = ""
-            temp_conv_id = conversation_id
             try:
-                if not temp_conv_id:
-                    yield f"event: conversation_id\ndata: new\n\n"
+                yield f"event: conversation_id\ndata: {conv.id}\n\n"
                 system_prompt = get_system_prompt(user_profile)
-                headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
-                json_data = { 
-                    "model": "mistralai/mistral-7b-instruct",
-                    "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": final_user_prompt}], 
-                    "stream": True 
+                if user_profile == 'catequista':
+                    user_message_final = f"Tema da Catequese: {user_message}\nFaixa Etária: {age_group}"
+                else:
+                    user_message_final = user_message
+
+                headers = {"Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json"}
+                json_data = {
+                    "model": "deepseek/deepseek-chat",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_message_final}
+                    ],
+                    "stream": True
                 }
-                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=9) as r:
+                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=60) as r:
                     r.raise_for_status()
                     for chunk in r.iter_lines():
                         if chunk.startswith(b'data: '):
                             chunk_data = chunk.decode('utf-8')[6:]
-                            if chunk_data.strip() == '[DONE]': break
-                            json_chunk = json.loads(chunk_data)
-                            content = json_chunk['choices'][0]['delta'].get('content', '')
-                            if content:
-                                full_ai_response += content
-                                yield f"data: {json.dumps({'content': content})}\n\n"
+                            if chunk_data.strip() == '[DONE]':
+                                break
+                            try:
+                                json_chunk = json.loads(chunk_data)
+                                content = json_chunk['choices'][0]['delta'].get('content', '')
+                                if content:
+                                    full_ai_response += content
+                                    yield f"data: {json.dumps({'content': content})}\n\n"
+                            except (json.JSONDecodeError, KeyError):
+                                continue
+                # Salva mensagem da IA
+                ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
+                db.session.add(ai_msg_db)
+                # Atualiza título da conversa se for novo chat
+                if conv.title == "Novo Chat":
+                    conv.title = generate_title(user_message, full_ai_response)
+                db.session.commit()
+            except requests.exceptions.HTTPError as e:
+                yield f"event: error\ndata: Erro na API: {e.response.status_code}\n\n"
             except Exception as e:
-                error_details = traceback.format_exc()
-                print(f"ERRO NO STREAM: {error_details}")
-                yield f"event: error\ndata: {json.dumps({'error': 'Erro interno no servidor durante o streaming.'})}\n\n"
-                return
-            
-            try:
-                with app.app_context():
-                    if temp_conv_id:
-                        conv = db.session.get(Conversation, temp_conv_id)
-                    else:
-                        conv = Conversation()
-                        db.session.add(conv)
-                        db.session.commit()
-                    yield f"event: conversation_id\ndata: {conv.id}\n\n"
-                    user_msg_db = Message(conversation_id=conv.id, sender='user', content=user_message_content)
-                    ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
-                    db.session.add_all([user_msg_db, ai_msg_db])
-                    if conv.title == "Novo Chat":
-                        conv.title = generate_title(user_message_content, full_ai_response)
-                    db.session.commit()
-            except Exception as e:
-                error_details = traceback.format_exc()
-                print(f"ERRO AO SALVAR NO BD: {error_details}")
-                yield f"event: error\ndata: {json.dumps({'error': 'Erro ao salvar a conversa.'})}\n\n"
-        return Response(stream_with_context(generate_response()), mimetype='text/event-stream')
-    except Exception as e:
-        error_details = traceback.format_exc()
-        print(f"ERRO CRÍTICO NA ROTA CHAT: {error_details}")
-        def error_stream():
-            yield f"event: error\ndata: {json.dumps({'error': 'Erro crítico no servidor.'})}\n\n"
-        return Response(stream_with_context(error_stream()), mimetype='text/event-stream')
+                yield f"event: error\ndata: {str(e)}\n\n"
 
+        return Response(stream_with_context(generate_response()), mimetype='text/event-stream')
+
+    except Exception as e:
+        print("Erro interno em /api/chat:", e)
+        return Response(json.dumps({"error": "Erro interno do servidor"}), status=500, mimetype='application/json')
+
+# PROMPT DE SISTEMA PARA IA
+def get_system_prompt(profile):
+    bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1')."
+    instructions = {
+        'crianca': f"Você é uma IA católica. Responda de forma muito simples, didática e adequada para uma criança pequena. {bible_citation_rule}",
+        'catequista': f"Você é uma IA católica para catequistas. Crie um plano de encontro de catequese detalhado e estruturado. Use Markdown para formatar a resposta com títulos, negrito e listas.",
+        'seminarista': f"Você é uma IA católica para seminaristas. Responda com profundidade teológica, referências a documentos da Igreja e filosofia. {bible_citation_rule}",
+        'sacerdote': f"Você é uma IA católica para sacerdotes. Responda com alta profundidade teológica, foco em hermenêutica e homilética. {bible_citation_rule}",
+        'leigo': f"Você é uma IA católica. Responda de forma clara, objetiva e completa para um leigo interessado em aprofundar sua fé. {bible_citation_rule}"
+    }
+    return instructions.get(profile, instructions['leigo'])
+
+# GERADOR DE TÍTULO DE CONVERSA
 def generate_title(user_prompt, ai_response):
-    # ... (código existente)
     try:
-        title_prompt = f"Gere um título curto (3 a 5 palavras) para a conversa:\n\nPERGUNTA: {user_prompt}\nRESPOSTA: {ai_response}\n\nTÍTULO:"
-        headers = { "Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json" }
-        json_data = {"model": "mistralai/mistral-7b-instruct", "messages": [{"role": "user", "content": title_prompt}], "max_tokens": 20}
-        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, timeout=5)
+        title_prompt = f"Gere um título muito curto (3 a 5 palavras) para a seguinte conversa:\n\nPERGUNTA: {user_prompt}\nRESPOSTA: {ai_response}\n\nTÍTULO:"
+        headers = {"Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json"}
+        json_data = {
+            "model": "deepseek/deepseek-chat",
+            "messages": [{"role": "user", "content": title_prompt}],
+            "max_tokens": 20
+        }
+        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data)
         response.raise_for_status()
         title = response.json()['choices'][0]['message']['content'].strip().strip('"')
         return title if title else "Chat sobre " + user_prompt[:20]
     except Exception:
         return "Chat sobre " + user_prompt[:20]
 
-# O bloco que permite rodar o app localmente
+# CRIA AS TABELAS NO BANCO
+with app.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True, threaded=True)
+    app.run(debug=True, threaded=True, port=5001)
