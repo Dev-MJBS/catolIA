@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Cadastro - CatólIA</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="icon" type="image/png" href="/static/images/logo.png">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Montserrat', 'Roboto', sans-serif; background: #f4f6f8; margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; }
@@ -21,25 +21,45 @@
 </head>
 <body>
     <div class="register-container">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="CatólIA logo" class="logo-img">
+        <img src="/static/images/logo.png" alt="CatólIA logo" class="logo-img">
         <h2>Cadastro</h2>
-        {% if error %}<div class="error">{{error}}</div>{% endif %}
-        <form method="post">
-            <div class="form-group">
-                <label for="name">Nome:</label>
-                <input type="text" id="name" name="name" required autofocus>
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Senha:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Cadastrar</button>
-        </form>
-        <a class="login-link" href="/login">Já tem conta? Login</a>
+        <div id="error" class="error"></div>
+        <div class="form-group">
+            <label for="name">Nome:</label>
+            <input type="text" id="name" required autofocus>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Senha:</label>
+            <input type="password" id="password" required>
+        </div>
+        <button type="button" onclick="register()">Cadastrar</button>
+        <a class="login-link" href="login.html">Já tem conta? Login</a>
     </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbKtpoJ2xegZT4I-A3M83-aBPR-U_AdrI",
+            authDomain: "catolia.firebaseapp.com",
+            projectId: "catolia",
+            storageBucket: "catolia.firebasestorage.app",
+            messagingSenderId: "38030323422",
+            appId: "1:38030323422:web:8ae8fa9f5c3ec7fb289c4f",
+            measurementId: "G-Q67PWHE0H4"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        window.register = function() {
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('password').value;
+            createUserWithEmailAndPassword(auth, email, senha)
+                .then(() => window.location.href = "home.html")
+                .catch(err => document.getElementById('error').innerText = err.message);
+        }
+    </script>
 </body>
 </html>

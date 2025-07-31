@@ -64,7 +64,6 @@
             -webkit-text-size-adjust: 100%;
         }
         #app-container { display: flex; height: 100%; width: 100%; transition: background-color 0.3s; }
-
         #history-sidebar {
             background-color: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
@@ -469,9 +468,8 @@
             <div class="footer">
                 <a href="#" id="theme-toggle-btn"><i class="fas fa-sun"></i><span id="theme-label">Mudar para Tema Claro</span></a>
                 <a href="#" id="clear-history-btn"><i class="fas fa-trash"></i><span>Limpar Histórico</span></a>
-                <!-- Corrigido para links estáticos -->
-                <!-- Se você usa backend para autenticação, o template deve ser processado no backend; senão, ajuste manualmente -->
-                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                <!-- CORRIGIDO PARA AMBIENTE FLASK LOCAL -->
+                <a href="/home"><i class="fas fa-sign-out-alt"></i> Sair</a>
                 <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
                 <a href="/register"><i class="fas fa-user-plus"></i> Cadastro</a>
             </div>
@@ -529,6 +527,7 @@
         <div class="cadastro-box">
             <h3>Cadastre-se na plataforma!</h3>
             <p>Salve seu histórico, tenha acesso a recursos exclusivos e receba novidades.</p>
+            <!-- CORRIGIDO PARA FLASK LOCAL -->
             <a href="/register" class="btn">Quero me cadastrar</a>
             <button onclick="document.getElementById('modalCadastro').style.display='none'">Continuar sem cadastro</button>
         </div>
