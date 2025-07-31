@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>CatólIA 2.0 - Seu Guia de Fé</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="icon" type="image/png" href="/static/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -384,7 +384,6 @@
             #history-sidebar.open { transform: translateX(0); }
             #main-header { display: flex; }
         }
-        /* Modal cadastro */
         .modal-cadastro {
             display: none;
             position: fixed;
@@ -470,12 +469,11 @@
             <div class="footer">
                 <a href="#" id="theme-toggle-btn"><i class="fas fa-sun"></i><span id="theme-label">Mudar para Tema Claro</span></a>
                 <a href="#" id="clear-history-btn"><i class="fas fa-trash"></i><span>Limpar Histórico</span></a>
-                {% if user and user.is_authenticated %}
-                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair ({{ user.name }})</a>
-                {% else %}
+                <!-- Corrigido para links estáticos -->
+                <!-- Se você usa backend para autenticação, o template deve ser processado no backend; senão, ajuste manualmente -->
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
                 <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
                 <a href="/register"><i class="fas fa-user-plus"></i> Cadastro</a>
-                {% endif %}
             </div>
         </aside>
         <main id="main-content">
@@ -526,8 +524,7 @@
         </main>
         <div class="overlay" id="menuOverlay"></div>
     </div>
-    <!-- Modal Cadastro: aparece só se não logado -->
-    {% if not user or not user.is_authenticated %}
+    <!-- Modal Cadastro: aparece só se não logado. Se você tem lógica JS para exibir/ocultar, ajuste conforme necessário -->
     <div id="modalCadastro" class="modal-cadastro" style="display:flex;">
         <div class="cadastro-box">
             <h3>Cadastre-se na plataforma!</h3>
@@ -536,9 +533,50 @@
             <button onclick="document.getElementById('modalCadastro').style.display='none'">Continuar sem cadastro</button>
         </div>
     </div>
-    {% endif %}
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Historico de conversas: só funciona se backend disponível
+        function carregarHistorico() {
+            fetch('/api/history').then(resp => resp.json()).then(history => {
+                const historyList = document.getElementById('history-list');
+                historyList.innerHTML = "";
+                if (!history.length) {
+                    let li = document.createElement('li');
+                    li.textContent = "Nenhum histórico encontrado.";
+                    li.style.color = "#aaa";
+                    li.style.fontSize = "0.97em";
+                    historyList.appendChild(li);
+                } else {
+                    history.forEach(conv => {
+                        const a = document.createElement('a');
+                        a.textContent = conv.title || "Chat sem título";
+                        a.href = "#";
+                        a.dataset.conversationId = conv.id;
+                        a.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            carregarConversacao(conv.id, a);
+                        });
+                        historyList.appendChild(a);
+                    });
+                }
+            });
+        }
+        function carregarConversacao(convId, linkElem) {
+            document.querySelectorAll('#history-list a').forEach(a => a.classList.remove('active'));
+            if (linkElem) linkElem.classList.add('active');
+            fetch(`/api/conversation/${convId}`).then(resp => resp.json()).then(data => {
+                chatContainer.innerHTML = "";
+                welcomeScreen.style.display = "none";
+                chatContainer.style.display = "block";
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        addMessage(msg.sender, msg.content);
+                    });
+                }
+                currentConversationId = convId;
+            });
+        }
+        carregarHistorico();
         document.querySelectorAll('.prompt-button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.prompt-button').forEach(b => b.classList.remove('selected'));
@@ -546,23 +584,20 @@
                 document.getElementById('catechist-options').style.display = (this.dataset.profile === 'catequista') ? 'block' : 'none';
             });
         });
-
         const userMessageInput = document.getElementById('userMessageInput');
         const sendMessageButton = document.getElementById('sendMessageButton');
         const chatContainer = document.getElementById('chat-container');
         const welcomeScreen = document.getElementById('welcome-screen');
         let currentConversationId = null;
         let sending = false;
-
-        userMessageInput.addEventListener('keydown', (e) => {
+        userMessageInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
         });
         sendMessageButton.addEventListener('click', sendMessage);
-
-        function addMessage(sender, content, isStreaming = false) {
+        function addMessage(sender, content, isStreaming) {
             chatContainer.style.display = 'block';
             welcomeScreen.style.display = 'none';
             const msgDiv = document.createElement('div');
@@ -583,7 +618,6 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             return contentDiv;
         }
-
         async function sendMessage() {
             if (sending) return;
             const messageText = userMessageInput.value.trim();
@@ -591,15 +625,10 @@
             sending = true;
             sendMessageButton.disabled = true;
             userMessageInput.disabled = true;
-
-            // Exibe mensagem do usuário
             addMessage('user', messageText);
-
-            // Prepara dados do perfil/idade
             const profile = document.querySelector('.prompt-button.selected').dataset.profile;
             const age_group = document.querySelector('.age-group input[type="radio"]:checked')?.value || '';
             let aiContentDiv = addMessage('ai', '', true);
-
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
@@ -611,7 +640,6 @@
                         conversation_id: currentConversationId
                     })
                 });
-
                 if (!response.ok) {
                     const errJson = await response.json().catch(() => ({}));
                     aiContentDiv.innerHTML = `<span style="color: #F39C12;">Erro: ${errJson.error || response.statusText}</span>`;
@@ -621,12 +649,10 @@
                     userMessageInput.value = '';
                     return;
                 }
-
-                // Streaming da resposta
                 const reader = response.body.getReader();
                 let fullText = '';
                 let decoder = new TextDecoder();
-
+                let newConvId = null;
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -634,7 +660,10 @@
                     chunk.split('\n').forEach(line => {
                         line = line.trim();
                         if (line.startsWith('event: conversation_id')) {
-                            // Pega ID da conversa
+                            const match = line.match(/data: (\d+)/);
+                            if (match && match[1]) {
+                                newConvId = match[1];
+                            }
                         }
                         if (line.startsWith('data: ')) {
                             try {
@@ -652,6 +681,10 @@
                 sendMessageButton.disabled = false;
                 userMessageInput.disabled = false;
                 userMessageInput.value = '';
+                if (newConvId) {
+                    currentConversationId = newConvId;
+                    carregarHistorico();
+                }
             } catch (err) {
                 aiContentDiv.innerHTML = `<span style="color: #F39C12;">Erro de conexão: ${err.message}</span>`;
                 sending = false;
@@ -659,24 +692,23 @@
                 userMessageInput.disabled = false;
             }
         }
-
         document.querySelectorAll('.suggestion-pill').forEach(pill => {
-            pill.addEventListener('click', () => {
+            pill.addEventListener('click', function() {
                 userMessageInput.value = pill.textContent;
                 sendMessage();
             });
         });
-
-        document.getElementById('clear-history-btn').addEventListener('click', async function(e) {
+        document.getElementById('clear-history-btn').addEventListener('click', function(e) {
             e.preventDefault();
             if (confirm('Deseja apagar todo o seu histórico de conversas?')) {
-                await fetch('/api/conversation', { method: 'DELETE' });
-                chatContainer.innerHTML = '';
-                welcomeScreen.style.display = 'flex';
-                chatContainer.style.display = 'none';
+                fetch('/api/conversation', { method: 'DELETE' }).then(() => {
+                    chatContainer.innerHTML = '';
+                    welcomeScreen.style.display = 'flex';
+                    chatContainer.style.display = 'none';
+                    carregarHistorico();
+                });
             }
         });
-
         document.getElementById('new-chat-btn').addEventListener('click', function(e) {
             e.preventDefault();
             currentConversationId = null;
@@ -684,14 +716,12 @@
             welcomeScreen.style.display = 'flex';
             chatContainer.style.display = 'none';
         });
-
         document.getElementById('theme-toggle-btn').addEventListener('click', function(e) {
             e.preventDefault();
             document.body.classList.toggle('light-mode');
             document.getElementById('theme-label').textContent =
                 document.body.classList.contains('light-mode') ? 'Mudar para Tema Escuro' : 'Mudar para Tema Claro';
         });
-
         const sidebar = document.getElementById('history-sidebar');
         const overlay = document.getElementById('menuOverlay');
         document.getElementById('sidebar-toggle').addEventListener('click', function() {
