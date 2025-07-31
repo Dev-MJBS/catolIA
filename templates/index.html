@@ -383,77 +383,7 @@
             #history-sidebar.open { transform: translateX(0); }
             #main-header { display: flex; }
         }
-        .modal-cadastro {
-            display: none;
-            position: fixed;
-            left: 0; top: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            background: rgba(0,0,0,0.56);
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-cadastro .cadastro-box {
-            background: #fff;
-            color: #222;
-            max-width: 350px;
-            width: 90vw;
-            padding: 32px 22px 24px 22px;
-            border-radius: 14px;
-            box-shadow: 0 6px 32px rgba(0,0,0,0.18);
-            text-align: center;
-            margin: auto;
-        }
-        .modal-cadastro .cadastro-box h3 {
-            margin-top: 0;
-            font-size: 1.35rem;
-            margin-bottom: 14px;
-            color: var(--color-primary);
-            font-weight: 700;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .modal-cadastro .cadastro-box p {
-            font-size: 1.07rem;
-            margin-bottom: 24px;
-            color: #222;
-        }
-        .modal-cadastro .cadastro-box .btn {
-            display: block;
-            background: var(--color-primary);
-            color: #fff;
-            padding: 12px 0;
-            border-radius: 7px;
-            margin: 10px 0 0;
-            text-decoration: none;
-            font-size: 1.1em;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .modal-cadastro .cadastro-box .btn:hover {
-            background: var(--color-primary-dark);
-        }
-        .modal-cadastro .cadastro-box button {
-            margin-top: 14px;
-            background: #eee;
-            color: #222;
-            border: none;
-            padding: 10px 0;
-            border-radius: 7px;
-            width: 100%;
-            font-size: 1em;
-            cursor: pointer;
-        }
-        @media (max-width: 500px) {
-            .modal-cadastro .cadastro-box {
-                max-width: 96vw;
-                padding: 18px 7vw 20px 7vw;
-            }
-            .modal-cadastro .cadastro-box h3 { font-size: 1.11rem; }
-            .modal-cadastro .cadastro-box p { font-size: 0.97rem; }
-        }
+        /* Modal cadastro CSS mantido, mas não será exibido pois foi removido do HTML */
     </style>
 </head>
 <body>
@@ -522,16 +452,7 @@
         </main>
         <div class="overlay" id="menuOverlay"></div>
     </div>
-    <!-- Modal Cadastro: aparece só se não logado. Se você tem lógica JS para exibir/ocultar, ajuste conforme necessário -->
-    <div id="modalCadastro" class="modal-cadastro" style="display:flex;">
-        <div class="cadastro-box">
-            <h3>Cadastre-se na plataforma!</h3>
-            <p>Salve seu histórico, tenha acesso a recursos exclusivos e receba novidades.</p>
-            <!-- CORRIGIDO PARA FLASK LOCAL -->
-            <a href="/register" class="btn">Quero me cadastrar</a>
-            <button onclick="document.getElementById('modalCadastro').style.display='none'">Continuar sem cadastro</button>
-        </div>
-    </div>
+    <!-- Modal cadastro removido conforme solicitado -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Historico de conversas: só funciona se backend disponível
