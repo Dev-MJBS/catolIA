@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
+        /* TODO: Seu CSS permanece inalterado */
         :root {
             --color-primary: #8E44AD;
             --color-primary-dark: #6C3483;
@@ -92,33 +93,6 @@
             text-align: center;
             text-decoration: none;
             box-sizing: border-box;
-        }
-        #history-sidebar .history-list {
-            flex-grow: 1;
-            list-style: none;
-            margin: 0;
-            padding: 15px;
-            overflow-y: auto;
-        }
-        #history-sidebar .history-list a {
-            display: block;
-            padding: 10px 15px;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: background-color 0.2s;
-        }
-        #history-sidebar .history-list a:hover {
-            background-color: var(--bg-input);
-            color: var(--text-primary);
-        }
-        #history-sidebar .history-list a.active {
-            background-color: var(--color-primary-dark);
-            color: white;
         }
         #history-sidebar .footer {
             padding: 15px;
@@ -383,7 +357,6 @@
             #history-sidebar.open { transform: translateX(0); }
             #main-header { display: flex; }
         }
-        /* Modal cadastro CSS mantido, mas não será exibido pois foi removido do HTML */
     </style>
 </head>
 <body>
@@ -394,12 +367,10 @@
                     <i class="fas fa-plus"></i> Novo Chat
                 </a>
             </div>
-            <ul id="history-list" class="history-list"></ul>
+            <!-- Removido histórico de conversas -->
             <div class="footer">
                 <a href="#" id="theme-toggle-btn"><i class="fas fa-sun"></i><span id="theme-label">Mudar para Tema Claro</span></a>
                 <a href="#" id="clear-history-btn"><i class="fas fa-trash"></i><span>Limpar Histórico</span></a>
-                <!-- CORRIGIDO PARA AMBIENTE FLASK LOCAL -->
-                <a href="/home"><i class="fas fa-sign-out-alt"></i> Sair</a>
                 <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
                 <a href="/register"><i class="fas fa-user-plus"></i> Cadastro</a>
             </div>
@@ -452,51 +423,8 @@
         </main>
         <div class="overlay" id="menuOverlay"></div>
     </div>
-    <!-- Modal cadastro removido conforme solicitado -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Historico de conversas: só funciona se backend disponível
-        function carregarHistorico() {
-            fetch('/api/history').then(resp => resp.json()).then(history => {
-                const historyList = document.getElementById('history-list');
-                historyList.innerHTML = "";
-                if (!history.length) {
-                    let li = document.createElement('li');
-                    li.textContent = "Nenhum histórico encontrado.";
-                    li.style.color = "#aaa";
-                    li.style.fontSize = "0.97em";
-                    historyList.appendChild(li);
-                } else {
-                    history.forEach(conv => {
-                        const a = document.createElement('a');
-                        a.textContent = conv.title || "Chat sem título";
-                        a.href = "#";
-                        a.dataset.conversationId = conv.id;
-                        a.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            carregarConversacao(conv.id, a);
-                        });
-                        historyList.appendChild(a);
-                    });
-                }
-            });
-        }
-        function carregarConversacao(convId, linkElem) {
-            document.querySelectorAll('#history-list a').forEach(a => a.classList.remove('active'));
-            if (linkElem) linkElem.classList.add('active');
-            fetch(`/api/conversation/${convId}`).then(resp => resp.json()).then(data => {
-                chatContainer.innerHTML = "";
-                welcomeScreen.style.display = "none";
-                chatContainer.style.display = "block";
-                if (data.messages && data.messages.length > 0) {
-                    data.messages.forEach(msg => {
-                        addMessage(msg.sender, msg.content);
-                    });
-                }
-                currentConversationId = convId;
-            });
-        }
-        carregarHistorico();
         document.querySelectorAll('.prompt-button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.prompt-button').forEach(b => b.classList.remove('selected'));
@@ -508,7 +436,6 @@
         const sendMessageButton = document.getElementById('sendMessageButton');
         const chatContainer = document.getElementById('chat-container');
         const welcomeScreen = document.getElementById('welcome-screen');
-        let currentConversationId = null;
         let sending = false;
         userMessageInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -556,8 +483,7 @@
                     body: JSON.stringify({
                         message: messageText,
                         profile,
-                        age_group,
-                        conversation_id: currentConversationId
+                        age_group
                     })
                 });
                 if (!response.ok) {
@@ -572,19 +498,12 @@
                 const reader = response.body.getReader();
                 let fullText = '';
                 let decoder = new TextDecoder();
-                let newConvId = null;
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
                     const chunk = decoder.decode(value);
                     chunk.split('\n').forEach(line => {
                         line = line.trim();
-                        if (line.startsWith('event: conversation_id')) {
-                            const match = line.match(/data: (\d+)/);
-                            if (match && match[1]) {
-                                newConvId = match[1];
-                            }
-                        }
                         if (line.startsWith('data: ')) {
                             try {
                                 const dataObj = JSON.parse(line.slice(6));
@@ -601,10 +520,6 @@
                 sendMessageButton.disabled = false;
                 userMessageInput.disabled = false;
                 userMessageInput.value = '';
-                if (newConvId) {
-                    currentConversationId = newConvId;
-                    carregarHistorico();
-                }
             } catch (err) {
                 aiContentDiv.innerHTML = `<span style="color: #F39C12;">Erro de conexão: ${err.message}</span>`;
                 sending = false;
@@ -620,18 +535,12 @@
         });
         document.getElementById('clear-history-btn').addEventListener('click', function(e) {
             e.preventDefault();
-            if (confirm('Deseja apagar todo o seu histórico de conversas?')) {
-                fetch('/api/conversation', { method: 'DELETE' }).then(() => {
-                    chatContainer.innerHTML = '';
-                    welcomeScreen.style.display = 'flex';
-                    chatContainer.style.display = 'none';
-                    carregarHistorico();
-                });
-            }
+            chatContainer.innerHTML = '';
+            welcomeScreen.style.display = 'flex';
+            chatContainer.style.display = 'none';
         });
         document.getElementById('new-chat-btn').addEventListener('click', function(e) {
             e.preventDefault();
-            currentConversationId = null;
             chatContainer.innerHTML = '';
             welcomeScreen.style.display = 'flex';
             chatContainer.style.display = 'none';
