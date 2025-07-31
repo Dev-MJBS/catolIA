@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 import requests
 import json
 
-# Carrega variáveis do .env
 load_dotenv()
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -21,7 +20,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
-# Configuração do Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -30,7 +28,6 @@ login_manager.login_view = "login"
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# MODELOS DO BANCO DE DADOS
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
@@ -54,11 +51,10 @@ class Conversation(db.Model):
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
-    sender = db.Column(db.String(10), nullable=False) # 'user' ou 'ai'
+    sender = db.Column(db.String(10), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# ROTAS DE AUTENTICAÇÃO
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -97,11 +93,9 @@ def logout():
 def index():
     return render_template('index.html', user=current_user if getattr(current_user, "is_authenticated", False) else None)
 
-# ROTAS DE HISTÓRICO
 @app.route('/api/history', methods=['GET'])
 @login_required
 def get_history():
-    # Corrigido: só mostra histórico para usuário logado
     conversations = Conversation.query.filter_by(user_id=current_user.id).order_by(Conversation.created_at.desc()).all()
     history = [{"id": conv.id, "title": conv.title} for conv in conversations]
     return jsonify(history)
@@ -109,7 +103,6 @@ def get_history():
 @app.route('/api/conversation/<int:conv_id>', methods=['GET'])
 @login_required
 def get_conversation(conv_id):
-    # Corrigido: só mostra conversa do usuário logado
     conversation = Conversation.query.filter_by(id=conv_id, user_id=current_user.id).first_or_404()
     messages = [{"sender": msg.sender, "content": msg.content} for msg in conversation.messages]
     return jsonify({"title": conversation.title, "messages": messages})
@@ -128,7 +121,6 @@ def delete_all_history():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-# CHAT IA (STREAMING) -- NÃO EXIGE LOGIN!
 @app.route('/api/chat', methods=['POST'])
 def chat():
     if not openrouter_api_key:
@@ -139,28 +131,19 @@ def chat():
         conversation_id = data.get('conversation_id')
         user_profile = data.get('profile', 'leigo')
         age_group = data.get('age_group', '')
-
         if not user_message:
             return Response(json.dumps({"error": "Mensagem vazia."}), status=400, mimetype='application/json')
-
-        # user_id: se logado, associa, se anônimo, salva como None
         uid = current_user.id if getattr(current_user, "is_authenticated", False) else None
-
         conv = None
-        # Se veio conversation_id, pega conversa (qualquer usuário)
         if conversation_id:
             conv = Conversation.query.filter_by(id=conversation_id).first()
-        # Se não existe, cria nova conversa (associando usuário logado, se houver)
         if not conv:
             conv = Conversation(user_id=uid)
             db.session.add(conv)
             db.session.commit()
-
-        # Salva mensagem do usuário
         user_msg_db = Message(conversation_id=conv.id, sender='user', content=user_message)
         db.session.add(user_msg_db)
         db.session.commit()
-
         def generate_response():
             full_ai_response = ""
             try:
@@ -170,7 +153,6 @@ def chat():
                     user_message_final = f"Tema da Catequese: {user_message}\nFaixa Etária: {age_group}"
                 else:
                     user_message_final = user_message
-
                 headers = {"Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json"}
                 json_data = {
                     "model": "deepseek/deepseek-chat",
@@ -195,10 +177,8 @@ def chat():
                                     yield f"data: {json.dumps({'content': content})}\n\n"
                             except (json.JSONDecodeError, KeyError):
                                 continue
-                # Salva mensagem da IA
                 ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
                 db.session.add(ai_msg_db)
-                # Atualiza título da conversa se for novo chat
                 if conv.title == "Novo Chat":
                     conv.title = generate_title(user_message, full_ai_response)
                 db.session.commit()
@@ -206,14 +186,11 @@ def chat():
                 yield f"event: error\ndata: Erro na API: {e.response.status_code}\n\n"
             except Exception as e:
                 yield f"event: error\ndata: {str(e)}\n\n"
-
         return Response(stream_with_context(generate_response()), mimetype='text/event-stream')
-
     except Exception as e:
         print("Erro interno em /api/chat:", e)
         return Response(json.dumps({"error": "Erro interno do servidor"}), status=500, mimetype='application/json')
 
-# PROMPT DE SISTEMA PARA IA
 def get_system_prompt(profile):
     bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1')."
     instructions = {
@@ -225,7 +202,6 @@ def get_system_prompt(profile):
     }
     return instructions.get(profile, instructions['leigo'])
 
-# GERADOR DE TÍTULO DE CONVERSA
 def generate_title(user_prompt, ai_response):
     try:
         title_prompt = f"Gere um título muito curto (3 a 5 palavras) para a seguinte conversa:\n\nPERGUNTA: {user_prompt}\nRESPOSTA: {ai_response}\n\nTÍTULO:"
@@ -242,7 +218,6 @@ def generate_title(user_prompt, ai_response):
     except Exception:
         return "Chat sobre " + user_prompt[:20]
 
-# CRIA AS TABELAS NO BANCO
 with app.app_context():
     db.create_all()
 
