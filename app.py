@@ -93,33 +93,7 @@ def logout():
 def index():
     return render_template('index.html', user=current_user if getattr(current_user, "is_authenticated", False) else None)
 
-@app.route('/api/history', methods=['GET'])
-@login_required
-def get_history():
-    conversations = Conversation.query.filter_by(user_id=current_user.id).order_by(Conversation.created_at.desc()).all()
-    history = [{"id": conv.id, "title": conv.title} for conv in conversations]
-    return jsonify(history)
-
-@app.route('/api/conversation/<int:conv_id>', methods=['GET'])
-@login_required
-def get_conversation(conv_id):
-    conversation = Conversation.query.filter_by(id=conv_id, user_id=current_user.id).first_or_404()
-    messages = [{"sender": msg.sender, "content": msg.content} for msg in conversation.messages]
-    return jsonify({"title": conversation.title, "messages": messages})
-
-@app.route('/api/conversation', methods=['DELETE'])
-@login_required
-def delete_all_history():
-    try:
-        conversations = Conversation.query.filter_by(user_id=current_user.id).all()
-        for conv in conversations:
-            Message.query.filter_by(conversation_id=conv.id).delete()
-        Conversation.query.filter_by(user_id=current_user.id).delete()
-        db.session.commit()
-        return jsonify({"success": "Histórico apagado com sucesso."})
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+# HISTÓRICO DE CONVERSAS REMOVIDO PARA USUÁRIOS NÃO AUTENTICADOS
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -128,26 +102,27 @@ def chat():
     try:
         data = request.get_json()
         user_message = data.get('message', '').strip()
-        conversation_id = data.get('conversation_id')
         user_profile = data.get('profile', 'leigo')
         age_group = data.get('age_group', '')
         if not user_message:
             return Response(json.dumps({"error": "Mensagem vazia."}), status=400, mimetype='application/json')
         uid = current_user.id if getattr(current_user, "is_authenticated", False) else None
+
+        # Conversa: salva só para usuários autenticados
         conv = None
-        if conversation_id:
-            conv = Conversation.query.filter_by(id=conversation_id).first()
-        if not conv:
+        if uid:
             conv = Conversation(user_id=uid)
             db.session.add(conv)
             db.session.commit()
-        user_msg_db = Message(conversation_id=conv.id, sender='user', content=user_message)
-        db.session.add(user_msg_db)
-        db.session.commit()
+            user_msg_db = Message(conversation_id=conv.id, sender='user', content=user_message)
+            db.session.add(user_msg_db)
+            db.session.commit()
+
         def generate_response():
             full_ai_response = ""
             try:
-                yield f"event: conversation_id\ndata: {conv.id}\n\n"
+                if conv:
+                    yield f"event: conversation_id\ndata: {conv.id}\n\n"
                 system_prompt = get_system_prompt(user_profile)
                 if user_profile == 'catequista':
                     user_message_final = f"Tema da Catequese: {user_message}\nFaixa Etária: {age_group}"
@@ -177,11 +152,13 @@ def chat():
                                     yield f"data: {json.dumps({'content': content})}\n\n"
                             except (json.JSONDecodeError, KeyError):
                                 continue
-                ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
-                db.session.add(ai_msg_db)
-                if conv.title == "Novo Chat":
-                    conv.title = generate_title(user_message, full_ai_response)
-                db.session.commit()
+                # Salva resposta só para usuário autenticado
+                if conv:
+                    ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
+                    db.session.add(ai_msg_db)
+                    if conv.title == "Novo Chat":
+                        conv.title = generate_title(user_message, full_ai_response)
+                    db.session.commit()
             except requests.exceptions.HTTPError as e:
                 yield f"event: error\ndata: Erro na API: {e.response.status_code}\n\n"
             except Exception as e:
@@ -192,19 +169,41 @@ def chat():
         return Response(json.dumps({"error": "Erro interno do servidor"}), status=500, mimetype='application/json')
 
 def get_system_prompt(profile):
-    bible_citation_rule = "Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1')."
+    bible_citation_rule = ("Ao citar passagens bíblicas, use sempre o formato 'Livro Capítulo, Versículo' (ex: 'Mateus 1,1'). "
+                           "Quando citar trechos bíblicos, sempre consulte a tradução da Vulgata. "
+                           "Para perguntas doutrinárias, consulte e cite o Catecismo da Igreja Católica. "
+                           "Para temas teológicos e sociais, cite encíclicas papais, buscando sempre fontes oficiais e confiáveis do site do Vaticano.")
     instructions = {
-        'crianca': f"Você é uma IA católica. Responda de forma muito simples, didática e adequada para uma criança pequena. {bible_citation_rule}",
-        'catequista': f"Você é uma IA católica para catequistas. Crie um plano de encontro de catequese detalhado e estruturado. Use Markdown para formatar a resposta com títulos, negrito e listas.",
-        'seminarista': f"Você é uma IA católica para seminaristas. Responda com profundidade teológica, referências a documentos da Igreja e filosofia. {bible_citation_rule}",
-        'sacerdote': f"Você é uma IA católica para sacerdotes. Responda com alta profundidade teológica, foco em hermenêutica e homilética. {bible_citation_rule}",
-        'leigo': f"Você é uma IA católica. Responda de forma clara, objetiva e completa para um leigo interessado em aprofundar sua fé. {bible_citation_rule}"
+        'crianca': (
+            "Você é uma IA católica. Responda de forma muito simples, didática e adequada para uma criança pequena. "
+            + bible_citation_rule
+        ),
+        'catequista': (
+            "Você é uma IA católica para catequistas. Crie um plano de encontro de catequese detalhado e estruturado. "
+            "Use Markdown para formatar a resposta com títulos, negrito e listas. "
+            + bible_citation_rule
+        ),
+        'seminarista': (
+            "Você é uma IA católica para seminaristas. Responda com profundidade teológica, referências a documentos da Igreja e filosofia. "
+            + bible_citation_rule
+        ),
+        'sacerdote': (
+            "Você é uma IA católica para sacerdotes. Responda com alta profundidade teológica, foco em hermenêutica e homilética. "
+            + bible_citation_rule
+        ),
+        'leigo': (
+            "Você é uma IA católica. Responda de forma clara, objetiva e completa para um leigo interessado em aprofundar sua fé. "
+            "Sempre fundamente as respostas com referências à Vulgata, ao Catecismo da Igreja Católica e às encíclicas papais do site do Vaticano. "
+            + bible_citation_rule
+        )
     }
     return instructions.get(profile, instructions['leigo'])
 
 def generate_title(user_prompt, ai_response):
     try:
-        title_prompt = f"Gere um título muito curto (3 a 5 palavras) para a seguinte conversa:\n\nPERGUNTA: {user_prompt}\nRESPOSTA: {ai_response}\n\nTÍTULO:"
+        title_prompt = (
+            f"Gere um título muito curto (3 a 5 palavras) para a seguinte conversa:\n\nPERGUNTA: {user_prompt}\nRESPOSTA: {ai_response}\n\nTÍTULO:"
+        )
         headers = {"Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json"}
         json_data = {
             "model": "deepseek/deepseek-chat",
