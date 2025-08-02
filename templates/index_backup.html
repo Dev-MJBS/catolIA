@@ -630,12 +630,14 @@
         <div class="overlay" id="menuOverlay"></div>
     </div>
     <script>
+    <script>
         // Verifica se usuário está logado
         const isUserLoggedIn = {{ 'true' if user and user.is_authenticated else 'false' }};
         // Contador de mensagens para mostrar modal de cadastro
         let messageCount = 0;
         let signupModalShown = false;
-        
+    </script>
+    <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Funções para gerenciar histórico (apenas para usuários logados)
         function loadHistory() {

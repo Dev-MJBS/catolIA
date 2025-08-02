@@ -111,6 +111,42 @@ def catch_all(path):
     # Redireciona todas as outras rotas para a página principal
     return redirect(url_for('index'))
 
+# ROTAS DE HISTÓRICO (APENAS PARA USUÁRIOS AUTENTICADOS)
+@app.route('/api/history', methods=['GET'])
+@login_required
+def get_history():
+    conversations = Conversation.query.filter_by(user_id=current_user.id).order_by(Conversation.created_at.desc()).all()
+    history = [{"id": conv.id, "title": conv.title, "created_at": conv.created_at.isoformat()} for conv in conversations]
+    return jsonify(history)
+
+@app.route('/api/conversation/<int:conv_id>', methods=['GET'])
+@login_required
+def get_conversation(conv_id):
+    conversation = Conversation.query.filter_by(id=conv_id, user_id=current_user.id).first_or_404()
+    messages = [{"sender": msg.sender, "content": msg.content, "created_at": msg.created_at.isoformat()} for msg in conversation.messages]
+    return jsonify({"title": conversation.title, "messages": messages})
+
+@app.route('/api/conversation/<int:conv_id>', methods=['DELETE'])
+@login_required
+def delete_conversation(conv_id):
+    conversation = Conversation.query.filter_by(id=conv_id, user_id=current_user.id).first_or_404()
+    db.session.delete(conversation)
+    db.session.commit()
+    return jsonify({"success": "Conversa deletada com sucesso."})
+
+@app.route('/api/conversation', methods=['DELETE'])
+@login_required
+def delete_all_history():
+    try:
+        conversations = Conversation.query.filter_by(user_id=current_user.id).all()
+        for conv in conversations:
+            db.session.delete(conv)
+        db.session.commit()
+        return jsonify({"success": "Histórico apagado com sucesso."})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 # --- ROTA PRINCIPAL DO CHAT ---
 @app.route('/api/chat', methods=['POST'])
 def chat():

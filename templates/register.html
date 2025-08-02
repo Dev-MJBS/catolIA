@@ -47,18 +47,3 @@
     </div>
 </body>
 </html>
-            appId: "1:38030323422:web:8ae8fa9f5c3ec7fb289c4f",
-            measurementId: "G-Q67PWHE0H4"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        window.register = function() {
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('password').value;
-            createUserWithEmailAndPassword(auth, email, senha)
-                .then(() => window.location.href = "home.html")
-                .catch(err => document.getElementById('error').innerText = err.message);
-        }
-    </script>
-</body>
-</html>
