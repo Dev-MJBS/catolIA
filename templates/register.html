@@ -12,42 +12,41 @@
         h2 { text-align:center; color: #8E44AD; margin-bottom:18px; }
         .form-group { margin-bottom: 16px; }
         label { display:block; margin-bottom:6px; color: #6C3483; font-weight:500; }
-        input { width: 100%; padding: 8px; border: 1px solid #8E44AD; border-radius: 6px; font-size:1em; }
+        input { width: 100%; padding: 8px; border: 1px solid #8E44AD; border-radius: 6px; font-size:1em; box-sizing: border-box; }
         button { width: 100%; background: #8E44AD; color:white; border:none; border-radius: 6px; padding: 10px; font-size:1em; cursor:pointer; font-weight:700; }
         button:hover { background: #6C3483; }
         .login-link { display:block; text-align:center; margin-top:12px; color: #8E44AD; text-decoration:none; }
         .error { color: #F39C12; text-align:center; margin-bottom:10px; }
+        .back-home { display:block; text-align:center; margin-top:20px; color: #8E44AD; text-decoration:none; }
     </style>
 </head>
 <body>
     <div class="register-container">
         <img src="/static/images/logo.png" alt="CatólIA logo" class="logo-img">
         <h2>Cadastro</h2>
-        <div id="error" class="error"></div>
-        <div class="form-group">
-            <label for="name">Nome:</label>
-            <input type="text" id="name" required autofocus>
-        </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Senha:</label>
-            <input type="password" id="password" required>
-        </div>
-        <button type="button" onclick="register()">Cadastrar</button>
-        <a class="login-link" href="login.html">Já tem conta? Login</a>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Nome:</label>
+                <input type="text" id="name" name="name" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Cadastrar</button>
+        </form>
+        <a class="login-link" href="/login">Já tem conta? Login</a>
+        <a class="back-home" href="/">← Voltar ao CatólIA</a>
     </div>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-        const firebaseConfig = {
-            apiKey: "AIzaSyDbKtpoJ2xegZT4I-A3M83-aBPR-U_AdrI",
-            authDomain: "catolia.firebaseapp.com",
-            projectId: "catolia",
-            storageBucket: "catolia.firebasestorage.app",
-            messagingSenderId: "38030323422",
+</body>
+</html>
             appId: "1:38030323422:web:8ae8fa9f5c3ec7fb289c4f",
             measurementId: "G-Q67PWHE0H4"
         };

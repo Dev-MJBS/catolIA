@@ -357,6 +357,87 @@
             #history-sidebar.open { transform: translateX(0); }
             #main-header { display: flex; }
         }
+        
+        /* Estilos para botão de fontes */
+        .sources-button {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .sources-button:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        /* Modal de fontes */
+        .sources-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .sources-modal-content {
+            background-color: var(--bg-chat-bubble);
+            margin: 15% auto;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .sources-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sources-modal-header h3 {
+            margin: 0;
+            color: var(--color-primary);
+        }
+        .close-sources {
+            color: var(--text-secondary);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .close-sources:hover {
+            color: var(--text-primary);
+        }
+        .sources-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sources-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .sources-list li:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -458,6 +539,15 @@
                 contentDiv.innerHTML = '<span class="typing-cursor"></span>';
             } else {
                 contentDiv.innerHTML = marked.parse(content);
+                
+                // Adicionar botão de fontes apenas para mensagens da IA
+                if (sender === 'ai' && content.includes('**Fontes consultadas:**')) {
+                    const sourcesButton = document.createElement('button');
+                    sourcesButton.className = 'sources-button';
+                    sourcesButton.innerHTML = '<i class="fas fa-book"></i> Ver Fontes';
+                    sourcesButton.onclick = () => showSources(content);
+                    contentDiv.appendChild(sourcesButton);
+                }
             }
             msgDiv.appendChild(avatarDiv);
             msgDiv.appendChild(contentDiv);
@@ -516,6 +606,16 @@
                     });
                 }
                 aiContentDiv.innerHTML = marked.parse(fullText);
+                
+                // Adicionar botão de fontes se a resposta contém seção de fontes
+                if (fullText.includes('**Fontes consultadas:**')) {
+                    const sourcesButton = document.createElement('button');
+                    sourcesButton.className = 'sources-button';
+                    sourcesButton.innerHTML = '<i class="fas fa-book"></i> Ver Fontes';
+                    sourcesButton.onclick = () => showSources(fullText);
+                    aiContentDiv.appendChild(sourcesButton);
+                }
+                
                 sending = false;
                 sendMessageButton.disabled = false;
                 userMessageInput.disabled = false;
@@ -527,6 +627,59 @@
                 userMessageInput.disabled = false;
             }
         }
+        
+        // Função para extrair e mostrar as fontes
+        function showSources(content) {
+            const modal = document.getElementById('sources-modal');
+            const sourcesList = document.getElementById('sources-list');
+            
+            // Extrair a seção de fontes do conteúdo
+            const sourcesMatch = content.match(/\*\*Fontes consultadas:\*\*([\s\S]*?)$/);
+            
+            if (sourcesMatch) {
+                const sourcesText = sourcesMatch[1].trim();
+                const sources = sourcesText.split('\n').filter(line => line.trim() && !line.startsWith('**'));
+                
+                // Limpar lista anterior
+                sourcesList.innerHTML = '';
+                
+                // Adicionar cada fonte como item da lista
+                sources.forEach(source => {
+                    const cleanSource = source.replace(/^[-*•]\s*/, '').trim();
+                    if (cleanSource) {
+                        const li = document.createElement('li');
+                        li.textContent = cleanSource;
+                        sourcesList.appendChild(li);
+                    }
+                });
+                
+                if (sourcesList.children.length === 0) {
+                    const li = document.createElement('li');
+                    li.textContent = 'Nenhuma fonte específica citada nesta resposta.';
+                    sourcesList.appendChild(li);
+                }
+            } else {
+                sourcesList.innerHTML = '<li>Nenhuma fonte específica citada nesta resposta.</li>';
+            }
+            
+            // Configurar event listeners para fechar o modal
+            const closeBtn = document.querySelector('.close-sources');
+            if (closeBtn) {
+                closeBtn.onclick = function() {
+                    modal.style.display = 'none';
+                };
+            }
+            
+            // Fechar modal ao clicar fora dele
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+            
+            modal.style.display = 'block';
+        }
+        
         document.querySelectorAll('.suggestion-pill').forEach(pill => {
             pill.addEventListener('click', function() {
                 userMessageInput.value = pill.textContent;
@@ -563,5 +716,18 @@
         });
     });
     </script>
+    
+    <!-- Modal de Fontes -->
+    <div id="sources-modal" class="sources-modal">
+        <div class="sources-modal-content">
+            <div class="sources-modal-header">
+                <h3><i class="fas fa-book"></i> Fontes Consultadas</h3>
+                <button class="close-sources">&times;</button>
+            </div>
+            <ul id="sources-list" class="sources-list">
+                <!-- As fontes serão inseridas aqui dinamicamente -->
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
