@@ -798,6 +798,7 @@
                 const reader = response.body.getReader();
                 let fullText = '';
                 let decoder = new TextDecoder();
+                let showCFCard = false;
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -811,12 +812,15 @@
                                     fullText += dataObj.content;
                                     aiContentDiv.innerHTML = marked.parse(fullText) + '<span class="typing-cursor"></span>';
                                 }
+                                if (dataObj.show_cf_card) {
+                                    showCFCard = true;
+                                }
                             } catch {}
                         }
                     });
                 }
                 aiContentDiv.innerHTML = marked.parse(fullText);
-                
+
                 // Adicionar botão de fontes se a resposta contém seção de fontes
                 if (fullText.includes('**Fontes consultadas:**')) {
                     const sourcesButton = document.createElement('button');
@@ -825,17 +829,31 @@
                     sourcesButton.onclick = () => showSources(fullText);
                     aiContentDiv.appendChild(sourcesButton);
                 }
-                
+
+                // Exibir card especial da Campanha da Fraternidade
+                if (showCFCard) {
+                    const cfCard = document.createElement('div');
+                    cfCard.className = 'cf-card';
+                    cfCard.innerHTML = `
+                        <div style="margin-top:16px; padding:18px; background:#f7f7f7; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #2C2C2C;">
+                            <strong style="font-size:1.1em; color:#2C2C2C;">Convite Especial: Curso Campanha da Fraternidade 2026</strong><br>
+                            <span style="color:#444;">Aprofunde-se no tema da CF 2026 com o curso exclusivo do Farol 1817.<br>Inscreva-se e participe!</span><br>
+                            <a href="https://portal.farol1817.com.br/turma/cf26/c-f2026" target="_blank" style="display:inline-block;margin-top:10px;padding:8px 18px;background:#2C2C2C;color:#fff;border-radius:8px;text-decoration:none;font-weight:500;">Acessar Curso</a>
+                        </div>
+                    `;
+                    aiContentDiv.appendChild(cfCard);
+                }
+
                 // Recarregar histórico se usuário estiver logado
                 if (isUserLoggedIn) {
                     loadHistory();
                 }
-                
+
                 // Mostrar modal de cadastro após a segunda mensagem (usuários não logados)
                 if (!isUserLoggedIn && messageCount >= 2) {
                     setTimeout(() => showSignupModal(), 1000);
                 }
-                
+
                 sending = false;
                 sendMessageButton.disabled = false;
                 userMessageInput.disabled = false;
