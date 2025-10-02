@@ -20,66 +20,62 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.String(80))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    conversations = db.relationship('Conversation', backref='user', lazy=True)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+class Conversation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    title = db.Column(db.String(120), default="Novo Chat")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    messages = db.relationship('Message', backref='conversation', lazy=True)
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
+    sender = db.Column(db.String(10))
+    content = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+import os
+from flask import Flask, request, jsonify, render_template, Response, stream_with_context, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+from dotenv import load_dotenv
+import requests
+import json
+
+load_dotenv()
+
+app = Flask(__name__, template_folder='templates', static_folder='static')
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "catolia-secret")
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PASSWORD')}"
+    f"@{os.getenv('MYSQL_HOST','localhost')}/{os.getenv('MYSQL_DB')}"
+)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
 @login_manager.user_loader
-        def generate_response():
-            full_ai_response = ""
-            try:
-                if conv:
-                    yield f"event: conversation_id\ndata: {conv.id}\n\n"
-                system_prompt = get_system_prompt(user_profile)
-                if user_profile == 'catequista':
-                    user_message_final = f"Tema da Catequese: {user_message}\nFaixa Etária: {age_group}"
-                else:
-                    user_message_final = user_message
-                # Detecta pergunta sobre campanha da fraternidade
-                cf_keywords = ["campanha da fraternidade", "cf 2026", "cf2026", "campanha fraternidade", "campanha da fraternidade 2026"]
-                cf_flag = any(kw in user_message_final.lower() for kw in cf_keywords)
-                headers = {"Authorization": f"Bearer {openrouter_api_key}", "Content-Type": "application/json"}
-                json_data = {
-                    "model": "deepseek/deepseek-chat",
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_message_final}
-                    ],
-                    "stream": True
-                }
-                with requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=json_data, stream=True, timeout=60) as r:
-                    r.raise_for_status()
-                    for chunk in r.iter_lines():
-                        if chunk.startswith(b'data: '):
-                            chunk_data = chunk.decode('utf-8')[6:]
-                            if chunk_data.strip() == '[DONE]':
-                                break
-                            try:
-                                json_chunk = json.loads(chunk_data)
-                                content = json_chunk['choices'][0]['delta'].get('content', '')
-                                if content:
-                                    full_ai_response += content
-                                    response_obj = {'content': content}
-                                    if cf_flag:
-                                        response_obj['show_cf_card'] = True
-                                    yield f"data: {json.dumps(response_obj)}\n\n"
-                            except (json.JSONDecodeError, KeyError):
-                                continue
-                # Salva resposta só para usuário autenticado
-                if conv:
-                    ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
-                    db.session.add(ai_msg_db)
-                    if conv.title == "Novo Chat":
-                        conv.title = generate_title(user_message, full_ai_response)
-                    db.session.commit()
-        email = request.form['email'].strip().lower()
-        password = request.form['password']
-        user = User.query.filter_by(email=email).first()
-        if user and user.check_password(password):
-            login_user(user)
-            return redirect(url_for('index'))
-        return render_template('login.html', error='Email ou senha inválidos!')
-    return render_template('login.html')
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route('/logout')
 @login_required
@@ -124,10 +120,6 @@ def delete_all_history():
         db.session.commit()
         return jsonify({"success": "Histórico apagado com sucesso."})
     except Exception as e:
-                                    response_obj = {'content': content}
-                                    if cf_flag:
-                                        response_obj['show_cf_card'] = True
-                                    yield f"data: {json.dumps(response_obj)}\n\n"
         return jsonify({"error": str(e)}), 500
 
 # HISTÓRICO DE CONVERSAS REMOVIDO PARA USUÁRIOS NÃO AUTENTICADOS
