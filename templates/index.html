@@ -808,12 +808,13 @@
                         if (line.startsWith('data: ')) {
                             try {
                                 const dataObj = JSON.parse(line.slice(6));
-                                if (dataObj.content) {
+                                // Se for o chunk final só com o convite, não repetir resposta
+                                if (dataObj.show_cf_card && dataObj.content && dataObj.content.includes('Convite Especial')) {
+                                    // Anexa convite ao final do texto já exibido
+                                    fullText += dataObj.content;
+                                } else if (dataObj.content) {
                                     fullText += dataObj.content;
                                     aiContentDiv.innerHTML = marked.parse(fullText) + '<span class="typing-cursor"></span>';
-                                }
-                                if (dataObj.show_cf_card) {
-                                    showCFCard = true;
                                 }
                             } catch {}
                         }
