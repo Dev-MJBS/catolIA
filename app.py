@@ -178,15 +178,17 @@ def chat():
                                 content = json_chunk['choices'][0]['delta'].get('content', '')
                                 if content:
                                     full_ai_response += content
-                                    # Detecta pergunta sobre campanha da fraternidade
-                                    cf_keywords = ["campanha da fraternidade", "cf 2026", "cf2026", "campanha fraternidade", "campanha da fraternidade 2026"]
-                                    cf_flag = any(kw in user_message_final.lower() for kw in cf_keywords)
                                     response_obj = {'content': content}
-                                    if cf_flag:
-                                        response_obj['show_cf_card'] = True
                                     yield f"data: {json.dumps(response_obj)}\n\n"
                             except (json.JSONDecodeError, KeyError):
                                 continue
+                # Adiciona convite e envia último chunk especial se for CF
+                cf_keywords = ["campanha da fraternidade", "cf 2026", "cf2026", "campanha fraternidade", "campanha da fraternidade 2026", "cf"]
+                cf_flag = any(kw in user_message_final.lower() for kw in cf_keywords)
+                if cf_flag and full_ai_response:
+                    full_ai_response += "\n\n---\n<div style='margin-top:16px; padding:18px; background:#f7f7f7; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.07); border:2px solid #2C2C2C;'><strong style='font-size:1.1em; color:#2C2C2C;'>Convite Especial: Curso Campanha da Fraternidade 2026</strong><br><span style='color:#444;'>Aprofunde-se no tema da CF 2026 com o curso exclusivo do Farol 1817.<br>Inscreva-se e participe!</span><br><a href='https://portal.farol1817.com.br/turma/cf26/c-f2026' target='_blank' style='display:inline-block;margin-top:10px;padding:8px 18px;background:#2C2C2C;color:#fff;border-radius:8px;text-decoration:none;font-weight:500;'>Acessar Curso</a></div>"
+                    # Envia chunk final com convite e flag
+                    yield f"data: {json.dumps({'content': full_ai_response, 'show_cf_card': True})}\n\n"
                 # Salva resposta só para usuário autenticado
                 if conv:
                     ai_msg_db = Message(conversation_id=conv.id, sender='ai', content=full_ai_response)
